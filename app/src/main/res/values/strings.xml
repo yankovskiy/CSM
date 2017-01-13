@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">CSM</string>
+
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+
+    <string name="action_settings">Настройки</string>
+
+    <string name="preference_file_key" translatable="false">gpsdata</string>
+    <string name="notification_message">Отслеживание тренировки</string>
+    <string name="ticker_text">CSM отслеживает вашу тренировку</string>
+    <string name="altitude">Высота</string>
+    <string name="longitude">Долгота</string>
+    <string name="latitude">Широта</string>
+    <string name="speed">Скорость</string>
+    <string name="max_speed">Максимальная скорость</string>
+    <string name="distance">Дистанция</string>
+    <string name="average_speed">Ср. скорость</string>
+    <string name="max_altitude">Максимальная высота</string>
+    <string name="up_distance">В гору</string>
+    <string name="down_distance">С горы</string>
+    <string name="training_result">Результат тренировки</string>
+    <string name="cancel">Отмена</string>
+    <string name="ok">OK</string>
+    <string name="title_cancel_training">Отменить тренировку?</string>
+    <string name="message_cancel_training">Отмена тренировки приведет к удалению всех данных о ней. Вы уверены?</string>
+    <string name="traning_description">Комментарий</string>
+    <string name="map">Карта</string>
+    <string name="compass">Компас</string>
+    <string name="zero">0</string>
+    <string name="total_time">Время тренировки</string>
+    <string name="finish_date">Дата завершения</string>
+    <string name="up_altitude">Набор высоты</string>
+    <string name="down_altitude">Потеря высоты</string>
+    <string name="stats">Статистика</string>
+    <string name="trip_removed">Тренировка удалена</string>
+</resources>
