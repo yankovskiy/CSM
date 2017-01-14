@@ -21,6 +21,7 @@ public class GPSData implements Serializable{
     public int down_distance;   // дистанция движения с горы
     public int up_altitude;     // набор высоты
     public int down_altitude;   // потеря высоты
+    public float accuracy;      // погрешность местоположения в метрах
 
     public void save(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(
@@ -38,6 +39,7 @@ public class GPSData implements Serializable{
         editor.putInt("down-distance", down_distance);
         editor.putInt("up-altitude", up_altitude);
         editor.putInt("down-altitude", down_altitude);
+        editor.putFloat("accuracy", accuracy);
         editor.apply();
     }
 
@@ -57,6 +59,7 @@ public class GPSData implements Serializable{
         down_distance = sharedPref.getInt("down-distance", 0);
         up_altitude = sharedPref.getInt("up-altitude", 0);
         down_altitude = sharedPref.getInt("down-altitude", 0);
+        accuracy = sharedPref.getFloat("accuracy", 0);
     }
 
     public void copyFrom(GPSData data) {
@@ -72,5 +75,6 @@ public class GPSData implements Serializable{
         down_distance = data.down_distance;
         up_altitude = data.up_altitude;
         down_altitude = data.down_altitude;
+        accuracy = data.accuracy;
     }
 }

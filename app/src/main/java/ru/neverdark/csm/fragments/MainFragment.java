@@ -40,6 +40,7 @@ import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.components.GeoClient;
 import ru.neverdark.csm.R;
+import ru.neverdark.widgets.Antenna;
 
 public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener {
     public static final int COMPASS = 0;
@@ -68,6 +69,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private GeoClient mGeoClient;
     public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
     private BroadcastReceiver mReseiver;
+    private int mSignal;
 
     public MainFragment() {
         // Required empty public constructor
@@ -92,9 +94,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             @Override
             public void onReceive(Context context, Intent intent) {
                 int time = intent.getIntExtra(TrackerService.TRACKER_SERVICE_TIMER_DATA, 0);
-                int seconds = time % 60 ;
+                int seconds = time % 60;
                 int minutes = (time / 60) % 60;
-                int hours   = time / (60 * 60);
+                int hours = time / (60 * 60);
                 String timeStr = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
                 getActivity().setTitle(timeStr);
                 Log.v(TAG, "onReceive: " + timeStr);
@@ -158,7 +160,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         return view;
     }
 
-    public void setButtonsEnabledState() {
+    private void setButtonsEnabledState() {
         Log.v(TAG, "setButtonsEnabledState: " + mIsServiceRunning);
         if (mIsServiceRunning) {
             mStartStopTrainingButton.setImageResource(R.drawable.fab_stop_training);
@@ -215,6 +217,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         mDistanceTv.setText(distance);
         mAverageSpeedTv.setText(average_speed);
 
+        updateSignalWidget(data.accuracy);
         updateCamera(new LatLng(data.latitude, data.longitude));
     }
 
@@ -225,7 +228,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
      * @param requestCode код запроса прав доступа для обработки onRequestPermissionsResult
      * @return true если права доступа есть
      */
-    public boolean checkAndRequirePermission(String permission, int requestCode) {
+    private boolean checkAndRequirePermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
@@ -336,6 +339,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReseiver, new IntentFilter(TrackerService.TRACKER_SERVICE_TIMER_REQUEST));
         mMap.onStart();
         setButtonsEnabledState();
+        mSignal = Antenna.SIGNAL_NO;
+
         if (!mIsServiceRunning) {
             mGeoClient.getLocationSettings(new LocationSettingsListener());
         }
@@ -361,16 +366,16 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         mCallback.stopTrackerService();
         mIsServiceRunning = false;
         mGeoClient.start();
-        controlRowsVisible(mCompassMenuItem.isVisible()? MAP: COMPASS);
+        controlRowsVisible(mCompassMenuItem.isVisible() ? MAP : COMPASS);
     }
 
-    public void startTrackerService() {
+    private void startTrackerService() {
         if (checkAndRequirePermission(Manifest.permission.ACCESS_FINE_LOCATION, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)) {
             Log.v(TAG, "startTrackerService: ");
             mCallback.startTrackerService();
             mIsServiceRunning = true;
             mGeoClient.stop();
-            controlRowsVisible(mCompassMenuItem.isVisible()? MAP: COMPASS);
+            controlRowsVisible(mCompassMenuItem.isVisible() ? MAP : COMPASS);
         }
     }
 
@@ -378,7 +383,29 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     public void onMyLocationChanged(Location location) {
         Log.v(TAG, String.format(Locale.US, "onMyLocationChanged: %f,%f", location.getLatitude(), location.getLongitude()));
         updateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
+        Log.v(TAG, "onMyLocationChanged: " + location.getAccuracy());
+        updateSignalWidget(location.getAccuracy());
     }
+
+    private void updateSignalWidget(float accuracy) {
+
+        mSignal = Antenna.SIGNAL_NO;
+
+        if (accuracy <= 5 && accuracy > 0.1) {
+            mSignal = Antenna.SIGNAL_HIGH;
+        } else if (accuracy <= 10) {
+            mSignal = Antenna.SIGNAL_MEDIUM_PLUS;
+        } else if (accuracy <= 15) {
+            mSignal = Antenna.SIGNAL_MEDIUM;
+        } else if (accuracy <= 20) {
+            mSignal = Antenna.SIGNAL_LOW_PLUS;
+        } else if (accuracy <= 40) {
+            mSignal = Antenna.SIGNAL_LOW;
+        }
+
+        mCallback.updateSignal(mSignal);
+    }
+
 
     private void updateCamera(LatLng latLng) {
         if (mGoogleMap != null) {
@@ -391,6 +418,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         void stopTrackerService();
 
         void startTrackerService();
+
+        void updateSignal(int signal);
     }
 
     private class ButtonsClickListener implements View.OnClickListener {
@@ -405,6 +434,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         if (mGoogleMap != null) {
             Location location = mGeoClient.getCurrentLocation();
             if (location != null) {
+                updateSignalWidget(location.getAccuracy());
                 mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 14));
             }
         }
@@ -444,7 +474,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         // and check the result in onActivityResult().
                         status.startResolutionForResult(
                                 getActivity(),
-                                mIsCheckForService? REQUETST_CHECK_SETTINGS_FOR_SERVICE : REQUEST_CHECK_SETTINGS);
+                                mIsCheckForService ? REQUETST_CHECK_SETTINGS_FOR_SERVICE : REQUEST_CHECK_SETTINGS);
                     } catch (IntentSender.SendIntentException e) {
                         // Ignore the error.
                     }

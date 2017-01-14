@@ -216,6 +216,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     }
 
     private void prepareData() {
+        mData.accuracy = mCurrentLocation.getAccuracy();
         mData.altitude = (int) mCurrentLocation.getAltitude();
         mData.longitude = (float) mCurrentLocation.getLongitude();
         mData.latitude = (float) mCurrentLocation.getLatitude();

@@ -14,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,6 +31,7 @@ import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
 import ru.neverdark.csm.utils.Constants;
 import ru.neverdark.csm.utils.Utils;
+import ru.neverdark.widgets.Antenna;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MainFragment.OnFragmentInteractionListener {
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mMainFragment;
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawer;
+    private Antenna mAntenna;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +108,7 @@ public class MainActivity extends AppCompatActivity
         mMainFragment = MainFragment.newInstance(mIsServiceRunning);
         getSupportFragmentManager().beginTransaction().add(R.id.main_content_fragment, mMainFragment).commit();
 
+        mAntenna = (Antenna) findViewById(R.id.quality);
         setButtonsEnabledState();
     }
 
@@ -113,6 +118,12 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(MainActivity.TRAININD_ID, id);
         intent.putExtra(MainActivity.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, TRAINING_RESULT_REQUEST);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        TextView tv = (TextView) findViewById(R.id.title);
+        tv.setText(title);
     }
 
     @Override
@@ -181,8 +192,12 @@ public class MainActivity extends AppCompatActivity
         if (!item.isChecked()) {
             Log.v(TAG, "onNavigationItemSelected: ");
             if (id == R.id.nav_training) {
+                mAntenna.setVisibility(View.VISIBLE);
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, mMainFragment).commit();
             } else if (id == R.id.nav_stats) {
+                if (mAntenna.getVisibility() != View.GONE) {
+                    mAntenna.setVisibility(View.GONE);
+                }
                 TrainingStatsFragment fragment = TrainingStatsFragment.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, fragment).commit();
             } else if (id == R.id.nav_gallery) {
@@ -225,6 +240,11 @@ public class MainActivity extends AppCompatActivity
         startService(mServiceIntent);
         mIsServiceRunning = true;
         setButtonsEnabledState();
+    }
+
+    @Override
+    public void updateSignal(int signal) {
+        mAntenna.setSignal(signal);
     }
 
     @Override

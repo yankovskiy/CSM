@@ -17,7 +17,36 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/title"
+                    style="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <ru.neverdark.widgets.Antenna
+                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:id="@+id/quality"
+                    android:layout_centerVertical="true"
+                    android:gravity="bottom"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:orientation="horizontal"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"/>
+
+            </RelativeLayout>
+
+            </android.support.v7.widget.Toolbar>
+
 
     </android.support.design.widget.AppBarLayout>
 
