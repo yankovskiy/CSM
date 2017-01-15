@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,21 +28,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import ru.neverdark.csm.MainActivity;
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.fragments.ConfirmDialog;
+import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.utils.Utils;
 
 public class TrainingFinishAcitivty extends AppCompatActivity implements ConfirmDialog.NoticeDialogListener, OnMapReadyCallback {
@@ -80,11 +77,11 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mData = (GPSData) intent.getSerializableExtra(MainActivity.TRAINING_DATA);
+        mData = (GPSData) intent.getSerializableExtra(MainFragment.TRAINING_DATA);
         Log.v(TAG, "onCreate: " + String.valueOf(mData == null));
 
-        mTrainingId = intent.getLongExtra(MainActivity.TRAININD_ID, 0);
-        mFinishDateInMillis = intent.getLongExtra(MainActivity.TRAINING_FINISH_DATE, 0);
+        mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
+        mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
         mapView.getMapAsync(this);
@@ -163,7 +160,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     @Override
     public void onDialogPositiveClick(AppCompatDialogFragment dialog) {
         Intent intent = new Intent();
-        intent.putExtra(MainActivity.TRAININD_ID, mTrainingId);
+        intent.putExtra(MainFragment.TRAININD_ID, mTrainingId);
         setResult(RESULT_CANCELED, intent);
         finish();
     }

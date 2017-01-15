@@ -1,6 +1,7 @@
 package ru.neverdark.csm.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,22 +35,35 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.File;
 import java.util.Locale;
 
+import ru.neverdark.csm.R;
+import ru.neverdark.csm.activity.TrainingFinishAcitivty;
 import ru.neverdark.csm.components.Compass;
+import ru.neverdark.csm.components.GeoClient;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.data.GPSData;
-import ru.neverdark.csm.components.GeoClient;
-import ru.neverdark.csm.R;
+import ru.neverdark.csm.db.Db;
+import ru.neverdark.csm.utils.Constants;
+import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 
-public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener {
+public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener {
     public static final int COMPASS = 0;
     public static final int MAP = 1;
+    public static final int REQUEST_CHECK_SETTINGS = 3;
+    public static final int TRAINING_RESULT_REQUEST = 1;
+    public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
     private static final String TAG = "MainFragment";
+    private static final String FRAGMENT_PATH = Constants.PACKAGE_NAME + "." + TAG;
+    public static final String APP_RUNNING = FRAGMENT_PATH + ".APP_RUNNING";
+    public static final String SERVICE_REQUEST = FRAGMENT_PATH + ".SERVICE_REQUEST";
+    public static final String TRAINING_FINISH_DATE = FRAGMENT_PATH + ".FINISH_DATE";
+    public static final String TRAININD_ID = FRAGMENT_PATH + ".TRAINING_ID";
+    public static final String TRAINING_DATA = FRAGMENT_PATH + ".DATA";
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
-    public static final int REQUEST_CHECK_SETTINGS = 3;
     private TextView mLatitudeTv;
     private TextView mLongitudeTv;
     private TextView mAltitudeTv;
@@ -67,12 +82,21 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private FloatingActionButton mStartStopTrainingButton;
     private boolean mIsServiceRunning;
     private GeoClient mGeoClient;
-    public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
-    private BroadcastReceiver mReseiver;
+    private BroadcastReceiver mTimerReseiver;
     private int mSignal;
+    private BroadcastReceiver mLocationReceiver;
+    private GPSData mData;
+    private boolean mSavedState;
+    private boolean mDelayShowDialog;
 
     public MainFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        mSavedState = true;
+        super.onSaveInstanceState(outState);
     }
 
     public static MainFragment newInstance(boolean isServiceRunning) {
@@ -82,14 +106,45 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MainFragment.TRAINING_RESULT_REQUEST) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                long recordId = data.getLongExtra(MainFragment.TRAININD_ID, 0);
+                Log.v(TAG, "onActivityResult: canceled");
+                Log.v(TAG, "onActivityResult: recordId = " + recordId);
+                removeTraining(recordId);
+            } else if (resultCode == Activity.RESULT_OK) {
+                Log.v(TAG, "onActivityResult: ok");
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void removeTraining(long recordId) {
+        String fileName = Utils.getSnapshotNameById(recordId);
+        File file = new File(getContext().getFilesDir(), fileName);
+        if (file.exists()) {
+            file.delete();
+        }
+        Db.getInstance(getContext()).getSummaryTable().deleteRecord(recordId);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate: " + mIsServiceRunning);
         mCompass = new Compass(getContext());
         mGeoClient = new GeoClient(getContext(), this);
+        mData = new GPSData();
+
         setHasOptionsMenu(true);
-        mReseiver = new BroadcastReceiver() {
+        createReseivers();
+    }
+
+    private void createReseivers() {
+        mTimerReseiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -102,6 +157,36 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                 Log.v(TAG, "onReceive: " + timeStr);
             }
         };
+
+        mLocationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.v(TAG, "onReceive: ");
+                GPSData data = (GPSData) intent.getSerializableExtra(TrackerService.TRACKER_SERVICE_GPSDATA);
+                if (data != null) {
+                    updateUI(data);
+                }
+
+                /* если сервис был остановлен */
+                if (!intent.getBooleanExtra(TrackerService.TRACKER_SERVICE_STARTED, true)) {
+                    long recordId = intent.getLongExtra(TrackerService.TRACKER_CURRENT_TRAINING_ID, 0);
+                    if (recordId == 0) {
+                        Log.v(TAG, "onReceive: incorrect database record id");
+                    } else {
+                        Log.v(TAG, "onReceive: create new activity with result");
+                        startTrainingFinishActivity(recordId);
+                    }
+                }
+            }
+        };
+    }
+
+    private void startTrainingFinishActivity(long id) {
+        Intent intent = new Intent(getContext(), TrainingFinishAcitivty.class);
+        intent.putExtra(MainFragment.TRAINING_DATA, mData);
+        intent.putExtra(MainFragment.TRAININD_ID, id);
+        intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
+        startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }
 
     private void setLayoutVisible(View layoutView, boolean visible) {
@@ -160,23 +245,34 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         return view;
     }
 
-    private void setButtonsEnabledState() {
-        Log.v(TAG, "setButtonsEnabledState: " + mIsServiceRunning);
-        if (mIsServiceRunning) {
+    /**
+     * Изменяет иконку кнопки запуска / остановки сервиса
+     * @param stopImage true если иконку нужно изменить на значок stop
+     *                  false если нужно изменить иконку на значок start
+     */
+    private void updateImageOnButton(boolean stopImage) {
+        Log.v(TAG, "updateImageOnButton: " + stopImage);
+        if (stopImage) {
             mStartStopTrainingButton.setImageResource(R.drawable.fab_stop_training);
         } else {
             mStartStopTrainingButton.setImageResource(R.drawable.fab_start_training);
         }
     }
 
-    public void handleStartStopButton() {
-        Log.v(TAG, "handleStartStopButton: " + mIsServiceRunning);
-        if (!mIsServiceRunning) {
+    /**
+     * Останавливает и запускает TrackerService
+     * В случае успешного остановки или запуска меняет иконку на соответсвующей кнопке
+     * @param start true если сервис нужно запустить
+     *              false если сервис нужно остановить
+     */
+    public void startStopService(boolean start) {
+        Log.v(TAG, "startStopService: " + start);
+        if (start) {
             startTrackerService();
         } else {
             stopTrackerService();
         }
-        setButtonsEnabledState();
+        updateImageOnButton(mIsServiceRunning);
     }
 
     @Override
@@ -219,6 +315,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
         updateSignalWidget(data.accuracy);
         updateCamera(new LatLng(data.latitude, data.longitude));
+
+        mData.copyFrom(data);
     }
 
     /**
@@ -291,7 +389,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     enableMyLocationButton();
-                    handleStartStopButton();
+                    startStopService(true);
                 }
                 break;
             case PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP:
@@ -299,6 +397,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     enableMyLocationButton();
+                    if (!mIsServiceRunning && !mGeoClient.isStarted()) {
+                        mGeoClient.getLocationSettings(new LocationSettingsListener());
+                    }
                 }
                 break;
             default:
@@ -316,6 +417,14 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         if (mMapMenuItem != null && mMapMenuItem.isVisible() && !mCompass.isStarted()) {
             mCompass.start();
         }
+
+        /* workaround для проблемы #1 */
+        if (mDelayShowDialog) {
+            mDelayShowDialog = false;
+            showLowSignalConfirmDialog();
+        }
+
+        mSavedState = false;
     }
 
     @Override
@@ -328,7 +437,12 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         }
 
         mGeoClient.stop();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReseiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTimerReseiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLocationReceiver);
+
+        Intent intent = new Intent(MainFragment.SERVICE_REQUEST);
+        intent.putExtra(MainFragment.APP_RUNNING, false);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
         super.onStop();
     }
 
@@ -336,14 +450,28 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     public void onStart() {
         Log.v(TAG, "onStart: ");
         super.onStart();
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReseiver, new IntentFilter(TrackerService.TRACKER_SERVICE_TIMER_REQUEST));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTimerReseiver, new IntentFilter(TrackerService.TRACKER_SERVICE_TIMER_REQUEST));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mLocationReceiver, new IntentFilter(TrackerService.TRACKER_SERVICE_REQUEST));
+
         mMap.onStart();
-        setButtonsEnabledState();
+
         mSignal = Antenna.SIGNAL_NO;
 
-        if (!mIsServiceRunning) {
+        /* Если произошел запуск / перезапуск активити при запущеннном сервисе */
+        if (mIsServiceRunning) {
+            GPSData data = new GPSData();
+            data.load(getContext());
+            updateUI(data);
+
+            Intent intent = new Intent(MainFragment.SERVICE_REQUEST);
+            intent.putExtra(MainFragment.APP_RUNNING, true);
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        } else if (!mGeoClient.isStarted()){
             mGeoClient.getLocationSettings(new LocationSettingsListener());
         }
+
+        // если запущен сервис, кнопка будет иметь обозначение остановки сервиса
+        updateImageOnButton(mIsServiceRunning);
     }
 
     @Override
@@ -377,6 +505,14 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             mGeoClient.stop();
             controlRowsVisible(mCompassMenuItem.isVisible() ? MAP : COMPASS);
         }
+    }
+
+    /**
+     * Определяет является точность определения местоположения приемлимой для начала тренировки
+     * @return true если погрешность определения местоположения не более 10м
+     */
+    private boolean isGoodAccuracy() {
+        return mSignal == Antenna.SIGNAL_HIGH || mSignal == Antenna.SIGNAL_MEDIUM_PLUS;
     }
 
     @Override
@@ -414,21 +550,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         }
     }
 
-    public interface OnFragmentInteractionListener {
-        void stopTrackerService();
-
-        void startTrackerService();
-
-        void updateSignal(int signal);
-    }
-
-    private class ButtonsClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            mGeoClient.getLocationSettings(new LocationSettingsListener(true));
-        }
-    }
-
     public void startGeoClient() {
         mGeoClient.start();
         if (mGoogleMap != null) {
@@ -440,7 +561,44 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         }
     }
 
+    @Override
+    public void onDialogPositiveClick(AppCompatDialogFragment dialog) {
+        startStopService(true);
+    }
+
+    @Override
+    public void onDialogNegativeClick(AppCompatDialogFragment dialog) {
+
+    }
+
+    public interface OnFragmentInteractionListener {
+        void stopTrackerService();
+
+        void startTrackerService();
+
+        void updateSignal(int signal);
+    }
+
+    private class ButtonsClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            // если сервис не запущен, нужно проверить включен ли gps, после чего уже произвести запуск сервиса
+            if (!mIsServiceRunning) {
+                mGeoClient.getLocationSettings(new LocationSettingsListener(true));
+            } else {
+                startStopService(false);
+            }
+        }
+    }
+
+    /**
+     * Класс для проверки настроек GPS и в случае выключенного состояния отправки запроса на включение
+     */
     private class LocationSettingsListener implements ResultCallback<LocationSettingsResult> {
+        /**
+         * true если проверка настроек GPS осуществляется перед запуском трекера (нажата кнопка начать тренировку)
+         * false если проверка настроек GPS осуществляется перед запуском локального gps-клиента
+         */
         private boolean mIsCheckForService;
 
         LocationSettingsListener(boolean isCheckForService) {
@@ -454,14 +612,11 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         @Override
         public void onResult(@NonNull LocationSettingsResult result) {
             final Status status = result.getStatus();
-            //final LocationSettingsStates= result.getLocationSettingsStates();
             Log.v(TAG, "onResult: " + status.getStatusCode());
             switch (status.getStatusCode()) {
                 case LocationSettingsStatusCodes.SUCCESS:
-                    // All location settings are satisfied. The client can
-                    // initialize location requests here.
                     if (mIsCheckForService) {
-                        handleStartStopButton();
+                        checkAccuracyAndRunTracker();
                     } else {
                         startGeoClient();
                     }
@@ -486,5 +641,27 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             }
 
         }
+    }
+
+    /**
+     * Проверяет качество сигнала и запускает сервис в случае удовлетворительной точности,
+     * иначе показыает диалог для подтверждения запуска трекера при низком качестве
+     */
+    public void checkAccuracyAndRunTracker() {
+        if (isGoodAccuracy()) {
+            startStopService(true);
+        } else {
+            // workaround для проблемы #1
+            if(!mSavedState) {
+                showLowSignalConfirmDialog();
+            } else {
+                mDelayShowDialog = true;
+            }
+        }
+    }
+
+    private void showLowSignalConfirmDialog() {
+        ConfirmDialog dialog = ConfirmDialog.getInstance(R.string.low_gps_signal_title, R.string.low_gps_signal_message, this);
+        dialog.show(getFragmentManager(), null);
     }
 }

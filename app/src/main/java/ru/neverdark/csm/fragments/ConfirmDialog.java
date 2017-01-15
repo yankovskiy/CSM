@@ -18,7 +18,7 @@ public class ConfirmDialog extends AppCompatDialogFragment {
         void onDialogNegativeClick(AppCompatDialogFragment dialog);
     }
 
-    NoticeDialogListener mCallback;
+    private NoticeDialogListener mCallback;
 
     public static ConfirmDialog getInstance(int titleResId, int messageResId) {
         ConfirmDialog dialog = new ConfirmDialog();
@@ -27,13 +27,21 @@ public class ConfirmDialog extends AppCompatDialogFragment {
         return dialog;
     }
 
+    public static ConfirmDialog getInstance(int titleResId, int messageResId, NoticeDialogListener callback) {
+        ConfirmDialog dialog = getInstance(titleResId, messageResId);
+        dialog.mCallback = callback;
+        return dialog;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
         try {
-            mCallback = (NoticeDialogListener) context;
-
+            // null или нет в зависимости от конструктора
+            if (mCallback == null) {
+                mCallback = (NoticeDialogListener) context;
+            }
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement NoticeDialogListener");

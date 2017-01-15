@@ -34,20 +34,21 @@ import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
+import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.utils.Constants;
 
 public class TrackerService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final int SERVICE_NOTIFICATION_ID = 1;
     private static final String TAG = "TrackerService";
     private static final String TRACKER_PATH = Constants.PACKAGE_NAME + "." + TAG;
-    public static final String TRACKER_SERVICE_MESSAGE = TRACKER_PATH + ".MESSAGE";
+    public static final String TRACKER_SERVICE_GPSDATA = TRACKER_PATH + ".GPSDATA";
     public static final String TRACKER_SERVICE_STARTED = TRACKER_PATH + ".STARTED";
-    public static final String TRACKER_SERVICE_REQUEST = TRACKER_PATH + ".REQUEST";
+    public static final String TRACKER_SERVICE_REQUEST = TRACKER_PATH + ".SERVICE_REQUEST";
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     public static final String TRACKER_SERVICE_TIMER_REQUEST = TRACKER_PATH + ".TIMER_REQUEST";
     public static final String TRACKER_SERVICE_TIMER_DATA = TRACKER_PATH + ".TIMER_DATA";
-    private boolean mIsActivityStarted;
+    private boolean mIsGUIRunning;
     private BroadcastReceiver mReceiver;
     private GPSData mData;
     private GoogleApiClient mGoogleApiClient;
@@ -95,13 +96,14 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public void onCreate() {
         super.onCreate();
 
-        mIsActivityStarted = true;
+        mIsGUIRunning = true;
+        /* Receiver поймает данные, когда приложение(GUI) остановлено или запущено */
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mIsActivityStarted = intent.getBooleanExtra(MainActivity.ACTIVITY_STARTED, false);
-                Log.v(TAG, "onReceive: Activity started = " + mIsActivityStarted);
-                if (!mIsActivityStarted && mData != null) {
+                mIsGUIRunning = intent.getBooleanExtra(MainFragment.APP_RUNNING, false);
+                Log.v(TAG, "onReceive: Activity started = " + mIsGUIRunning);
+                if (!mIsGUIRunning && mData != null) {
                     mData.save(TrackerService.this);
                 }
             }
@@ -137,7 +139,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         mGoogleApiClient.connect();
         mData = new GPSData();
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(MainActivity.ACTIVITY_REQUEST));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(MainFragment.SERVICE_REQUEST));
         createNotification();
 
         /* перезапуск в случае смерти */
@@ -190,7 +192,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if (mCurrentLocation != null) {
                     Log.v(TAG, String.format(Locale.US, "startLocationUpdates: %f,%f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-                    updateUI();
+                    notifyUI();
                     mGpsLog.saveData(mCurrentLocation, mTempRecordId);
                 }
             }
@@ -200,17 +202,22 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         }
     }
 
-    private void updateUI() {
+    /**
+     * Уведомляет UI о новых данных или сохраняет их на диск
+     * В случае, если пользовательский интерфейс доступен - отсылается уведомление о новых данных с координатами
+     * В противном случае данные сохраняются на диск, чтобы при перезапуске приложение сразу отобразило последние данные не дожидаясь изменений в сервисе
+     */
+    private void notifyUI() {
         prepareData();
 
         /* Если активити доступна пересылаем данные в него, иначе сохраняем в shared-prefs */
-        if (mIsActivityStarted) {
-            Log.v(TAG, "updateUI: send data to activity");
+        if (mIsGUIRunning) {
+            Log.v(TAG, "notifyUI: send data to activity");
             Intent intent = new Intent(TRACKER_SERVICE_REQUEST);
-            intent.putExtra(TRACKER_SERVICE_MESSAGE, mData);
+            intent.putExtra(TRACKER_SERVICE_GPSDATA, mData);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         } else {
-            Log.v(TAG, "updateUI: save data to shared-prefs");
+            Log.v(TAG, "notifyUI: save data to shared-prefs");
             mData.save(TrackerService.this);
         }
     }
@@ -280,7 +287,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
 
             mGpsLog.saveData(mCurrentLocation, mTempRecordId);
-            updateUI();
+            notifyUI();
         }
     }
 }

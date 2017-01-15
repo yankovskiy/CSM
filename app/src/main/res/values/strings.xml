@@ -34,4 +34,6 @@
     <string name="down_altitude">Потеря высоты</string>
     <string name="stats">Статистика</string>
     <string name="trip_removed">Тренировка удалена</string>
+    <string name="low_gps_signal_title">Слабый сигнал GPS</string>
+    <string name="low_gps_signal_message">Слабый сигнал GPS приведет к большой погрешности при определении вашего местоположения. Все равно начать тренировку?</string>
 </resources>
