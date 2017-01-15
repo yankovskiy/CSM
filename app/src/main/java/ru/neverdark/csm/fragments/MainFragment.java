@@ -440,9 +440,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTimerReseiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLocationReceiver);
 
-        Intent intent = new Intent(MainFragment.SERVICE_REQUEST);
-        intent.putExtra(MainFragment.APP_RUNNING, false);
-        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+        notifyService(false);
         super.onStop();
     }
 
@@ -463,15 +461,23 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             data.load(getContext());
             updateUI(data);
 
-            Intent intent = new Intent(MainFragment.SERVICE_REQUEST);
-            intent.putExtra(MainFragment.APP_RUNNING, true);
-            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+            notifyService(true);
         } else if (!mGeoClient.isStarted()){
             mGeoClient.getLocationSettings(new LocationSettingsListener());
         }
 
         // если запущен сервис, кнопка будет иметь обозначение остановки сервиса
         updateImageOnButton(mIsServiceRunning);
+    }
+
+    /**
+     * Уведодмляет сервис о состояниях UI-части приложения
+     * @param isAppRunning true если UI доступен
+     */
+    private void notifyService(boolean isAppRunning) {
+        Intent intent = new Intent(MainFragment.SERVICE_REQUEST);
+        intent.putExtra(MainFragment.APP_RUNNING, isAppRunning);
+        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
     }
 
     @Override
