@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,7 +26,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.csm.MainActivity;
@@ -44,7 +48,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public static final String TRACKER_SERVICE_GPSDATA = TRACKER_PATH + ".GPSDATA";
     public static final String TRACKER_SERVICE_STARTED = TRACKER_PATH + ".STARTED";
     public static final String TRACKER_SERVICE_REQUEST = TRACKER_PATH + ".SERVICE_REQUEST";
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     public static final String TRACKER_SERVICE_TIMER_REQUEST = TRACKER_PATH + ".TIMER_REQUEST";
     public static final String TRACKER_SERVICE_TIMER_DATA = TRACKER_PATH + ".TIMER_DATA";
@@ -64,6 +68,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public static final String TRACKER_CURRENT_TRAINING_ID = TRACKER_PATH + ".TEMP_TRAINING_ID";
     private Runnable mChronometer;
     private int mTotalTime;
+    private final IBinder mBinder = new LocalBinder();
 
     public TrackerService() {
     }
@@ -89,7 +94,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return true;    // for rebind
     }
 
     @Override
@@ -192,8 +202,9 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if (mCurrentLocation != null) {
                     Log.v(TAG, String.format(Locale.US, "startLocationUpdates: %f,%f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-                    notifyUI();
                     mGpsLog.saveData(mCurrentLocation, mTempRecordId);
+                    mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+                    notifyUI();
                 }
             }
 
@@ -287,7 +298,22 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
 
             mGpsLog.saveData(mCurrentLocation, mTempRecordId);
+            mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
             notifyUI();
         }
     }
+
+    private final List<LatLng> mLatLngLst = new ArrayList<>();
+
+    public List<LatLng> getLatLngList() {
+        return mLatLngLst;
+    }
+
+    public class LocalBinder extends Binder {
+        public TrackerService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return TrackerService.this;
+        }
+    }
+
 }

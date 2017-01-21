@@ -1,21 +1,26 @@
 package ru.neverdark.csm;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.List;
+
 import ru.neverdark.csm.components.TrackerService;
-import ru.neverdark.csm.fragments.ConfirmDialog;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
 import ru.neverdark.csm.utils.Utils;
@@ -152,6 +157,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void stopTrackerService() {
         stopService(new Intent(this, TrackerService.class));
+        mBound = false;
         setDrawerDisabledState(false);
     }
 
@@ -164,5 +170,57 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void updateSignal(int signal) {
         mAntenna.setSignal(signal);
+    }
+
+    @Override
+    public List<LatLng> getLatLngList() {
+        if (mBound) {
+            return mService.getLatLngList();
+        } else {
+            return null;
+        }
+    }
+
+    private boolean mBound;
+    private TrackerService mService;
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.v(TAG, "onServiceConnected: ");
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            TrackerService.LocalBinder binder = (TrackerService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+
+            mMainFragment.onTrackerServiceConnected();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            Log.v(TAG, "onServiceDisconnected: ");
+            mBound = false;
+        }
+    };
+
+    @Override
+    public void bindTrackerService() {
+        if (!mBound) {
+            Intent intent = new Intent(this, TrackerService.class);
+            boolean bind = bindService(intent, mConnection, 0);
+            Log.v(TAG, "bindTrackerService: " + bind);
+        } else {
+            Log.v(TAG, "bindTrackerService: already bind");
+        }
+    }
+
+    @Override
+    public void unbindTrackerService() {
+        Log.v(TAG, "unbindTrackerService: ");
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 }
