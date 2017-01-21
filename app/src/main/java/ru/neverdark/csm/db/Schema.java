@@ -9,6 +9,7 @@ class Schema {
                 "`longitude`REAL," +
                 "`altitude`REAL," +
                 "`speed`REAL," +
+                "`accuracy`REAL," +
                 "`timestamp`INTEGER," +
                 "FOREIGN KEY(train_id) REFERENCES summary(_id) ON DELETE CASCADE" +
                 ")";

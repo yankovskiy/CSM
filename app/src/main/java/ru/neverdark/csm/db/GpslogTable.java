@@ -22,6 +22,7 @@ public class GpslogTable {
         values.put(Entry.COLUMN_LATITUDE, location.getLatitude());
         values.put(Entry.COLUMN_LONGITUDE, location.getLongitude());
         values.put(Entry.COLUMN_SPEED, location.getSpeed());
+        values.put(Entry.COLUMN_ACCURACY, location.getAccuracy());
 
         mDb.insert(Entry.TABLE_NAME, null, values);
     }
@@ -42,5 +43,6 @@ public class GpslogTable {
         public static final String COLUMN_SPEED = "speed";
         public static final String COLUMN_TIMESTAMP = "timestamp";
         public static final String COLUMN_TRAINING_ID = "train_id";
+        public static final String COLUMN_ACCURACY = "accuracy";
     }
 }
