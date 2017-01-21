@@ -36,4 +36,8 @@
     <string name="trip_removed">Тренировка удалена</string>
     <string name="low_gps_signal_title">Слабый сигнал GPS</string>
     <string name="low_gps_signal_message">Слабый сигнал GPS приведет к большой погрешности при определении вашего местоположения. Все равно начать тренировку?</string>
+    <string name="backup_database">Резервная копия БД</string>
+    <string name="external_storage_not_available">Внешнее хранилище недоступно</string>
+    <string name="backup_database_success">База данных успешно экспортирована</string>
+    <string name="backup_database_fail">Ошибка при экспорте базы данных</string>
 </resources>
