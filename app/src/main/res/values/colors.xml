@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#171717</color>
     <color name="colorAccent">#277879</color>
     <color name="textColorPrimary">#FFFFFFFF</color>
-    <color name="textColorSecondary">#B3FFFFFF</color>
-    <color name="textColorTertiary">#60FFFFFF</color>
+    <color name="textColorSecondary">#B3FFFFFF</color> <!-- 70% -->
+    <color name="textColorHints">#7EFFFFFF</color>  <!-- 50% -->
+    <color name="textColorTertiary">#60FFFFFF</color> <!-- 37% -->
 </resources>

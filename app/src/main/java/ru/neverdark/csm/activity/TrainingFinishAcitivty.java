@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -16,7 +18,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,13 +53,13 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private GPSData mData;
     private long mTrainingId;
 
+    private ScrollView mScrollView;
+
     private TextView mDistanceTv;
     private TextView mTotalTimeTv;
     private TextView mMaxSpeedTv;
     private TextView mAverageSpeedTv;
     private TextView mMaxAltitudeTv;
-    private TextView mUpDistanceTv;
-    private TextView mDownDistanceTv;
     private TextView mFinishDateTv;
     private EditText mDescriptionEd;
 
@@ -65,6 +69,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private LatLngBounds mBounds;
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
+    private FloatingActionButton mFabDone;
 
 
     @Override
@@ -91,17 +96,30 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     }
 
     private void bindObjects() {
-        mDistanceTv = (TextView) findViewById(R.id.distance);
-        mTotalTimeTv = (TextView) findViewById(R.id.total_time);
-        mAverageSpeedTv = (TextView) findViewById(R.id.average_speed);
-        mMaxSpeedTv = (TextView) findViewById(R.id.max_speed);
-        mMaxAltitudeTv = (TextView) findViewById(R.id.max_altitude);
-        mUpDistanceTv = (TextView) findViewById(R.id.up_distance);
-        mDownDistanceTv = (TextView) findViewById(R.id.down_distance);
-        mFinishDateTv = (TextView) findViewById(R.id.finish_date);
+        mFabDone = (FloatingActionButton) findViewById(R.id.training_done_button);
+        mScrollView = (ScrollView) findViewById(R.id.content_training_finish_acitivty);
+        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                Log.v(TAG, "onScrollChanged: " + mScrollView.getScrollY());
+                if (mScrollView.getScrollY() == 0 && mFabDone.getVisibility() == View.GONE) {
+                    mFabDone.show();
+                } else if (mScrollView.getScrollY() > 20 && mFabDone.getVisibility() == View.VISIBLE) {
+                    mFabDone.hide();
+                }
+            }
+        });
+
+        mDistanceTv = (TextView) findViewById(R.id.distance_value);
+        mTotalTimeTv = (TextView) findViewById(R.id.total_time_value);
+        mAverageSpeedTv = (TextView) findViewById(R.id.average_speed_value);
+        mMaxSpeedTv = (TextView) findViewById(R.id.max_speed_value);
+        mMaxAltitudeTv = (TextView) findViewById(R.id.max_altitude_value);
+        mFinishDateTv = (TextView) findViewById(R.id.finish_date_value);
         mDescriptionEd = (EditText) findViewById(R.id.description);
-        mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude);
-        mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude);
+        mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
+        mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
+
     }
 
     public void onButtonClick(View view) {
@@ -244,29 +262,22 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 mTotalTimeStr = String.format(Locale.US, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
 
                 Date date = new Date(mFinishDateInMillis);
-                String strDateTime = new SimpleDateFormat("EEE, MMM d, ''yy'T'HH:mm:ss", Locale.getDefault()).format(date);
+                String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
 
-                String distanceStr = String.format(Locale.US, "%s: %d km %d m", getString(R.string.distance), mData.distance / 1000, mData.distance % 1000);
-                String maxSpeedStr = String.format(Locale.US, "%s: %.2f", getString(R.string.max_speed), mData.max_speed * 3.6);
-                String averageSpeedStr = String.format(Locale.US, "%s: %.2f", getString(R.string.average_speed), mData.average_speed * 3.6);
-                String maxAltitudeStr = String.format(Locale.US, "%s: %d", getString(R.string.max_altitude), mData.max_altitude);
-                String upDistanceStr = String.format(Locale.US, "%s: %d km %d m", getString(R.string.up_distance), (mData.up_distance / 1000), (mData.up_distance % 1000));
-                String downDistanceStr = String.format(Locale.US, "%s: %d km %d m", getString(R.string.down_distance), (mData.down_distance / 1000), (mData.down_distance % 1000));
-                String totalTimeStr = String.format(Locale.US, "%s: %s", getString(R.string.total_time), mTotalTimeStr);
-                String finishDateStr = String.format(Locale.US, "%s: %s", getString(R.string.finish_date), strDateTime);
-                String upAltitude = String.format(Locale.US, "%s: %d m", getString(R.string.up_altitude), mData.up_altitude);
-                String downAltitude = String.format(Locale.US, "%s: %d m", getString(R.string.down_altitude), mData.down_altitude);
+                String distanceStr = String.format(Locale.US, "%dkm %dm", mData.distance / 1000, mData.distance % 1000);
+                String maxSpeedStr = String.format(Locale.US, "%.2f",  mData.max_speed * 3.6);
+                String averageSpeedStr = String.format(Locale.US, "%.2f", mData.average_speed * 3.6);
+                String maxAltitudeStr = String.format(Locale.US, "%d", mData.max_altitude);
+                String upAltitude = String.format(Locale.US, "%dm", mData.up_altitude);
+                String downAltitude = String.format(Locale.US, "%dm", mData.down_altitude);
 
-                mTotalTimeTv.setText(totalTimeStr);
+                mTotalTimeTv.setText(mTotalTimeStr);
                 mDistanceTv.setText(distanceStr);
                 mMaxSpeedTv.setText(maxSpeedStr);
                 mAverageSpeedTv.setText(averageSpeedStr);
                 mMaxAltitudeTv.setText(maxAltitudeStr);
-                mUpDistanceTv.setText(upDistanceStr);
-                mDownDistanceTv.setText(downDistanceStr);
                 mUpAltitudeTv.setText(upAltitude);
                 mDownAltitudeTv.setText(downAltitude);
-
                 mFinishDateTv.setText(finishDateStr);
 
                 if (mGoogleMap != null) {

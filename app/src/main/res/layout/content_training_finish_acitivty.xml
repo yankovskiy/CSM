@@ -5,6 +5,7 @@
     android:id="@+id/content_training_finish_acitivty"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="ru.neverdark.csm.activity.TrainingFinishAcitivty"
     tools:showIn="@layout/activity_training_finish"
@@ -24,96 +25,135 @@
         android:layout_height="180dp"/>
 
     <TextView
+        style="@style/StatField"
+        android:drawableLeft="@drawable/ic_distance"
+        android:drawableStart="@drawable/ic_distance"
+        android:text="@string/distance"
         android:layout_below="@+id/mapView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/distance" />
 
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="105km 235m"
+         android:id="@+id/distance_value"
+         android:layout_alignBaseline="@+id/distance" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/StatField"
+        android:drawableStart="@drawable/ic_duration"
+        android:drawableLeft="@drawable/ic_duration"
+        android:text="@string/total_time"
         android:layout_below="@+id/distance"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/total_time" />
 
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="00:00:00"
+         android:id="@+id/total_time_value"
+         android:layout_alignBaseline="@+id/total_time" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/StatField"
+        android:drawableLeft="@drawable/ic_avgspeed"
+        android:drawableStart="@drawable/ic_avgspeed"
+        android:text="@string/average_speed"
         android:layout_below="@+id/total_time"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/average_speed" />
 
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="12,5km"
+         android:id="@+id/average_speed_value"
+         android:layout_alignBaseline="@+id/average_speed" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/StatField"
+        android:drawableStart="@drawable/ic_maxspeed"
+        android:drawableLeft="@drawable/ic_maxspeed"
         android:layout_below="@+id/average_speed"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:text="@string/max_speed"
         android:id="@+id/max_speed" />
 
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="44,5km"
+         android:id="@+id/max_speed_value"
+         android:layout_alignBaseline="@+id/max_speed" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/StatField"
+        android:drawableLeft="@drawable/ic_altitude"
+        android:drawableStart="@drawable/ic_altitude"
+        android:text="@string/max_altitude"
         android:layout_below="@+id/max_speed"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/up_distance" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/up_distance"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/down_distance" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/down_distance"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:id="@+id/max_altitude" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/max_altitude"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/finish_date" />
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="100m"
+         android:id="@+id/max_altitude_value"
+         android:layout_alignBaseline="@+id/max_altitude" />
 
     <TextView
+        style="@style/StatField"
+        android:drawableLeft="@drawable/ic_ascend"
+        android:drawableStart="@drawable/ic_ascend"
+        android:text="@string/up_altitude"
         android:id="@+id/up_altitude"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/finish_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_below="@id/max_altitude" />
+
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="400m"
+         android:id="@+id/up_altitude_value"
+         android:layout_alignBaseline="@+id/up_altitude" />
 
     <TextView
+        style="@style/StatField"
+        android:drawableLeft="@drawable/ic_descend"
+        android:drawableStart="@drawable/ic_descend"
+        android:text="@string/down_altitude"
         android:id="@+id/down_altitude"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/up_altitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_below="@id/up_altitude" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:ems="10"
-        android:hint="@string/traning_description"
-        android:layout_below="@+id/down_altitude"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/description"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="430m"
+         android:id="@+id/down_altitude_value"
+         android:layout_alignBaseline="@+id/down_altitude" />
+
+     <TextView
+         style="@style/StatField"
+         android:drawableStart="@drawable/ic_time"
+         android:drawableLeft="@drawable/ic_time"
+         android:text="@string/finish_date"
+         android:layout_below="@+id/down_altitude"
+         android:id="@+id/finish_date" />
+
+     <TextView
+         style="@style/StatFieldValue"
+         android:text="17:40:55"
+         android:id="@+id/finish_date_value"
+         android:layout_alignBaseline="@+id/finish_date" />
+
+     <EditText
+         android:layout_marginTop="8dp"
+         android:layout_marginStart="16dp"
+         android:layout_marginLeft="16dp"
+         android:layout_marginRight="78dp"
+         android:layout_marginEnd="78dp"
+         android:drawableLeft="@drawable/ic_mode_edit_black_24dp"
+         android:drawableStart="@drawable/ic_mode_edit_black_24dp"
+         android:drawablePadding="16dp"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:inputType="text"
+         android:textSize="16sp"
+         android:textColor="@color/textColorSecondary"
+         android:hint="@string/traning_description"
+         android:layout_below="@+id/finish_date"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentStart="true"
+         android:id="@+id/description" />
  </RelativeLayout>
 </ScrollView>
