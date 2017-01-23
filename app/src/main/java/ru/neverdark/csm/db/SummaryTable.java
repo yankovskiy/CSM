@@ -101,7 +101,7 @@ public class SummaryTable {
     }
 
     public static class Record {
-        public Record(long _id, long finish_date, String description, boolean is_commited, int distance, String total_time, float average_speed, int max_speed, int up_distance, int down_distance, int max_altitude, int up_altitude, int down_altitude) {
+        public Record(long _id, long finish_date, String description, boolean is_commited, int distance, String total_time, float average_speed, float max_speed, int up_distance, int down_distance, int max_altitude, int up_altitude, int down_altitude) {
             this._id = _id;
             this.finish_date = finish_date;
             this.description = description;
@@ -128,7 +128,7 @@ public class SummaryTable {
         public int distance;
         public String total_time;
         public float average_speed;
-        public int max_speed;
+        public float max_speed;
         public int up_distance;
         public int down_distance;
         public int max_altitude;

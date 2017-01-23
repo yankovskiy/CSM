@@ -12,9 +12,9 @@ public class GPSData implements Serializable{
     public float latitude;      // текущая широта
     public float longitude;     // текущая долгтоа
     public int altitude;        // текущая высота
-    public int speed;           // текущая скорость
+    public float speed;           // текущая скорость
     public int distance;        // пройденное расстояние
-    public int max_speed;       // максимальная скорость
+    public float max_speed;       // максимальная скорость
     public float average_speed; // средняя скорость
     public int max_altitude;    // максимальная высота
     public int up_distance;     // дистанция движения в гору
@@ -30,10 +30,10 @@ public class GPSData implements Serializable{
         editor.putInt("altitude", altitude);
         editor.putFloat("latitude", latitude);
         editor.putFloat("longitude", longitude);
-        editor.putInt("speed", speed);
+        editor.putFloat("speed", speed);
         editor.putFloat("average-speed", average_speed);
         editor.putInt("distance", distance);
-        editor.putInt("max-speed", max_speed);
+        editor.putFloat("max-speed", max_speed);
         editor.putInt("max-altitude", max_altitude);
         editor.putInt("up-distance", up_distance);
         editor.putInt("down-distance", down_distance);
@@ -47,13 +47,13 @@ public class GPSData implements Serializable{
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        speed = sharedPref.getInt("speed", 0);
+        speed = sharedPref.getFloat("speed", 0);
         latitude = sharedPref.getFloat("latitude", 0);
         longitude = sharedPref.getFloat("longitude", 0);
         altitude = sharedPref.getInt("altitude", 0);
         average_speed = sharedPref.getFloat("average-speed", 0);
         distance = sharedPref.getInt("distance", 0);
-        max_speed = sharedPref.getInt("max-speed", 0);
+        max_speed = sharedPref.getFloat("max-speed", 0);
         max_altitude = sharedPref.getInt("max-altitude", 0);
         up_distance = sharedPref.getInt("up-distance", 0);
         down_distance = sharedPref.getInt("down-distance", 0);

@@ -61,7 +61,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private Location mCurrentLocation;
     private Location mPreviousLocation;
     private long mTempRecordId;
-    private long mSumSpeed;
+    private float mSumSpeed;
     private int mSegmentCount;
     private Handler mHandler;
     //private long mStartTime;
@@ -238,7 +238,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         mData.altitude = (int) mCurrentLocation.getAltitude();
         mData.longitude = (float) mCurrentLocation.getLongitude();
         mData.latitude = (float) mCurrentLocation.getLatitude();
-        mData.speed = (int) mCurrentLocation.getSpeed();
+        mData.speed = mCurrentLocation.getSpeed();
 
         Log.v(TAG, "prepareData: longitude = " + mData.longitude);
         Log.v(TAG, "prepareData: latitude = " + mData.latitude);
