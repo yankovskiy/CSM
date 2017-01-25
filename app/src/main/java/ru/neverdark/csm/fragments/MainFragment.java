@@ -329,9 +329,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Log.v(TAG, "updateUI: ");
         String latitude = String.format(Locale.US, "%f", data.latitude);
         String longitude = String.format(Locale.US, "%f", data.longitude);
-        String altitude = String.format(Locale.US, "%d", data.altitude);
+        String altitude = String.format(Locale.US, "%d", Math.round(data.altitude));
         String speed = String.format(Locale.US, "%.2f", data.speed * 3.6);
-        String distance = String.format(Locale.US, "%d km %d m", data.distance / 1000, data.distance % 1000);
+        String distance = String.format(Locale.US, "%d km %d m", Math.round(data.distance) / 1000, Math.round(data.distance) % 1000);
         String average_speed = String.format(Locale.US, "%.2f", data.average_speed * 3.6);
 
         Log.v(TAG, "updateUI: latitude = " + latitude);
