@@ -287,7 +287,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public void onLocationChanged(Location location) {
         Log.v(TAG, "onLocationChanged: ");
         // Логируем и обновляем интерфейс только если есть скорость
-        if (location.hasSpeed()) {
+        if (location.getSpeed() != 0.0) {
             if (mCurrentLocation != null) {
                 mPreviousLocation = mCurrentLocation;
             }
