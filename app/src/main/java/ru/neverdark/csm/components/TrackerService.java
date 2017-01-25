@@ -235,7 +235,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
     private void prepareData() {
         mData.accuracy = mCurrentLocation.getAccuracy();
-        mData.altitude = (int) mCurrentLocation.getAltitude();
+        mData.altitude =  (float) mCurrentLocation.getAltitude();
         mData.longitude = (float) mCurrentLocation.getLongitude();
         mData.latitude = (float) mCurrentLocation.getLatitude();
         mData.speed = mCurrentLocation.getSpeed();
@@ -243,7 +243,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         Log.v(TAG, "prepareData: longitude = " + mData.longitude);
         Log.v(TAG, "prepareData: latitude = " + mData.latitude);
         if (mPreviousLocation != null) {
-            double distance = mPreviousLocation.distanceTo(mCurrentLocation);
+            float distance = mPreviousLocation.distanceTo(mCurrentLocation);
             mData.distance += distance;
 
             if (mPreviousLocation.getAltitude() < mData.altitude) {
@@ -286,20 +286,23 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     @Override
     public void onLocationChanged(Location location) {
         Log.v(TAG, "onLocationChanged: ");
-        if (mCurrentLocation != null) {
-            mPreviousLocation = mCurrentLocation;
-        }
+        // Логируем и обновляем интерфейс только если есть скорость
+        if (location.hasSpeed()) {
+            if (mCurrentLocation != null) {
+                mPreviousLocation = mCurrentLocation;
+            }
 
-        mCurrentLocation = location;
+            mCurrentLocation = location;
 
-        /* Сохраняем в базу и обновляем интерфейс только если местоположение меняется */
-        if (mPreviousLocation != null &&
-                mPreviousLocation.getLatitude() != mCurrentLocation.getLatitude() &&
-                mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
+            /* Сохраняем в базу и обновляем интерфейс только если местоположение меняется */
+            if (mPreviousLocation != null &&
+                    mPreviousLocation.getLatitude() != mCurrentLocation.getLatitude() &&
+                    mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
 
-            mGpsLog.saveData(mCurrentLocation, mTempRecordId);
-            mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-            notifyUI();
+                mGpsLog.saveData(mCurrentLocation, mTempRecordId);
+                mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
+                notifyUI();
+            }
         }
     }
 

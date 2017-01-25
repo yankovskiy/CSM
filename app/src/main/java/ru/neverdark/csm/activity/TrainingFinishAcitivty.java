@@ -64,12 +64,12 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private EditText mDescriptionEd;
 
     private long mFinishDateInMillis;
-    private String mTotalTimeStr;
     private GoogleMap mGoogleMap;
     private LatLngBounds mBounds;
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
     private FloatingActionButton mFabDone;
+    private SummaryTable.Record mSummaryRecord;
 
 
     @Override
@@ -83,10 +83,26 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
 
         Intent intent = getIntent();
         mData = (GPSData) intent.getSerializableExtra(MainFragment.TRAINING_DATA);
+
         Log.v(TAG, "onCreate: " + String.valueOf(mData == null));
 
         mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
         mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
+        mSummaryRecord = new SummaryTable.Record(
+                mTrainingId,
+                mFinishDateInMillis,
+                null, // Заметка, установим позже
+                true,
+                Math.round(mData.distance),
+                null, // Общее время тренировки, установим позже
+                mData.average_speed,
+                mData.max_speed,
+                Math.round(mData.up_distance),
+                Math.round(mData.down_distance),
+                Math.round(mData.max_altitude),
+                Math.round(mData.up_altitude),
+                Math.round(mData.down_altitude)
+        );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
         mapView.getMapAsync(this);
@@ -129,21 +145,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     }
 
     private void saveTrainingResult() {
-        Db.getInstance(this).getSummaryTable().updateRecordData(new SummaryTable.Record(
-                mTrainingId,
-                mFinishDateInMillis,
-                mDescriptionEd.getText().toString(),
-                true,
-                mData.distance,
-                mTotalTimeStr,
-                mData.average_speed,
-                mData.max_speed,
-                mData.up_distance,
-                mData.down_distance,
-                mData.max_altitude,
-                mData.up_altitude,
-                mData.down_altitude
-        ));
+        Db.getInstance(this).getSummaryTable().updateRecordData(mSummaryRecord);
 
         setResult(RESULT_OK);
         finish();
@@ -259,19 +261,19 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 int minutes = (int) ((mTimeDiff / (1000 * 60)) % 60);
                 int hours   = (int) (mTimeDiff / (1000 * 60 * 60));
 
-                mTotalTimeStr = String.format(Locale.US, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
+                String totalTimeStr = String.format(Locale.US, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
 
                 Date date = new Date(mFinishDateInMillis);
                 String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
 
-                String distanceStr = String.format(Locale.US, "%dkm %dm", mData.distance / 1000, mData.distance % 1000);
+                String distanceStr = String.format(Locale.US, "%dkm %dm", Math.round(mData.distance) / 1000, Math.round(mData.distance) % 1000);
                 String maxSpeedStr = String.format(Locale.US, "%.2f",  mData.max_speed * 3.6);
                 String averageSpeedStr = String.format(Locale.US, "%.2f", mData.average_speed * 3.6);
-                String maxAltitudeStr = String.format(Locale.US, "%d", mData.max_altitude);
-                String upAltitude = String.format(Locale.US, "%dm", mData.up_altitude);
-                String downAltitude = String.format(Locale.US, "%dm", mData.down_altitude);
+                String maxAltitudeStr = String.format(Locale.US, "%d", Math.round(mData.max_altitude));
+                String upAltitude = String.format(Locale.US, "%dm", Math.round(mData.up_altitude));
+                String downAltitude = String.format(Locale.US, "%dm", Math.round(mData.down_altitude));
 
-                mTotalTimeTv.setText(mTotalTimeStr);
+                mTotalTimeTv.setText(totalTimeStr);
                 mDistanceTv.setText(distanceStr);
                 mMaxSpeedTv.setText(maxSpeedStr);
                 mAverageSpeedTv.setText(averageSpeedStr);
@@ -279,6 +281,9 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 mUpAltitudeTv.setText(upAltitude);
                 mDownAltitudeTv.setText(downAltitude);
                 mFinishDateTv.setText(finishDateStr);
+
+                mSummaryRecord.description = mDescriptionEd.getText().toString();
+                mSummaryRecord.total_time = totalTimeStr;
 
                 if (mGoogleMap != null) {
                     mGoogleMap.addPolyline(rectOptions);

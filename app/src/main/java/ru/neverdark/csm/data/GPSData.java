@@ -9,36 +9,36 @@ import ru.neverdark.csm.R;
 
 public class GPSData implements Serializable{
 
-    public float latitude;      // текущая широта
-    public float longitude;     // текущая долгтоа
-    public int altitude;        // текущая высота
-    public float speed;           // текущая скорость
-    public int distance;        // пройденное расстояние
-    public float max_speed;       // максимальная скорость
-    public float average_speed; // средняя скорость
-    public int max_altitude;    // максимальная высота
-    public int up_distance;     // дистанция движения в гору
-    public int down_distance;   // дистанция движения с горы
-    public int up_altitude;     // набор высоты
-    public int down_altitude;   // потеря высоты
-    public float accuracy;      // погрешность местоположения в метрах
+    public float latitude;          // текущая широта
+    public float longitude;         // текущая долгтоа
+    public float altitude;          // текущая высота
+    public float speed;             // текущая скорость
+    public float distance;          // пройденное расстояние
+    public float max_speed;         // максимальная скорость
+    public float average_speed;     // средняя скорость
+    public float max_altitude;      // максимальная высота
+    public float up_distance;       // дистанция движения в гору
+    public float down_distance;     // дистанция движения с горы
+    public float up_altitude;       // набор высоты
+    public float down_altitude;     // потеря высоты
+    public float accuracy;          // погрешность местоположения в метрах
 
     public void save(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt("altitude", altitude);
+        editor.putFloat("altitude", altitude);
         editor.putFloat("latitude", latitude);
         editor.putFloat("longitude", longitude);
         editor.putFloat("speed", speed);
         editor.putFloat("average-speed", average_speed);
-        editor.putInt("distance", distance);
+        editor.putFloat("distance", distance);
         editor.putFloat("max-speed", max_speed);
-        editor.putInt("max-altitude", max_altitude);
-        editor.putInt("up-distance", up_distance);
-        editor.putInt("down-distance", down_distance);
-        editor.putInt("up-altitude", up_altitude);
-        editor.putInt("down-altitude", down_altitude);
+        editor.putFloat("max-altitude", max_altitude);
+        editor.putFloat("up-distance", up_distance);
+        editor.putFloat("down-distance", down_distance);
+        editor.putFloat("up-altitude", up_altitude);
+        editor.putFloat("down-altitude", down_altitude);
         editor.putFloat("accuracy", accuracy);
         editor.apply();
     }
@@ -50,15 +50,15 @@ public class GPSData implements Serializable{
         speed = sharedPref.getFloat("speed", 0);
         latitude = sharedPref.getFloat("latitude", 0);
         longitude = sharedPref.getFloat("longitude", 0);
-        altitude = sharedPref.getInt("altitude", 0);
+        altitude = sharedPref.getFloat("altitude", 0);
         average_speed = sharedPref.getFloat("average-speed", 0);
-        distance = sharedPref.getInt("distance", 0);
+        distance = sharedPref.getFloat("distance", 0);
         max_speed = sharedPref.getFloat("max-speed", 0);
-        max_altitude = sharedPref.getInt("max-altitude", 0);
-        up_distance = sharedPref.getInt("up-distance", 0);
-        down_distance = sharedPref.getInt("down-distance", 0);
-        up_altitude = sharedPref.getInt("up-altitude", 0);
-        down_altitude = sharedPref.getInt("down-altitude", 0);
+        max_altitude = sharedPref.getFloat("max-altitude", 0);
+        up_distance = sharedPref.getFloat("up-distance", 0);
+        down_distance = sharedPref.getFloat("down-distance", 0);
+        up_altitude = sharedPref.getFloat("up-altitude", 0);
+        down_altitude = sharedPref.getFloat("down-altitude", 0);
         accuracy = sharedPref.getFloat("accuracy", 0);
     }
 
