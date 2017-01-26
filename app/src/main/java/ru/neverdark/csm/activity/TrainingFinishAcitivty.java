@@ -70,6 +70,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mDownAltitudeTv;
     private FloatingActionButton mFabDone;
     private SummaryTable.Record mSummaryRecord;
+    private String mTrainingDuration;
 
 
     @Override
@@ -88,13 +89,16 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
 
         mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
         mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
+        mTrainingDuration = intent.getStringExtra(MainFragment.TRAINING_DURATION);
+        Log.v(TAG, "onCreate: " + mTrainingDuration);
+
         mSummaryRecord = new SummaryTable.Record(
                 mTrainingId,
                 mFinishDateInMillis,
                 null, // Заметка, установим позже
                 true,
                 Math.round(mData.distance),
-                null, // Общее время тренировки, установим позже
+                mTrainingDuration,
                 mData.average_speed,
                 mData.max_speed,
                 Math.round(mData.up_distance),
@@ -209,14 +213,12 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         static final int SUCCESS_STATUS = 0;
         static final int FAIL_STATUS = 1;
         private PolylineOptions rectOptions = new PolylineOptions();
-        private long mTimeDiff;
 
         @Override
         protected Integer doInBackground(Long... trainingId) {
             Cursor cursor = Db.getInstance(getApplicationContext()).getGpslogTable().getRecordsForTraining(trainingId[0]);
             if (cursor.getCount() > 1) {
                 cursor.moveToFirst();
-                long startTime = cursor.getLong(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_TIMESTAMP));
                 double latitude;
                 double longitude;
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -228,11 +230,8 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                     rectOptions.add(latLng);
                     builder.include(latLng);
                 } while (cursor.moveToNext());
-                mBounds = builder.build();
-                cursor.moveToLast();
-                long endTime = cursor.getLong(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_TIMESTAMP));
                 cursor.close();
-                mTimeDiff = endTime - startTime;
+                mBounds = builder.build();
             } else {
                 cursor.close();
                 return FAIL_STATUS;
@@ -256,13 +255,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 // TODO показать основной интерфейс
                 Log.v(TAG, "onPostExecute: success");
 
-                int milliseconds = (int) (mTimeDiff % 1000);
-                int seconds = (int) (mTimeDiff / 1000) % 60 ;
-                int minutes = (int) ((mTimeDiff / (1000 * 60)) % 60);
-                int hours   = (int) (mTimeDiff / (1000 * 60 * 60));
-
-                String totalTimeStr = String.format(Locale.US, "%02d:%02d:%02d.%03d", hours, minutes, seconds, milliseconds);
-
                 Date date = new Date(mFinishDateInMillis);
                 String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
 
@@ -273,7 +265,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 String upAltitude = String.format(Locale.US, "%dm", Math.round(mData.up_altitude));
                 String downAltitude = String.format(Locale.US, "%dm", Math.round(mData.down_altitude));
 
-                mTotalTimeTv.setText(totalTimeStr);
+                mTotalTimeTv.setText(mTrainingDuration);
                 mDistanceTv.setText(distanceStr);
                 mMaxSpeedTv.setText(maxSpeedStr);
                 mAverageSpeedTv.setText(averageSpeedStr);
@@ -283,7 +275,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 mFinishDateTv.setText(finishDateStr);
 
                 mSummaryRecord.description = mDescriptionEd.getText().toString();
-                mSummaryRecord.total_time = totalTimeStr;
 
                 if (mGoogleMap != null) {
                     mGoogleMap.addPolyline(rectOptions);

@@ -69,6 +69,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     public static final String TRAINING_DATA = FRAGMENT_PATH + ".DATA";
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
+    public static final String TRAINING_DURATION = FRAGMENT_PATH + ".TRAINING_DURATION";
     private TextView mLatitudeTv;
     private TextView mLongitudeTv;
     private TextView mAltitudeTv;
@@ -100,6 +101,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private static final int COMPLETE_MAP_LOAD = 1;
     private static final int COMPLETE_SERVICE_BIND = 2;
     private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
+    private String mTrainingDuration;
 
     private synchronized void completeJob(int job) {
         if (mCompleteJob != COMPLETE_ALL) {
@@ -182,8 +184,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                 int seconds = time % 60;
                 int minutes = (time / 60) % 60;
                 int hours = time / (60 * 60);
-                String timeStr = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
-                getActivity().setTitle(timeStr);
+                mTrainingDuration = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
+                getActivity().setTitle(mTrainingDuration);
             }
         };
 
@@ -214,6 +216,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Intent intent = new Intent(getContext(), TrainingFinishAcitivty.class);
         intent.putExtra(MainFragment.TRAINING_DATA, mData);
         intent.putExtra(MainFragment.TRAININD_ID, id);
+        intent.putExtra(MainFragment.TRAINING_DURATION, mTrainingDuration);
         intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }
