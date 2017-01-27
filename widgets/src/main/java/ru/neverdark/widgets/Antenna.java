@@ -11,10 +11,12 @@ import android.widget.LinearLayout;
 
 public class Antenna extends LinearLayout {
     private View mLow;
+    private View mLogPlus;
     private View mMedium;
+    private View mMediumPlus;
     private View mHigh;
+
     private int mSignal;
-    private Context mContext;
 
     public static final int SIGNAL_LOW = 0;
     public static final int SIGNAL_LOW_PLUS = 1;
@@ -24,8 +26,7 @@ public class Antenna extends LinearLayout {
     public static final int SIGNAL_NO = 5;
 
     private int mNoSignalColor;
-    private int mMediumSignalColor;
-    private int mHighSignalColor;
+    private int mSignalColor;
 
     public Antenna(Context context) {
         super(context);
@@ -51,19 +52,22 @@ public class Antenna extends LinearLayout {
 
 
     private void init() {
-        mContext = getContext();
+        Context mContext = getContext();
         inflate(mContext, R.layout.antenna, this);
-        mLow = findViewById(R.id.low_quality);
-        mMedium = findViewById(R.id.medium_quality);
-        mHigh = findViewById(R.id.high_quality);
 
-        int color = ContextCompat.getColor(mContext, R.color.textColorTertiary);
-        mNoSignalColor = color;
-        mMediumSignalColor = ContextCompat.getColor(mContext, R.color.textColorSecondary);
-        mHighSignalColor = ContextCompat.getColor(mContext, R.color.textColorPrimary);
+        mLow = findViewById(R.id.low);
+        mLogPlus = findViewById(R.id.low_plus);
+        mMedium = findViewById(R.id.medium);
+        mMediumPlus = findViewById(R.id.medium_plus);
+        mHigh = findViewById(R.id.high);
+
+        mNoSignalColor = ContextCompat.getColor(mContext, R.color.textColorTertiary);
+        mSignalColor = ContextCompat.getColor(mContext, R.color.textColorPrimary);
 
         mLow.setBackgroundColor(mNoSignalColor);
+        mLogPlus.setBackgroundColor(mNoSignalColor);
         mMedium.setBackgroundColor(mNoSignalColor);
+        mMediumPlus.setBackgroundColor(mNoSignalColor);
         mHigh.setBackgroundColor(mNoSignalColor);
     }
 
@@ -73,33 +77,45 @@ public class Antenna extends LinearLayout {
         switch (mSignal) {
             case SIGNAL_NO:
                 mLow.setBackgroundColor(mNoSignalColor);
+                mLogPlus.setBackgroundColor(mNoSignalColor);
                 mMedium.setBackgroundColor(mNoSignalColor);
+                mMediumPlus.setBackgroundColor(mNoSignalColor);
                 mHigh.setBackgroundColor(mNoSignalColor);
                 break;
             case SIGNAL_LOW:
-                mLow.setBackgroundColor(mHighSignalColor);
+                mLow.setBackgroundColor(mSignalColor);
+                mLogPlus.setBackgroundColor(mNoSignalColor);
                 mMedium.setBackgroundColor(mNoSignalColor);
+                mMediumPlus.setBackgroundColor(mNoSignalColor);
                 mHigh.setBackgroundColor(mNoSignalColor);
                 break;
             case SIGNAL_LOW_PLUS:
-                mLow.setBackgroundColor(mHighSignalColor);
-                mMedium.setBackgroundColor(mMediumSignalColor);
+                mLow.setBackgroundColor(mSignalColor);
+                mLogPlus.setBackgroundColor(mSignalColor);
+                mMedium.setBackgroundColor(mNoSignalColor);
+                mMediumPlus.setBackgroundColor(mNoSignalColor);
                 mHigh.setBackgroundColor(mNoSignalColor);
                 break;
             case SIGNAL_MEDIUM:
-                mLow.setBackgroundColor(mHighSignalColor);
-                mMedium.setBackgroundColor(mHighSignalColor);
+                mLow.setBackgroundColor(mSignalColor);
+                mLogPlus.setBackgroundColor(mSignalColor);
+                mMedium.setBackgroundColor(mSignalColor);
+                mMediumPlus.setBackgroundColor(mNoSignalColor);
                 mHigh.setBackgroundColor(mNoSignalColor);
                 break;
             case SIGNAL_MEDIUM_PLUS:
-                mLow.setBackgroundColor(mHighSignalColor);
-                mMedium.setBackgroundColor(mHighSignalColor);
-                mHigh.setBackgroundColor(mMediumSignalColor);
+                mLow.setBackgroundColor(mSignalColor);
+                mLogPlus.setBackgroundColor(mSignalColor);
+                mMedium.setBackgroundColor(mSignalColor);
+                mMediumPlus.setBackgroundColor(mSignalColor);
+                mHigh.setBackgroundColor(mNoSignalColor);
                 break;
             case SIGNAL_HIGH:
-                mLow.setBackgroundColor(mHighSignalColor);
-                mMedium.setBackgroundColor(mHighSignalColor);
-                mHigh.setBackgroundColor(mHighSignalColor);
+                mLow.setBackgroundColor(mSignalColor);
+                mLogPlus.setBackgroundColor(mSignalColor);
+                mMedium.setBackgroundColor(mSignalColor);
+                mMediumPlus.setBackgroundColor(mSignalColor);
+                mHigh.setBackgroundColor(mSignalColor);
                 break;
         }
     }

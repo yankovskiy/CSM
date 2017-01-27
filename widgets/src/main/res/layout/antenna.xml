@@ -7,27 +7,46 @@
     android:orientation="horizontal">
 
     <View
-        android:id="@+id/low_quality"
+        android:id="@+id/low"
         android:layout_width="0dp"
-        android:layout_height="12dp"
-        android:layout_weight="1"
-        android:background="@color/textColorPrimary" />
-
-    <View
-        android:id="@+id/medium_quality"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginStart="2dp"
-        android:layout_weight="1"
-        android:background="@color/textColorSecondary" />
-
-    <View
-        android:id="@+id/high_quality"
-        android:layout_width="0dp"
-        android:layout_height="38dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginStart="2dp"
+        android:layout_height="6dp"
         android:layout_weight="1"
         android:background="@color/textColorTertiary" />
+
+    <View
+        android:id="@+id/low_plus"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_weight="1"
+        android:background="@color/textColorTertiary" />
+
+    <View
+        android:id="@+id/medium"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_weight="1"
+        android:background="@color/textColorTertiary" />
+
+    <View
+        android:id="@+id/medium_plus"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_weight="1"
+        android:background="@color/textColorTertiary" />
+
+    <View
+        android:id="@+id/high"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginStart="1dp"
+        android:layout_weight="1"
+        android:background="@color/textColorTertiary" />
+
 </LinearLayout>
