@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
@@ -175,8 +176,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy: ");
-        // TODO: добавить отвязку от gps
-        // https://developer.android.com/training/location/receive-location-updates.html
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            saveAndNotify(location);
+        }
+
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
         mHandler.removeCallbacks(mChronometer);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
@@ -286,6 +291,16 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     @Override
     public void onLocationChanged(Location location) {
         Log.v(TAG, "onLocationChanged: ");
+        saveAndNotify(location);
+
+    }
+
+    /**
+     * Сохраняет данные о местоположении и уведомляет UI только если местоположение изменилось и
+     * при этом зафиксирована ненулевая скорость
+     * @param location объект содержащий информацию об определенном местоположении
+     */
+    private void saveAndNotify(Location location) {
         // Логируем и обновляем интерфейс только если есть скорость
         if (location.getSpeed() != 0.0) {
             if (mCurrentLocation != null) {
