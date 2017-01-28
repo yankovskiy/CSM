@@ -40,4 +40,8 @@
     <string name="external_storage_not_available">Внешнее хранилище недоступно</string>
     <string name="backup_database_success">База данных успешно экспортирована</string>
     <string name="backup_database_fail">Ошибка при экспорте базы данных</string>
+    <string name="map_normal">Карта</string>
+    <string name="map_satellite">Спутник</string>
+    <string name="map_hybrid">Гибрид</string>
+    <string name="map_terrain">Местность</string>
 </resources>

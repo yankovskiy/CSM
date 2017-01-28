@@ -236,6 +236,18 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             case R.id.action_show_map:
                 showMapCompass(MainFragment.MAP);
                 break;
+            case R.id.action_map_type_normal:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+            case R.id.action_map_type_hybrid:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                break;
+            case R.id.action_map_type_satellite:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                break;
+            case R.id.action_map_type_terrain:
+                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
