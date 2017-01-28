@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_show_map"
-        android:title="@string/map"
-        android:visible="false"
-        app:showAsAction="never"/>
-
     <item android:id="@+id/action_map_type_normal"
         android:title="@string/map_normal"
         app:showAsAction="never"/>
@@ -22,14 +17,4 @@
     <item android:id="@+id/action_map_type_terrain"
         android:title="@string/map_terrain"
         app:showAsAction="never"/>
-
-    <item android:id="@+id/action_show_compass"
-        android:title="@string/compass"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
 </menu>

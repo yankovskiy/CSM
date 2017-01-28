@@ -55,8 +55,6 @@ import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 
 public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener {
-    public static final int COMPASS = 0;
-    public static final int MAP = 1;
     public static final int REQUEST_CHECK_SETTINGS = 3;
     public static final int TRAINING_RESULT_REQUEST = 1;
     public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
@@ -70,20 +68,11 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
     public static final String TRAINING_DURATION = FRAGMENT_PATH + ".TRAINING_DURATION";
-    private TextView mLatitudeTv;
-    private TextView mLongitudeTv;
-    private TextView mAltitudeTv;
-    private TextView mSpeedTv;
     private TextView mDistanceTv;
     private TextView mAverageSpeedTv;
-    private Compass mCompass;
     private OnFragmentInteractionListener mCallback;
     private MapView mMap;
-    private View mCompassGroup;
     private View mFirstRow;
-    private View mSecondRow;
-    private MenuItem mCompassMenuItem;
-    private MenuItem mMapMenuItem;
     private GoogleMap mGoogleMap;
     private FloatingActionButton mStartStopTrainingButton;
     private boolean mIsServiceRunning;
@@ -144,7 +133,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
             mPolyline.remove();
             mPolyline = null;
-
+            setLayoutVisible(mFirstRow, false);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -164,7 +153,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Log.v(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate: " + mIsServiceRunning);
-        mCompass = new Compass(getContext());
         mGeoClient = new GeoClient(getContext(), this);
         mData = new GPSData();
 
@@ -228,14 +216,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                break;
-            case R.id.action_show_compass:
-                showMapCompass(MainFragment.COMPASS);
-                break;
-            case R.id.action_show_map:
-                showMapCompass(MainFragment.MAP);
-                break;
             case R.id.action_map_type_normal:
                 mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
@@ -257,9 +237,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.v(TAG, "onCreateOptionsMenu: ");
         inflater.inflate(R.menu.main, menu);
-        mCompassMenuItem = menu.findItem(R.id.action_show_compass);
-        mMapMenuItem = menu.findItem(R.id.action_show_map);
-        showMapCompass(MAP);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -269,18 +246,15 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Log.v(TAG, "onCreateView: ");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mLatitudeTv = (TextView) view.findViewById(R.id.latitude);
-        mLongitudeTv = (TextView) view.findViewById(R.id.longitude);
-        mAltitudeTv = (TextView) view.findViewById(R.id.altitude);
-        mSpeedTv = (TextView) view.findViewById(R.id.speed);
-        mDistanceTv = (TextView) view.findViewById(R.id.distance);
-        mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed);
+        mDistanceTv = (TextView) view.findViewById(R.id.distance_value);
+        mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed_value);
         mMap = (MapView) view.findViewById(R.id.mapView);
-        mCompass.setArrowView(view.findViewById(R.id.compass_internal));
-        mCompassGroup = view.findViewById(R.id.compass_group);
         mStartStopTrainingButton = (FloatingActionButton) view.findViewById(R.id.start_stop_training_button);
         mFirstRow = view.findViewById(R.id.first_row);
-        mSecondRow = view.findViewById(R.id.second_row);
+
+        if (mIsServiceRunning) {
+            setLayoutVisible(mFirstRow, true);
+        }
 
         mStartStopTrainingButton.setOnClickListener(new ButtonsClickListener());
         mMap.onCreate(null);
@@ -342,20 +316,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
     public void updateUI(GPSData data) {
         Log.v(TAG, "updateUI: ");
-        String latitude = String.format(Locale.US, "%f", data.latitude);
-        String longitude = String.format(Locale.US, "%f", data.longitude);
-        String altitude = String.format(Locale.US, "%d", Math.round(data.altitude));
-        String speed = String.format(Locale.US, "%.2f", data.speed * 3.6);
-        String distance = String.format(Locale.US, "%d km %d m", Math.round(data.distance) / 1000, Math.round(data.distance) % 1000);
-        String average_speed = String.format(Locale.US, "%.2f", data.average_speed * 3.6);
+        String distance = String.format(Locale.US, "%.3f км", data.distance / 1000);
+        String average_speed = String.format(Locale.US, "%.2f км/ч", data.average_speed * 3.6);
 
-        Log.v(TAG, "updateUI: latitude = " + latitude);
-        Log.v(TAG, "updateUI: longitude = " + longitude);
-
-        mLatitudeTv.setText(latitude);
-        mLongitudeTv.setText(longitude);
-        mAltitudeTv.setText(altitude);
-        mSpeedTv.setText(speed);
         mDistanceTv.setText(distance);
         mAverageSpeedTv.setText(average_speed);
 
@@ -438,37 +401,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         }
     }
 
-    private void showMapCompass(int componentID) {
-        Log.v(TAG, "showMapCompass: " + componentID);
-        if (componentID == COMPASS) {
-            mCompass.start();
-        } else {
-            mCompass.stop();
-        }
-
-        setLayoutVisible(mMap, componentID == MAP);
-        setLayoutVisible(mCompassGroup, componentID == COMPASS);
-        mMapMenuItem.setVisible(componentID == COMPASS);
-        mCompassMenuItem.setVisible(componentID == MAP);
-
-        controlRowsVisible(componentID);
-    }
-
-    private void controlRowsVisible(int componentID) {
-        if (mIsServiceRunning) {
-            setLayoutVisible(mFirstRow, true);
-            setLayoutVisible(mSecondRow, true);
-        } else {
-            if (componentID == MAP) {
-                setLayoutVisible(mFirstRow, false);
-                setLayoutVisible(mSecondRow, false);
-            } else if (componentID == COMPASS) {
-                setLayoutVisible(mFirstRow, true);
-                setLayoutVisible(mSecondRow, false);
-            }
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -502,10 +434,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         super.onResume();
         mMap.onResume();
 
-        if (mMapMenuItem != null && mMapMenuItem.isVisible() && !mCompass.isStarted()) {
-            mCompass.start();
-        }
-
         /* workaround для проблемы #1 */
         if (mDelayShowDialog) {
             mDelayShowDialog = false;
@@ -523,10 +451,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Settings.getInstance(getContext()).saveMapZoom(mGoogleMap.getCameraPosition().zoom);
 
         mMap.onStop();
-
-        if (mMapMenuItem.isVisible()) {
-            mCompass.stop();
-        }
 
         mGeoClient.stop();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTimerReseiver);
@@ -599,7 +523,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         mCallback.stopTrackerService();
         mIsServiceRunning = false;
         mGeoClient.start();
-        controlRowsVisible(mCompassMenuItem.isVisible() ? MAP : COMPASS);
     }
 
 
@@ -612,7 +535,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
             mIsServiceRunning = true;
             mGeoClient.stop();
-            controlRowsVisible(mCompassMenuItem.isVisible() ? MAP : COMPASS);
+            setLayoutVisible(mFirstRow, true);
         }
     }
 
