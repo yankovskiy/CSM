@@ -14,8 +14,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +27,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -32,7 +34,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
@@ -43,8 +44,8 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.activity.TrainingFinishAcitivty;
-import ru.neverdark.csm.components.Compass;
 import ru.neverdark.csm.components.GeoClient;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.data.GPSData;
@@ -54,7 +55,7 @@ import ru.neverdark.csm.utils.Settings;
 import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 
-public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener {
+public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener, OnTabNaviListener {
     public static final int REQUEST_CHECK_SETTINGS = 3;
     public static final int TRAINING_RESULT_REQUEST = 1;
     public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
@@ -68,11 +69,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
     public static final String TRAINING_DURATION = FRAGMENT_PATH + ".TRAINING_DURATION";
-    private TextView mDistanceTv;
-    private TextView mAverageSpeedTv;
     private OnFragmentInteractionListener mCallback;
-    private MapView mMap;
-    private View mFirstRow;
     private GoogleMap mGoogleMap;
     private FloatingActionButton mStartStopTrainingButton;
     private boolean mIsServiceRunning;
@@ -91,6 +88,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private static final int COMPLETE_SERVICE_BIND = 2;
     private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
     private String mTrainingDuration;
+    private ViewPager mPager;
+    private MapTabFragment mMapTabFragment;
+    private CompassTabFragment mCompassTabFragment;
+    private InfoTabFragment mInfoTabFragment;
 
     private synchronized void completeJob(int job) {
         if (mCompleteJob != COMPLETE_ALL) {
@@ -133,7 +134,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
             mPolyline.remove();
             mPolyline = null;
-            setLayoutVisible(mFirstRow, false);
+
+            mMapTabFragment.resetUI();
+            mInfoTabFragment.resetUI();
+            mCompassTabFragment.resetUI();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -209,10 +213,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }
 
-    private void setLayoutVisible(View layoutView, boolean visible) {
-        layoutView.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -246,20 +246,36 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Log.v(TAG, "onCreateView: ");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mDistanceTv = (TextView) view.findViewById(R.id.distance_value);
-        mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed_value);
-        mMap = (MapView) view.findViewById(R.id.mapView);
         mStartStopTrainingButton = (FloatingActionButton) view.findViewById(R.id.start_stop_training_button);
-        mFirstRow = view.findViewById(R.id.first_row);
-
-        if (mIsServiceRunning) {
-            setLayoutVisible(mFirstRow, true);
-        }
-
         mStartStopTrainingButton.setOnClickListener(new ButtonsClickListener());
-        mMap.onCreate(null);
 
-        mMap.getMapAsync(this);
+        mMapTabFragment = MapTabFragment.getInstance(this, this);
+        mCompassTabFragment = CompassTabFragment.getInstance(this);
+        mInfoTabFragment = InfoTabFragment.getInstance(this);
+
+        mPager = (ViewPager) view.findViewById(R.id.tab_container);
+        mPager.setOffscreenPageLimit(TABS.values().length - 1);
+        mPager.setAdapter(new CustomAdapter(getChildFragmentManager()));
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position != TABS.MAP.ordinal()) {
+                    mStartStopTrainingButton.hide();
+                } else {
+                    mStartStopTrainingButton.show();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return view;
     }
 
@@ -316,11 +332,10 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
     public void updateUI(GPSData data) {
         Log.v(TAG, "updateUI: ");
-        String distance = String.format(Locale.US, "%.3f км", data.distance / 1000);
-        String average_speed = String.format(Locale.US, "%.2f км/ч", data.average_speed * 3.6);
 
-        mDistanceTv.setText(distance);
-        mAverageSpeedTv.setText(average_speed);
+        mMapTabFragment.updateUI(data);
+        mCompassTabFragment.updateUI(data);
+        mInfoTabFragment.updateUI(data);
 
         updateSignalWidget(data.accuracy);
         LatLng latLng = new LatLng(data.latitude, data.longitude);
@@ -432,7 +447,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     public void onResume() {
         Log.v(TAG, "onResume: ");
         super.onResume();
-        mMap.onResume();
 
         /* workaround для проблемы #1 */
         if (mDelayShowDialog) {
@@ -450,8 +464,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         Settings.getInstance(getContext()).saveMapType(mGoogleMap.getMapType());
         Settings.getInstance(getContext()).saveMapZoom(mGoogleMap.getCameraPosition().zoom);
 
-        mMap.onStop();
-
         mGeoClient.stop();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTimerReseiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mLocationReceiver);
@@ -468,8 +480,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         super.onStart();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mTimerReseiver, new IntentFilter(TrackerService.TRACKER_SERVICE_TIMER_REQUEST));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mLocationReceiver, new IntentFilter(TrackerService.TRACKER_SERVICE_REQUEST));
-
-        mMap.onStart();
 
         mSignal = Antenna.SIGNAL_NO;
 
@@ -505,14 +515,12 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     @Override
     public void onPause() {
         Log.v(TAG, "onPause: ");
-        mMap.onPause();
         super.onPause();
     }
 
     @Override
     public void onDestroyView() {
         Log.v(TAG, "onDestroyView: ");
-        mMap.onDestroy();
         mGeoClient.disconnect();
         super.onDestroyView();
     }
@@ -535,7 +543,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
             mIsServiceRunning = true;
             mGeoClient.stop();
-            setLayoutVisible(mFirstRow, true);
         }
     }
 
@@ -627,6 +634,16 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         dialog.show(getFragmentManager(), null);
     }
 
+    @Override
+    public void onPrevTab() {
+        mPager.setCurrentItem(mPager.getCurrentItem() - 1, true);
+    }
+
+    @Override
+    public void onNextTab() {
+        mPager.setCurrentItem(mPager.getCurrentItem() + 1, true);
+    }
+
     public interface OnFragmentInteractionListener {
         void stopTrackerService();
 
@@ -702,6 +719,54 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                     break;
             }
 
+        }
+    }
+
+    private enum TABS {
+        MAP(R.string.map),
+        INFO(R.string.info),
+        COMPASS(R.string.compass);
+
+        private final int mTitleRes;
+
+        TABS(int titleResIs) {
+            mTitleRes = titleResIs;
+        }
+
+        public int getTitle() {
+            return mTitleRes;
+        }
+    }
+
+    private class CustomAdapter extends FragmentPagerAdapter {
+        public CustomAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            TABS tab = TABS.values()[position];
+
+            if (tab == TABS.MAP) {
+                return mMapTabFragment;
+            } else if (tab == TABS.COMPASS) {
+                return mCompassTabFragment;
+            } else if (tab == TABS.INFO) {
+                return mInfoTabFragment;
+            }
+
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return TABS.values().length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            TABS tab = TABS.values()[position];
+            return getString(tab.getTitle());
         }
     }
 }

@@ -302,7 +302,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
      */
     private void saveAndNotify(Location location) {
         // Логируем и обновляем интерфейс только если есть скорость
-        if (location.getSpeed() != 0.0) {
+        if (location.getSpeed() != 0.0 || Constants.SAVE_POINTS_WITHOUT_SPEED) {
             if (mCurrentLocation != null) {
                 mPreviousLocation = mCurrentLocation;
             }
