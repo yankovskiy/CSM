@@ -18,17 +18,17 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
+import ru.neverdark.widgets.DataCard;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MapTabFragment extends AbsTabFragment {
 
-    private TextView mDistanceTv;
-    private TextView mAverageSpeedTv;
+    private DataCard mDistance;
+    private DataCard mAverageSpeed;
 
     private OnMapReadyCallback mMapReadyCallback;
-    private GPSData mCachedData;
 
     public MapTabFragment() {
         // Required empty public constructor
@@ -49,8 +49,8 @@ public class MapTabFragment extends AbsTabFragment {
             String distance = String.format(Locale.US, "%.3f км", data.distance / 1000);
             String average_speed = String.format(Locale.US, "%.2f км/ч", data.average_speed * 3.6);
 
-            mDistanceTv.setText(distance);
-            mAverageSpeedTv.setText(average_speed);
+            mDistance.setValue(distance);
+            mAverageSpeed.setValue(average_speed);
         } else {
             repeatUpdateAfterResumed(data);
         }
@@ -58,8 +58,8 @@ public class MapTabFragment extends AbsTabFragment {
 
     @Override
     public void resetUI() {
-        mDistanceTv.setText(R.string.zero);
-        mAverageSpeedTv.setText(R.string.zero);
+        mDistance.setValue(R.string.zero);
+        mAverageSpeed.setValue(R.string.zero);
     }
 
     private static final String TAG = "MapTabFragment";
@@ -69,8 +69,8 @@ public class MapTabFragment extends AbsTabFragment {
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView: ");
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        mDistanceTv = (TextView) view.findViewById(R.id.distance_value);
-        mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed_value);
+        mDistance = (DataCard) view.findViewById(R.id.distance);
+        mAverageSpeed = (DataCard) view.findViewById(R.id.average_speed);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(mMapReadyCallback);
