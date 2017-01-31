@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:dataCard="http://schemas.android.com/apk/res-auto"
+    tools:context="ru.neverdark.csm.fragments.CompassTabFragment">
+
+    <ImageView
+        android:id="@+id/prev_tab"
+        style="@style/PrevTabButton" />
+
+    <LinearLayout
+        android:id="@+id/first_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal">
+
+        <ru.neverdark.widgets.DataCard
+            android:id="@+id/latitude"
+            dataCard:title="@string/latitude"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <ru.neverdark.widgets.DataCard
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:id="@+id/longitude"
+            dataCard:title="@string/longitude"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_alignStart="@+id/first_row"
+        android:layout_alignLeft="@+id/first_row"
+        android:layout_alignRight="@+id/first_row"
+        android:layout_alignEnd="@+id/first_row"
+        android:id="@+id/second_row"
+        android:layout_below="@+id/first_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <ru.neverdark.widgets.DataCard
+            android:id="@+id/altitude"
+            dataCard:title="@string/altitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/compass_ext"
+        android:src="@drawable/compass_ext"
+        android:layout_centerInParent="true"
+        android:layout_width="260dp"
+        android:layout_height="260dp" />
+
+    <ImageView
+        android:id="@+id/compass_int"
+        android:src="@drawable/compass_int"
+        android:layout_centerInParent="true"
+        android:layout_width="125dp"
+        android:layout_height="125dp" />
+
+        <LinearLayout
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <TextView
+            android:text="NE"
+            android:textSize="20sp"
+            android:id="@+id/direction"
+            android:textColor="@color/textColorPrimary"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+            <View
+                android:background="@color/colorAccent"
+                android:layout_width="40dp"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:text="320°"
+                android:textColor="@color/textColorSecondary"
+                android:id="@+id/deegres"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

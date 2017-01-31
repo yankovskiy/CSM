@@ -45,4 +45,12 @@
     <string name="map_hybrid">Гибрид</string>
     <string name="map_terrain">Местность</string>
     <string name="info">Информация</string>
+    <string name="north_direction">С</string>
+    <string name="northeast_direction">СВ</string>
+    <string name="east_direction">В</string>
+    <string name="southeast_direction">ЮВ</string>
+    <string name="south_direction">Ю</string>
+    <string name="southwest_direction">ЮЗ</string>
+    <string name="west_direction">З</string>
+    <string name="northwest_direction">СЗ</string>
 </resources>

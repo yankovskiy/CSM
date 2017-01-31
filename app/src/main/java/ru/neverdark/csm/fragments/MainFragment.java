@@ -269,6 +269,12 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                 } else {
                     mStartStopTrainingButton.show();
                 }
+
+                if (position != TABS.COMPASS.ordinal()) {
+                    mCompassTabFragment.stopCompass();
+                } else {
+                    mCompassTabFragment.startCompass();
+                }
             }
 
             @Override
@@ -559,6 +565,13 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     @Override
     public void onMyLocationChanged(Location location) {
         Log.v(TAG, String.format(Locale.US, "onMyLocationChanged: %f,%f", location.getLatitude(), location.getLongitude()));
+
+        GPSData data = new GPSData();
+        data.latitude = (float) location.getLatitude();
+        data.longitude = (float) location.getLongitude();
+        data.altitude = (float) location.getAltitude();
+        mCompassTabFragment.updateUI(data);
+
         updateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
         Log.v(TAG, "onMyLocationChanged: " + location.getAccuracy());
         updateSignalWidget(location.getAccuracy());
