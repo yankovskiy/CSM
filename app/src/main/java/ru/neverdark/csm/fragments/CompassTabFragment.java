@@ -40,9 +40,13 @@ public class CompassTabFragment extends AbsTabFragment {
 
     @Override
     public void updateUI(GPSData data) {
-        mLatitude.setValue(String.valueOf(data.latitude));
-        mLongitude.setValue(String.valueOf(data.longitude));
-        mAltitude.setValue(String.valueOf(Math.round(data.altitude)));
+        if (isResumed()) {
+            mLatitude.setValue(String.valueOf(data.latitude));
+            mLongitude.setValue(String.valueOf(data.longitude));
+            mAltitude.setValue(String.valueOf(Math.round(data.altitude)));
+        } else {
+            repeatUpdateAfterResumed(data);
+        }
     }
 
     @Override
