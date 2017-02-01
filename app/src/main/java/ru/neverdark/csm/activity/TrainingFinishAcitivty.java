@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -209,42 +208,66 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         });
     }
 
-    private class CollectSummaryTask extends AsyncTask<Long, Void, Integer> {
-        static final int SUCCESS_STATUS = 0;
-        static final int FAIL_STATUS = 1;
+    private class CollectSummaryTask extends AsyncTask<Long, Void, Void> {
         private PolylineOptions rectOptions = new PolylineOptions();
 
         @Override
-        protected Integer doInBackground(Long... trainingId) {
-            Cursor cursor = Db.getInstance(getApplicationContext()).getGpslogTable().getRecordsForTraining(trainingId[0]);
-            if (cursor.getCount() > 1) {
-                cursor.moveToFirst();
-                double latitude;
-                double longitude;
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                rectOptions.color(Color.RED).width(4).geodesic(true);
-                do {
-                    latitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LATITUDE));
-                    longitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LONGITUDE));
-                    LatLng latLng = new LatLng(latitude, longitude);
-                    rectOptions.add(latLng);
-                    builder.include(latLng);
-                } while (cursor.moveToNext());
-                cursor.close();
-                mBounds = builder.build();
-            } else {
-                cursor.close();
-                return FAIL_STATUS;
-            }
+        protected Void doInBackground(Long... trainingId) {
+            Log.v(TAG, "doInBackground: ");
 
-            return SUCCESS_STATUS;
+            Cursor cursor = Db.getInstance(getApplicationContext()).getGpslogTable().getRecordsForTraining(trainingId[0]);
+
+            cursor.moveToFirst();
+            double latitude;
+            double longitude;
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            rectOptions.color(Color.RED).width(4).geodesic(true);
+            do {
+                latitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LATITUDE));
+                longitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LONGITUDE));
+                LatLng latLng = new LatLng(latitude, longitude);
+                rectOptions.add(latLng);
+                builder.include(latLng);
+            } while (cursor.moveToNext());
+            cursor.close();
+            mBounds = builder.build();
+
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Integer status) {
-            if (status == FAIL_STATUS) {
-                // TODO сообщить об ошибке
-                Log.v(TAG, "onPostExecute: error");
+        protected void onPostExecute(Void aVoid) {
+            Log.v(TAG, "onPostExecute: ");
+
+            String kmch = getString(R.string.kmch);
+            String km = getString(R.string.km);
+            String m = getString(R.string.m);
+
+            Date date = new Date(mFinishDateInMillis);
+            String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
+
+            String distanceStr = String.format(Locale.US, "%d %s %d %s", Math.round(mData.distance) / 1000, km, Math.round(mData.distance) % 1000, m);
+            String maxSpeedStr = String.format(Locale.US, "%.2f %s", mData.max_speed * 3.6, kmch);
+            String averageSpeedStr = String.format(Locale.US, "%.2f %s", mData.average_speed * 3.6, kmch);
+            String maxAltitudeStr = String.format(Locale.US, "%d %s", Math.round(mData.max_altitude), m);
+            String upAltitude = String.format(Locale.US, "%d %s", Math.round(mData.up_altitude), m);
+            String downAltitude = String.format(Locale.US, "%d %s", Math.round(mData.down_altitude), m);
+
+            mTotalTimeTv.setText(mTrainingDuration);
+            mDistanceTv.setText(distanceStr);
+            mMaxSpeedTv.setText(maxSpeedStr);
+            mAverageSpeedTv.setText(averageSpeedStr);
+            mMaxAltitudeTv.setText(maxAltitudeStr);
+            mUpAltitudeTv.setText(upAltitude);
+            mDownAltitudeTv.setText(downAltitude);
+            mFinishDateTv.setText(finishDateStr);
+
+            mSummaryRecord.description = mDescriptionEd.getText().toString();
+
+            if (mGoogleMap != null) {
+                mGoogleMap.addPolyline(rectOptions);
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBounds, 0));
+
                 mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
@@ -252,44 +275,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                     }
                 });
             } else {
-                // TODO показать основной интерфейс
-                Log.v(TAG, "onPostExecute: success");
-
-                Date date = new Date(mFinishDateInMillis);
-                String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
-
-                String distanceStr = String.format(Locale.US, "%dkm %dm", Math.round(mData.distance) / 1000, Math.round(mData.distance) % 1000);
-                String maxSpeedStr = String.format(Locale.US, "%.2f",  mData.max_speed * 3.6);
-                String averageSpeedStr = String.format(Locale.US, "%.2f", mData.average_speed * 3.6);
-                String maxAltitudeStr = String.format(Locale.US, "%d", Math.round(mData.max_altitude));
-                String upAltitude = String.format(Locale.US, "%dm", Math.round(mData.up_altitude));
-                String downAltitude = String.format(Locale.US, "%dm", Math.round(mData.down_altitude));
-
-                mTotalTimeTv.setText(mTrainingDuration);
-                mDistanceTv.setText(distanceStr);
-                mMaxSpeedTv.setText(maxSpeedStr);
-                mAverageSpeedTv.setText(averageSpeedStr);
-                mMaxAltitudeTv.setText(maxAltitudeStr);
-                mUpAltitudeTv.setText(upAltitude);
-                mDownAltitudeTv.setText(downAltitude);
-                mFinishDateTv.setText(finishDateStr);
-
-                mSummaryRecord.description = mDescriptionEd.getText().toString();
-
-                if (mGoogleMap != null) {
-                    mGoogleMap.addPolyline(rectOptions);
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mBounds, 0));
-
-                    mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                        @Override
-                        public void onMapLoaded() {
-                            mGoogleMap.snapshot(new SnapshotMap());
-                        }
-                    });
-                } else {
-                    Toast.makeText(TrainingFinishAcitivty.this, "Map is not ready", Toast.LENGTH_LONG).show();
-                }
-
+                Toast.makeText(TrainingFinishAcitivty.this, "Map is not ready", Toast.LENGTH_LONG).show();
             }
         }
     }

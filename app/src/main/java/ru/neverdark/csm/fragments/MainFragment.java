@@ -87,11 +87,12 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     private static final int COMPLETE_MAP_LOAD = 1;
     private static final int COMPLETE_SERVICE_BIND = 2;
     private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
-    private String mTrainingDuration;
+    private String mTrainingDurationFormated;
     private ViewPager mPager;
     private MapTabFragment mMapTabFragment;
     private CompassTabFragment mCompassTabFragment;
     private InfoTabFragment mInfoTabFragment;
+    private int mTrainingDurationRaw;
 
     private synchronized void completeJob(int job) {
         if (mCompleteJob != COMPLETE_ALL) {
@@ -172,12 +173,12 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                int time = intent.getIntExtra(TrackerService.TRACKER_SERVICE_TIMER_DATA, 0);
-                int seconds = time % 60;
-                int minutes = (time / 60) % 60;
-                int hours = time / (60 * 60);
-                mTrainingDuration = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
-                getActivity().setTitle(mTrainingDuration);
+                mTrainingDurationRaw = intent.getIntExtra(TrackerService.TRACKER_SERVICE_TIMER_DATA, 0);
+                int seconds = mTrainingDurationRaw % 60;
+                int minutes = (mTrainingDurationRaw / 60) % 60;
+                int hours = mTrainingDurationRaw / (60 * 60);
+                mTrainingDurationFormated = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
+                getActivity().setTitle(mTrainingDurationFormated);
             }
         };
 
@@ -197,18 +198,28 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         Log.v(TAG, "onReceive: incorrect database record id");
                     } else {
                         Log.v(TAG, "onReceive: create new activity with result");
-                        startTrainingFinishActivity(recordId);
+                        List<LatLng> lst = mCallback.getLatLngList();
+                        if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
+                            startTrainingFinishActivity(recordId);
+                        } else {
+                            showLowQualityTrainingDialog();
+                        }
                     }
                 }
             }
         };
     }
 
+    private void showLowQualityTrainingDialog() {
+        InfoDialog dialog = InfoDialog.getInstance(R.string.short_traning_title, R.string.short_training_message);
+        dialog.show(getFragmentManager(), null);
+    }
+
     private void startTrainingFinishActivity(long id) {
         Intent intent = new Intent(getContext(), TrainingFinishAcitivty.class);
         intent.putExtra(MainFragment.TRAINING_DATA, mData);
         intent.putExtra(MainFragment.TRAININD_ID, id);
-        intent.putExtra(MainFragment.TRAINING_DURATION, mTrainingDuration);
+        intent.putExtra(MainFragment.TRAINING_DURATION, mTrainingDurationFormated);
         intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }
