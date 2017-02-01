@@ -90,16 +90,40 @@ public class InfoTabFragment extends AbsTabFragment {
     }
 
     private void bindData(View view) {
+        int km = R.string.km;
+        int kmch = R.string.kmch;
+        int m = R.string.m;
+
         mDistance = (DataCard) view.findViewById(R.id.distance);
+        mDistance.setTitleNote(km);
+
         mSpeed = (DataCard) view.findViewById(R.id.speed);
+        mSpeed.setTitleNote(kmch);
+
         mAverageSpeed = (DataCard) view.findViewById(R.id.average_speed);
+        mAverageSpeed.setTitleNote(kmch);
+
         mMaxSpeed = (DataCard) view.findViewById(R.id.max_speed);
+        mMaxSpeed.setTitleNote(kmch);
+
         mAltitude = (DataCard) view.findViewById(R.id.altitude);
+        mAltitude.setTitleNote(m);
+
         mMaxAltitude = (DataCard) view.findViewById(R.id.max_altitude);
+        mMaxAltitude.setTitleNote(m);
+
         mUpAltitude = (DataCard) view.findViewById(R.id.up_altitude);
+        mUpAltitude.setTitleNote(m);
+
         mDownAltitude = (DataCard) view.findViewById(R.id.down_altitude);
+        mDownAltitude.setTitleNote(m);
+
         mUpDistance = (DataCard) view.findViewById(R.id.up_distance);
+        mUpDistance.setTitleNote(km);
+
         mDownDistance = (DataCard) view.findViewById(R.id.down_distance);
+        mDownDistance.setTitleNote(km);
+
         mLatitude = (DataCard) view.findViewById(R.id.latitude);
         mLongitude = (DataCard) view.findViewById(R.id.longitude);
     }

@@ -80,4 +80,23 @@ public class DataCard extends CardView {
     public void setTitle(int resId) {
         mTitleTv.setText(resId);
     }
+
+    /**
+     * Добавляет примечание к заголовку.
+     * Внимание! Фактически функция перезаписывает заголовок добавляя к нему (примечание)
+     * @param note текст примечания
+     */
+    public void setTitleNote(String note) {
+        mTitleTv.setText(String.format("%s (%s)", getTitle(), note));
+    }
+
+    /**
+     * Добавляет примечание к заголовку.
+     * Внимание! Фактически функция перезаписывает заголовок добавляя к нему (примечание)
+     * @param noteResId ресурс содержащий текст примечания
+     */
+    public void setTitleNote(int noteResId) {
+        String note = getContext().getString(noteResId);
+        setTitleNote(note);
+    }
 }

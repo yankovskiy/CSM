@@ -136,12 +136,16 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
             mPolyline.remove();
             mPolyline = null;
 
-            mMapTabFragment.resetUI();
-            mInfoTabFragment.resetUI();
-            mCompassTabFragment.resetUI();
+            resetData();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void resetData() {
+        mMapTabFragment.resetUI();
+        mInfoTabFragment.resetUI();
+        mCompassTabFragment.resetUI();
     }
 
     private void removeTraining(long recordId) {
@@ -202,6 +206,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
                             startTrainingFinishActivity(recordId);
                         } else {
+                            resetData();
                             showLowQualityTrainingDialog();
                         }
                     }

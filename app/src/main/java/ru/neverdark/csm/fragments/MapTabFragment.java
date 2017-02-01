@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -46,8 +45,8 @@ public class MapTabFragment extends AbsTabFragment {
         /* может быть вызвана до того, как фрагмент перешел в статус onResumed
          * если так, то запоминаем переданные данные и повторно вызываем эту функцию из onResume */
         if(isResumed()) {
-            String distance = String.format(Locale.US, "%.3f км", data.distance / 1000);
-            String average_speed = String.format(Locale.US, "%.2f км/ч", data.average_speed * 3.6);
+            String distance = String.format(Locale.US, "%.3f", data.distance / 1000);
+            String average_speed = String.format(Locale.US, "%.2f", data.average_speed * 3.6);
 
             mDistance.setValue(distance);
             mAverageSpeed.setValue(average_speed);
@@ -69,8 +68,11 @@ public class MapTabFragment extends AbsTabFragment {
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView: ");
         View view = super.onCreateView(inflater, container, savedInstanceState);
+
         mDistance = (DataCard) view.findViewById(R.id.distance);
         mAverageSpeed = (DataCard) view.findViewById(R.id.average_speed);
+        mDistance.setTitleNote(R.string.km);
+        mAverageSpeed.setTitleNote(R.string.kmch);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(mMapReadyCallback);
