@@ -133,9 +133,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                 Log.v(TAG, "onActivityResult: ok");
             }
 
-            mPolyline.remove();
-            mPolyline = null;
-
             resetData();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -143,6 +140,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     }
 
     private void resetData() {
+        mPolyline.remove();
+        mPolyline = null;
         mMapTabFragment.resetUI();
         mInfoTabFragment.resetUI();
         mCompassTabFragment.resetUI();
