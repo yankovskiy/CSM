@@ -201,7 +201,8 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                         Log.v(TAG, "onReceive: incorrect database record id");
                     } else {
                         Log.v(TAG, "onReceive: create new activity with result");
-                        List<LatLng> lst = mCallback.getLatLngList();
+                        List<LatLng> lst = mPolyline != null? mPolyline.getPoints() : null;
+
                         if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
                             startTrainingFinishActivity(recordId);
                         } else {
