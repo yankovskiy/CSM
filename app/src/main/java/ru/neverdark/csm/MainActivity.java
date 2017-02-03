@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity
             Log.v(TAG, "onNavigationItemSelected: ");
             if (id == R.id.nav_training) {
                 mAntenna.setVisibility(View.VISIBLE);
+                mMainFragment = MainFragment.newInstance(false);
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, mMainFragment).commit();
             } else if (id == R.id.nav_stats) {
                 if (mAntenna.getVisibility() != View.GONE) {

@@ -27,6 +27,7 @@ public class CompassTabFragment extends AbsTabFragment {
     private DataCard mLongitude;
     private DataCard mAltitude;
     private Compass mCompass;
+    private boolean mStartCompass;
 
     public CompassTabFragment() {
         // Required empty public constructor
@@ -63,6 +64,25 @@ public class CompassTabFragment extends AbsTabFragment {
     public void stopCompass() {
         if (mCompass.isStarted()) {
             mCompass.stop();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mCompass.isStarted()) {
+            mCompass.stop();
+            mStartCompass = true;
+        } else {
+            mStartCompass = false;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mStartCompass) {
+            startCompass();
         }
     }
 
