@@ -2,12 +2,17 @@ package ru.neverdark.csm.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -22,21 +27,26 @@ import ru.neverdark.widgets.DataCard;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapTabFragment extends AbsTabFragment {
+public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback {
 
     private DataCard mDistance;
     private DataCard mAverageSpeed;
 
-    private OnMapReadyCallback mMapReadyCallback;
+    public interface OnMapFragmentListener {
+        void onChangeMapType(int mapType);
+        void onMapReady(GoogleMap googleMap);
+    }
+
+    private OnMapFragmentListener mCallback;
 
     public MapTabFragment() {
         // Required empty public constructor
     }
 
-    public static MapTabFragment getInstance(OnTabNaviListener listener, OnMapReadyCallback callback) {
+    public static MapTabFragment getInstance(OnTabNaviListener listener, OnMapFragmentListener callback) {
         MapTabFragment fragment = new MapTabFragment();
         fragment.setData(R.layout.fragment_map_tab, listener);
-        fragment.mMapReadyCallback = callback;
+        fragment.mCallback = callback;
         return fragment;
     }
 
@@ -75,8 +85,45 @@ public class MapTabFragment extends AbsTabFragment {
         mAverageSpeed.setTitleNote(R.string.kmch);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
-        mapFragment.getMapAsync(mMapReadyCallback);
+        mapFragment.getMapAsync(this);
         return view;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v(TAG, "onCreateOptionsMenu: ");
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_map_type_normal:
+                mCallback.onChangeMapType(GoogleMap.MAP_TYPE_NORMAL);
+                break;
+            case R.id.action_map_type_hybrid:
+                mCallback.onChangeMapType(GoogleMap.MAP_TYPE_HYBRID);
+                break;
+            case R.id.action_map_type_satellite:
+                mCallback.onChangeMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                break;
+            case R.id.action_map_type_terrain:
+                mCallback.onChangeMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mCallback.onMapReady(googleMap);
+    }
 }

@@ -22,9 +22,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,7 +31,6 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -55,7 +51,7 @@ import ru.neverdark.csm.utils.Settings;
 import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 
-public class MainFragment extends Fragment implements OnMapReadyCallback, GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener, OnTabNaviListener {
+public class MainFragment extends Fragment implements GeoClient.OnGeoClientListener, ConfirmDialog.NoticeDialogListener, OnTabNaviListener, MapTabFragment.OnMapFragmentListener {
     public static final int REQUEST_CHECK_SETTINGS = 3;
     public static final int TRAINING_RESULT_REQUEST = 1;
     public static final int REQUETST_CHECK_SETTINGS_FOR_SERVICE = 4;
@@ -151,7 +147,9 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         String fileName = Utils.getSnapshotNameById(recordId);
         File file = new File(getContext().getFilesDir(), fileName);
         if (file.exists()) {
-            file.delete();
+            if(!file.delete()) {
+                Log.v(TAG, "removeTraining: unable to delete " + file.getAbsolutePath());
+            }
         }
         Db.getInstance(getContext()).getSummaryTable().deleteRecord(recordId);
     }
@@ -167,7 +165,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         // если сервис запущен и перезапущен UI нам нужно обновить масштаб на карте
         mDelayedUpdateMap = mIsServiceRunning;
 
-        setHasOptionsMenu(true);
         createReseivers();
     }
 
@@ -227,33 +224,6 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
         intent.putExtra(MainFragment.TRAINING_DURATION, mTrainingDurationFormated);
         intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_map_type_normal:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                break;
-            case R.id.action_map_type_hybrid:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                break;
-            case R.id.action_map_type_satellite:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                break;
-            case R.id.action_map_type_terrain:
-                mGoogleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.v(TAG, "onCreateOptionsMenu: ");
-        inflater.inflate(R.menu.main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -401,6 +371,11 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
                 mPolyline = mGoogleMap.addPolyline(options);
             }
         }
+    }
+
+    @Override
+    public void onChangeMapType(int mapType) {
+        mGoogleMap.setMapType(mapType);
     }
 
     @Override
@@ -768,7 +743,7 @@ public class MainFragment extends Fragment implements OnMapReadyCallback, GeoCli
     }
 
     private class CustomAdapter extends FragmentPagerAdapter {
-        public CustomAdapter(FragmentManager fm) {
+        CustomAdapter(FragmentManager fm) {
             super(fm);
         }
 
