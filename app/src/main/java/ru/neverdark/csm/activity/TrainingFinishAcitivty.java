@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
@@ -18,10 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.EditText;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +47,6 @@ import ru.neverdark.csm.utils.Utils;
 public class TrainingFinishAcitivty extends AppCompatActivity implements ConfirmDialog.NoticeDialogListener, OnMapReadyCallback {
 
     private static final String TAG = "TrainingFinishAcitivty";
-    private GPSData mData;
     private long mTrainingId;
 
     private TextView mDistanceTv;
@@ -81,9 +76,9 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        mData = (GPSData) intent.getSerializableExtra(MainFragment.TRAINING_DATA);
+        GPSData data = (GPSData) intent.getSerializableExtra(MainFragment.TRAINING_DATA);
 
-        Log.v(TAG, "onCreate: " + String.valueOf(mData == null));
+        Log.v(TAG, "onCreate: " + String.valueOf(data == null));
 
         mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
         mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
@@ -95,15 +90,15 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 mFinishDateInMillis,
                 null, // Заметка, установим позже
                 true,
-                Math.round(mData.distance),
+                Math.round(data.distance),
                 mTrainingDuration,
-                mData.average_speed,
-                mData.max_speed,
-                Math.round(mData.up_distance),
-                Math.round(mData.down_distance),
-                Math.round(mData.max_altitude),
-                Math.round(mData.up_altitude),
-                Math.round(mData.down_altitude)
+                data.average_speed,
+                data.max_speed,
+                Math.round(data.up_distance),
+                Math.round(data.down_distance),
+                Math.round(data.max_altitude),
+                Math.round(data.up_altitude),
+                Math.round(data.down_altitude)
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
@@ -232,12 +227,12 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             Date date = new Date(mFinishDateInMillis);
             String finishDateStr = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date);
 
-            String distanceStr = String.format(Locale.US, "%d %s %d %s", Math.round(mData.distance) / 1000, km, Math.round(mData.distance) % 1000, m);
-            String maxSpeedStr = String.format(Locale.US, "%.2f %s", mData.max_speed * 3.6, kmch);
-            String averageSpeedStr = String.format(Locale.US, "%.2f %s", mData.average_speed * 3.6, kmch);
-            String maxAltitudeStr = String.format(Locale.US, "%d %s", Math.round(mData.max_altitude), m);
-            String upAltitude = String.format(Locale.US, "%d %s", Math.round(mData.up_altitude), m);
-            String downAltitude = String.format(Locale.US, "%d %s", Math.round(mData.down_altitude), m);
+            String distanceStr = String.format(Locale.US, "%d %s %d %s", mSummaryRecord.distance / 1000, km, mSummaryRecord.distance % 1000, m);
+            String maxSpeedStr = String.format(Locale.US, "%.2f %s", mSummaryRecord.max_speed * 3.6, kmch);
+            String averageSpeedStr = String.format(Locale.US, "%.2f %s", mSummaryRecord.average_speed * 3.6, kmch);
+            String maxAltitudeStr = String.format(Locale.US, "%d %s", mSummaryRecord.max_altitude, m);
+            String upAltitude = String.format(Locale.US, "%d %s", mSummaryRecord.up_altitude, m);
+            String downAltitude = String.format(Locale.US, "%d %s", mSummaryRecord.down_altitude, m);
 
             mTotalTimeTv.setText(mTrainingDuration);
             mDistanceTv.setText(distanceStr);
