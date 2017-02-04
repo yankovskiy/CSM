@@ -203,6 +203,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                         if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
                             startTrainingFinishActivity(recordId);
                         } else {
+                            removeTraining(recordId);
                             resetData();
                             showLowQualityTrainingDialog();
                         }
