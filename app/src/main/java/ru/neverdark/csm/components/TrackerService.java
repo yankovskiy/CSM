@@ -209,7 +209,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                     Log.v(TAG, String.format(Locale.US, "startLocationUpdates: %f,%f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
                     mGpsLog.saveData(mCurrentLocation, mTempRecordId);
                     mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-                    notifyUI();
+                    prepareDataAndNotifyUI();
                 }
             }
 
@@ -218,15 +218,18 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         }
     }
 
+    private void prepareDataAndNotifyUI() {
+        prepareData();
+        notifyUI();
+    }
+
     /**
      * Уведомляет UI о новых данных или сохраняет их на диск
      * В случае, если пользовательский интерфейс доступен - отсылается уведомление о новых данных с координатами
      * В противном случае данные сохраняются на диск, чтобы при перезапуске приложение сразу отобразило последние данные не дожидаясь изменений в сервисе
      */
     private void notifyUI() {
-        prepareData();
-
-        /* Если активити доступна пересылаем данные в него, иначе сохраняем в shared-prefs */
+    /* Если активити доступна пересылаем данные в него, иначе сохраняем в shared-prefs */
         if (mIsGUIRunning) {
             Log.v(TAG, "notifyUI: send data to activity");
             Intent intent = new Intent(TRACKER_SERVICE_REQUEST);
@@ -316,8 +319,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
                 mGpsLog.saveData(mCurrentLocation, mTempRecordId);
                 mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-                notifyUI();
+                prepareDataAndNotifyUI();
             }
+        } else {
+            // отсылка нулевой скорости без сохранения данных в базу
+            mData.speed = 0;
+            notifyUI();
         }
     }
 
