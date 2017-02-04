@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.db.SummaryTable;
@@ -63,7 +64,9 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         holder.mAverageSpeedTv.setText(String.format(Locale.US, "%.2f %s", record.average_speed * 3.6, mKmch));
         holder.mDistanceTv.setText(String.format(Locale.US, "%.3f %s", (float) record.distance / 1000, mKm));
         holder.mTotalTimeTv.setText(record.total_time);
-        holder.mFinishDate.setText(new SimpleDateFormat("EEE, dd.MM.yyyy", Locale.getDefault()).format(date));
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd.MM.yyyy", Locale.getDefault());
+        sdf.setTimeZone(TimeZone.getTimeZone(record.timezone));
+        holder.mFinishDate.setText(sdf.format(date));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

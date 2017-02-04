@@ -27,7 +27,8 @@ class Schema {
                 "`down_distance`INTEGER," +
                 "`max_altitude`INTEGER," +
                 "`up_altitude` INTEGER," +
-                "`down_altitude` INTEGER" +
+                "`down_altitude` INTEGER," +
+                "`timezone` TEXT" +
                 ")";
 
         static final String DROP_GPSLOG = "DROP TABLE IF EXISTS `gpslog`";

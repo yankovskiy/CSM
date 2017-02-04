@@ -53,6 +53,7 @@ public class SummaryTable {
             int max_altitude = c.getColumnIndex(Entry.COLUMN_MAX_ALTITUDE);
             int up_altitude = c.getColumnIndex(Entry.COLUMN_UP_ALTITUDE);
             int down_altitude = c.getColumnIndex(Entry.COLUMN_DOWN_ALTITUDE);
+            int timezone = c.getColumnIndex(Entry.COLUMN_TIMEZONE);
             do {
                 Record record = new Record(
                         c.getLong(id),
@@ -67,7 +68,8 @@ public class SummaryTable {
                         c.getInt(down_distance),
                         c.getInt(max_altitude),
                         c.getInt(up_altitude),
-                        c.getInt(down_altitude)
+                        c.getInt(down_altitude),
+                        c.getString(timezone)
                 );
                 records.add(record);
             } while (c.moveToNext());
@@ -97,11 +99,12 @@ public class SummaryTable {
         values.put(Entry.COLUMN_MAX_ALTITUDE, data.max_altitude);
         values.put(Entry.COLUMN_UP_ALTITUDE, data.up_altitude);
         values.put(Entry.COLUMN_DOWN_ALTITUDE, data.down_altitude);
+        values.put(Entry.COLUMN_TIMEZONE, data.timezone);
         mDb.update(Entry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     public static class Record {
-        public Record(long _id, long finish_date, String description, boolean is_commited, int distance, String total_time, float average_speed, float max_speed, int up_distance, int down_distance, int max_altitude, int up_altitude, int down_altitude) {
+        public Record(long _id, long finish_date, String description, boolean is_commited, int distance, String total_time, float average_speed, float max_speed, int up_distance, int down_distance, int max_altitude, int up_altitude, int down_altitude, String timezone) {
             this._id = _id;
             this.finish_date = finish_date;
             this.description = description;
@@ -115,6 +118,7 @@ public class SummaryTable {
             this.max_altitude = max_altitude;
             this.up_altitude = up_altitude;
             this.down_altitude = down_altitude;
+            this.timezone = timezone;
         }
 
         public Record() {
@@ -134,6 +138,7 @@ public class SummaryTable {
         public int max_altitude;
         public int up_altitude;
         public int down_altitude;
+        public String timezone;
     }
 
     public static class Entry implements BaseColumns {
@@ -150,6 +155,7 @@ public class SummaryTable {
         public static final String COLUMN_MAX_ALTITUDE = "max_altitude";
         public static final String COLUMN_UP_ALTITUDE = "up_altitude"; // набор высоты
         public static final String COLUMN_DOWN_ALTITUDE = "down_altitude"; // потеря высоты
+        public static final String COLUMN_TIMEZONE = "timezone";
 
         public static final String[] COLUMN_ALL = {
                 _ID,
@@ -164,6 +170,8 @@ public class SummaryTable {
                 COLUMN_DOWN_DISTANCE,
                 COLUMN_MAX_ALTITUDE,
                 COLUMN_UP_ALTITUDE,
-                COLUMN_DOWN_ALTITUDE};
+                COLUMN_DOWN_ALTITUDE,
+                COLUMN_TIMEZONE
+        };
     }
 }

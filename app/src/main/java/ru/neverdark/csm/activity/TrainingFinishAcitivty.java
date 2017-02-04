@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.data.GPSData;
@@ -98,7 +99,8 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 Math.round(data.down_distance),
                 Math.round(data.max_altitude),
                 Math.round(data.up_altitude),
-                Math.round(data.down_altitude)
+                Math.round(data.down_altitude),
+                TimeZone.getDefault().getID()
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
