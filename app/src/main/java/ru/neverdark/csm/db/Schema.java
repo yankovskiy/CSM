@@ -11,6 +11,7 @@ class Schema {
                 "`speed`REAL," +
                 "`accuracy`REAL," +
                 "`timestamp`INTEGER," +
+                "`distance` REAL," +
                 "FOREIGN KEY(train_id) REFERENCES summary(_id) ON DELETE CASCADE" +
                 ")";
 

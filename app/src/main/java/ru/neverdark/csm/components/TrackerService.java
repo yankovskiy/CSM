@@ -207,7 +207,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                 if (mCurrentLocation != null) {
                     Log.v(TAG, String.format(Locale.US, "startLocationUpdates: %f,%f", mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
-                    mGpsLog.saveData(mCurrentLocation, mTempRecordId);
+                    mGpsLog.saveData(mCurrentLocation, 0, mTempRecordId);
                     mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
                     prepareDataAndNotifyUI();
                 }
@@ -317,7 +317,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                     mPreviousLocation.getLatitude() != mCurrentLocation.getLatitude() &&
                     mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
 
-                mGpsLog.saveData(mCurrentLocation, mTempRecordId);
+                double distance = mPreviousLocation.distanceTo(mCurrentLocation);
+                mGpsLog.saveData(mCurrentLocation, distance, mTempRecordId);
                 mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
                 prepareDataAndNotifyUI();
             }

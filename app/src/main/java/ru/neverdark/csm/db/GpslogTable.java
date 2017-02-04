@@ -13,7 +13,7 @@ public class GpslogTable {
         mDb = database;
     }
 
-    public void saveData(Location location, long trainingId) {
+    public void saveData(Location location, double distance, long trainingId) {
         long timestamp = System.currentTimeMillis();
         ContentValues values = new ContentValues();
         values.put(Entry.COLUMN_TRAINING_ID, trainingId);
@@ -23,7 +23,7 @@ public class GpslogTable {
         values.put(Entry.COLUMN_LONGITUDE, location.getLongitude());
         values.put(Entry.COLUMN_SPEED, location.getSpeed());
         values.put(Entry.COLUMN_ACCURACY, location.getAccuracy());
-
+        values.put(Entry.COLUMN_DISTANCE, distance);
         mDb.insert(Entry.TABLE_NAME, null, values);
     }
 
@@ -44,5 +44,6 @@ public class GpslogTable {
         public static final String COLUMN_TIMESTAMP = "timestamp";
         public static final String COLUMN_TRAINING_ID = "train_id";
         public static final String COLUMN_ACCURACY = "accuracy";
+        public static final String COLUMN_DISTANCE = "distance";
     }
 }
