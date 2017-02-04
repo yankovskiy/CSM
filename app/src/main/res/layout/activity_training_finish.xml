@@ -23,13 +23,4 @@
 
     <include layout="@layout/content_training_finish_acitivty" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/training_done_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/fab_done_training"
-        android:onClick="onButtonClick" />
-
 </android.support.design.widget.CoordinatorLayout>

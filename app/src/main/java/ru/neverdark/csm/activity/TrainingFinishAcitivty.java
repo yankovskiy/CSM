@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -52,8 +54,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private GPSData mData;
     private long mTrainingId;
 
-    private ScrollView mScrollView;
-
     private TextView mDistanceTv;
     private TextView mTotalTimeTv;
     private TextView mMaxSpeedTv;
@@ -67,7 +67,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private LatLngBounds mBounds;
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
-    private FloatingActionButton mFabDone;
     private SummaryTable.Record mSummaryRecord;
     private String mTrainingDuration;
 
@@ -114,21 +113,14 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         new CollectSummaryTask().execute(mTrainingId);
     }
 
-    private void bindObjects() {
-        mFabDone = (FloatingActionButton) findViewById(R.id.training_done_button);
-        mScrollView = (ScrollView) findViewById(R.id.content_training_finish_acitivty);
-        mScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                Log.v(TAG, "onScrollChanged: " + mScrollView.getScrollY());
-                if (mScrollView.getScrollY() == 0 && mFabDone.getVisibility() == View.GONE) {
-                    mFabDone.show();
-                } else if (mScrollView.getScrollY() > 20 && mFabDone.getVisibility() == View.VISIBLE) {
-                    mFabDone.hide();
-                }
-            }
-        });
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.finish, menu);
+        return true;
+    }
 
+    private void bindObjects() {
         mDistanceTv = (TextView) findViewById(R.id.distance_value);
         mTotalTimeTv = (TextView) findViewById(R.id.total_time_value);
         mAverageSpeedTv = (TextView) findViewById(R.id.average_speed_value);
@@ -138,13 +130,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mDescriptionEd = (EditText) findViewById(R.id.description);
         mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
-
-    }
-
-    public void onButtonClick(View view) {
-        if (view.getId() == R.id.training_done_button) {
-            saveTrainingResult();
-        }
     }
 
     private void saveTrainingResult() {
@@ -173,9 +158,10 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         if (id == android.R.id.home) {
             handleCancelAction();
             return true;
+        } else if (id == R.id.action_save_training) {
+            saveTrainingResult();
+            return true;
         } else {
-
-
             return super.onOptionsItemSelected(item);
         }
     }

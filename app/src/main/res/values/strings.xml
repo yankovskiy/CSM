@@ -59,4 +59,5 @@
     <string name="m">м</string>
     <string name="km">км</string>
     <string name="kmch">км/ч</string>
+    <string name="save">Сохранить</string>
 </resources>
