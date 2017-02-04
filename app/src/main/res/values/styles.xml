@@ -15,6 +15,31 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- Блок стилей для карточки в статистике -->
+    <style name="AbsStatCardField">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColor">@color/textColorSecondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="AbsStatCardField.Left">
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="AbsStatCardField.Right">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_marginRight">16dp</item>
+    </style>
+
+    <style name="LeftStatCardField" parent="AbsStatCardField.Left" />
+    <style name="RightStatCardField" parent="AbsStatCardField.Right" />
+
+    <!-- Блок стилей для окна завершения тренировки -->
     <style name="MainStatField">
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginLeft">16dp</item>
@@ -27,7 +52,7 @@
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
-    <style name="StatField" parent="MainStatField"/>
+    <style name="StatField" parent="MainStatField" />
 
     <style name="MainStatFieldValue">
         <item name="android:layout_marginRight">16dp</item>
@@ -40,6 +65,7 @@
 
     <style name="StatFieldValue" parent="MainStatFieldValue" />
 
+    <!-- Блок стилей для вкладок -->
     <style name="AbsTabButtonBase">
         <item name="android:background">@color/colorAccent</item>
         <item name="android:layout_width">wrap_content</item>
@@ -48,7 +74,7 @@
         <item name="android:layout_centerInParent">true</item>
     </style>
 
-    <style name="AbsTabButton" parent="AbsTabButtonBase"/>
+    <style name="AbsTabButton" parent="AbsTabButtonBase" />
 
     <style name="AbsTabButton.Next">
         <item name="android:src">@drawable/ic_next_tab</item>
@@ -60,6 +86,7 @@
         <item name="android:layout_alignParentLeft">true</item>
     </style>
 
-    <style name="NextTabButton" parent="AbsTabButton.Next"/>
-    <style name="PrevTabButton" parent="AbsTabButton.Prev"/>
+    <style name="NextTabButton" parent="AbsTabButton.Next" />
+
+    <style name="PrevTabButton" parent="AbsTabButton.Prev" />
 </resources>

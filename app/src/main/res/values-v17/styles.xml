@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-        <style name="StatField" parent="MainStatField">
-                <item name="android:layout_alignParentStart">true</item>
-                <item name="android:layout_marginStart">16dp</item>
-        </style>
 
-        <style name="StatFieldValue" parent="MainStatFieldValue">
-                <item name="android:layout_marginEnd">16dp</item>
-                <item name="android:layout_alignParentEnd">true</item>
-        </style>
+    <style name="StatField" parent="MainStatField">
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_marginStart">16dp</item>
+    </style>
 
-        <style name="NextTabButton" parent="AbsTabButton.Next">
-                <item name="android:layout_alignParentEnd">true</item>
-        </style>
+    <style name="StatFieldValue" parent="MainStatFieldValue">
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_alignParentEnd">true</item>
+    </style>
 
-        <style name="PrevTabButton" parent="AbsTabButton.Prev">
-                <item name="android:layout_alignParentStart">true</item>
-        </style>
+    <style name="NextTabButton" parent="AbsTabButton.Next">
+        <item name="android:layout_alignParentEnd">true</item>
+    </style>
+
+    <style name="PrevTabButton" parent="AbsTabButton.Prev">
+        <item name="android:layout_alignParentStart">true</item>
+    </style>
+
+    <style name="LeftStatCardField" parent="AbsStatCardField.Left">
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_marginStart">16dp</item>
+    </style>
+
+    <style name="RightStatCardField" parent="AbsStatCardField.Right">
+        <item name="android:layout_alignParentEnd">true</item>
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
 </resources>

@@ -4,82 +4,56 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/distance"
+            style="@style/LeftStatCardField"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16dp"
+            android:drawableLeft="@drawable/ic_distance"
+            android:drawableStart="@drawable/ic_distance"
+            android:text="10 км 250 м" />
+
+        <TextView
+            android:id="@+id/finish_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="Чт, 28.12.2017"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/map_snapshot"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="140dp"
+            android:layout_below="@+id/distance"
+            android:layout_marginTop="8dp" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        <TextView
+            style="@style/RightStatCardField"
+            android:id="@+id/duration"
+            android:layout_below="@+id/map_snapshot"
+            android:drawableLeft="@drawable/ic_duration"
+            android:drawableStart="@drawable/ic_duration"
+            android:text="00:15:00" />
 
-            <TextView
-                android:id="@+id/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:text="24km"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16sp" />
+        <TextView
+            style="@style/LeftStatCardField"
+            android:id="@+id/average_speed"
+            android:layout_below="@id/map_snapshot"
+            android:drawableLeft="@drawable/ic_avgspeed"
+            android:drawableStart="@drawable/ic_avgspeed"
+            android:text="12,5 км/ч" />
 
-            <TextView
-                android:id="@+id/total_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/distance"
-                android:layout_marginTop="8dp"
-                android:text="00:30:00.000"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-            <TextView
-                android:id="@+id/average_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="24,3km/ч"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/average_speed_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/average_speed"
-                android:layout_alignStart="@+id/average_speed"
-                android:layout_below="@+id/average_speed"
-                android:layout_marginTop="8dp"
-                android:text="Ср.скорость"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-            <TextView
-                android:id="@+id/finish_date_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/finish_date"
-                android:layout_alignStart="@+id/finish_date"
-                android:layout_centerVertical="true"
-                android:text="23:00:12"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@id/finish_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/finish_date_time"
-                android:layout_marginTop="8dp"
-                android:text="Ср, 18.05.1985"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-        </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 </android.support.v7.widget.CardView>

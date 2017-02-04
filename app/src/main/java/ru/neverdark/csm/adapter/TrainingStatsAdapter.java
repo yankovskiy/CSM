@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +26,8 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
     private final List<SummaryTable.Record> mValues;
     private final OnListInteractionListener mListener;
     private final Context mContext;
+    private final String mKmch;
+    private final String mKm;
 
     public void insertItem(SummaryTable.Record item, int position) {
         mValues.add(position, item);
@@ -43,6 +43,8 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         mValues = items;
         mListener = listener;
         mContext = context;
+        mKmch = mContext.getString(R.string.kmch);
+        mKm = mContext.getString(R.string.km);
     }
 
     @Override
@@ -58,11 +60,10 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         holder.mItem = record;
 
         Date date = new Date(record.finish_date);
-        holder.mAverageSpeedTv.setText(String.format(Locale.US, "%.2f", record.average_speed * 3.6));
-        holder.mDistanceTv.setText(String.format(Locale.US, "%d km %d m", record.distance / 1000, record.distance % 1000));
+        holder.mAverageSpeedTv.setText(String.format(Locale.US, "%.2f %s", record.average_speed * 3.6, mKmch));
+        holder.mDistanceTv.setText(String.format(Locale.US, "%.3f %s", (float) record.distance / 1000, mKm));
         holder.mTotalTimeTv.setText(record.total_time);
-        holder.mFinishDateTimeTv.setText(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date));
-        holder.mFinishDate.setText(new SimpleDateFormat("EEE, MMM d, ''yy", Locale.getDefault()).format(date));
+        holder.mFinishDate.setText(new SimpleDateFormat("EEE, dd.MM.yyyy", Locale.getDefault()).format(date));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,23 +98,21 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         mListener.onRemoveItem(record, position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        private final View mView;
         private final TextView mDistanceTv;
         private final TextView mTotalTimeTv;
         private final TextView mAverageSpeedTv;
-        private final TextView mFinishDateTimeTv;
         private final TextView mFinishDate;
         private final ImageView mMapSnapshot;
-        public SummaryTable.Record mItem;
+        private SummaryTable.Record mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mDistanceTv = (TextView) view.findViewById(R.id.distance);
-            mTotalTimeTv = (TextView) view.findViewById(R.id.total_time);
+            mTotalTimeTv = (TextView) view.findViewById(R.id.duration);
             mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed);
-            mFinishDateTimeTv = (TextView) view.findViewById(R.id.finish_date_time);
             mFinishDate = (TextView) view.findViewById(R.id.finish_date);
             mMapSnapshot = (ImageView) view.findViewById(R.id.map_snapshot);
         }
@@ -124,30 +123,30 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         }
     }
 
-    private class AsyncSnapshotLoad extends AsyncTask<ViewHolder, Void, Void>{
+    private class AsyncSnapshotLoad extends AsyncTask<ViewHolder, Void, Bitmap>{
         private ViewHolder mHolder;
-        private Bitmap mSnapshot;
 
         @Override
-        protected Void doInBackground(ViewHolder... viewHolders) {
+        protected Bitmap doInBackground(ViewHolder... viewHolders) {
+            Bitmap snapshot = null;
             mHolder = viewHolders[0];
             String filename = Utils.getSnapshotNameById(mHolder.mItem._id);
 
             try {
                 FileInputStream inputStream = mContext.openFileInput(filename);
-                mSnapshot = BitmapFactory.decodeStream(inputStream);
+                snapshot = BitmapFactory.decodeStream(inputStream);
                 inputStream.close();
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return snapshot;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            if (mSnapshot != null) {
-                mHolder.mMapSnapshot.setImageBitmap(mSnapshot);
+        protected void onPostExecute(Bitmap snapshot) {
+            if (snapshot != null) {
+                mHolder.mMapSnapshot.setImageBitmap(snapshot);
             }
         }
     }
