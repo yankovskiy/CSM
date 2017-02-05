@@ -57,52 +57,12 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <RelativeLayout
+    <ru.neverdark.widgets.Compass
+        android:id="@+id/compass"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/compass_ext"
-        android:src="@drawable/compass_ext"
-        android:layout_centerInParent="true"
-        android:layout_width="260dp"
-        android:layout_height="260dp" />
-
-    <ImageView
-        android:id="@+id/compass_int"
-        android:src="@drawable/compass_int"
-        android:layout_centerInParent="true"
-        android:layout_width="125dp"
-        android:layout_height="125dp" />
-
-        <LinearLayout
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        <TextView
-            android:textSize="20sp"
-            android:id="@+id/direction"
-            android:textColor="@color/textColorPrimary"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-            <View
-                android:background="@color/colorAccent"
-                android:layout_width="40dp"
-                android:layout_height="1dp"/>
-
-            <TextView
-                android:textColor="@color/textColorSecondary"
-                android:id="@+id/deegres"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-    </RelativeLayout>
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

@@ -1,24 +1,23 @@
-package ru.neverdark.csm.components;
+package ru.neverdark.widgets;
 
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.Locale;
 
-import ru.neverdark.csm.R;
-
-/**
- * Based on the compass (https://github.com/iutinvg/compass) by Viacheslav Iutin
- */
-public class Compass implements SensorEventListener {
+public class Compass extends RelativeLayout implements SensorEventListener {
     private static final String TAG = "Compass";
 
     private SensorManager mSensorManager;
@@ -28,57 +27,43 @@ public class Compass implements SensorEventListener {
     private float[] mGeomagnetic = new float[3];
     private float mAzimuth = 0f;
     private float mCurrectAzimuth = 0f;
-    private View mArrowView = null;
+    private View mArrowView;
     private boolean mIsStarted;
     private TextView mDeegres;
     private TextView mDirection;
 
     public Compass(Context context) {
+        super(context);
+        init();
+    }
+
+    public Compass(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public Compass(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public Compass(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
+    private void init() {
+        Context context = getContext();
         mSensorManager = (SensorManager) context
                 .getSystemService(Context.SENSOR_SERVICE);
         mGsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMFsensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-    }
 
-    public void start() {
-        if (mArrowView == null) {
-            throw new NullPointerException("arrow view is not set");
-        }
-
-        if (mDeegres == null) {
-            throw new NullPointerException("Deegres TextView is not set");
-        }
-
-        if (mDirection == null) {
-            throw new NullPointerException("Direction TextView is not set");
-        }
-
-        mSensorManager.registerListener(this, mGsensor,
-                SensorManager.SENSOR_DELAY_GAME);
-        mSensorManager.registerListener(this, mMFsensor,
-                SensorManager.SENSOR_DELAY_GAME);
-        mIsStarted = true;
-    }
-
-    public void stop() {
-        mSensorManager.unregisterListener(this);
-        mIsStarted = false;
-    }
-
-    public boolean isStarted() {
-        return mIsStarted;
-    }
-
-    public void setDeegresTv(TextView tv) {
-        mDeegres = tv;
-    }
-
-    public void setDirectionTv(TextView tv) {
-        mDirection = tv;
-    }
-
-    public void setArrowView(View arrowView) {
-        mArrowView = arrowView;
+        inflate(context, R.layout.compass, this);
+        mArrowView = findViewById(R.id.compass_ext);
+        mDeegres = (TextView) findViewById(R.id.deegres);
+        mDirection = (TextView) findViewById(R.id.direction);
     }
 
     private void adjustArrow() {
@@ -185,5 +170,23 @@ public class Compass implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
+
+    public void stop() {
+        mSensorManager.unregisterListener(this);
+        mIsStarted = false;
+    }
+
+    public boolean isStarted() {
+        return mIsStarted;
+    }
+
+    public void start() {
+        mSensorManager.registerListener(this, mGsensor, SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(this, mMFsensor, SensorManager.SENSOR_DELAY_GAME);
+        mIsStarted = true;
+    }
+
+
 }
