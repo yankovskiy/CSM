@@ -37,6 +37,7 @@
     </style>
 
     <style name="LeftStatCardField" parent="AbsStatCardField.Left" />
+
     <style name="RightStatCardField" parent="AbsStatCardField.Right" />
 
     <!-- Блок стилей для окна завершения тренировки -->

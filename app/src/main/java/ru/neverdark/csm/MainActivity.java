@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -33,8 +32,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.List;
-import java.util.Locale;
 
+import ru.neverdark.csm.activity.SettingsActivity;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
@@ -155,10 +154,17 @@ public class MainActivity extends AppCompatActivity
 
             } else if (id == R.id.nav_backup_db) {
                 backupDatabase();
+            } else if (id == R.id.nav_settings) {
+                openSettings();
             }
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     private void backupDatabase() {
