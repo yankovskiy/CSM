@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CSM</string>
+    <string name="app_name">Orendis</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -29,7 +29,8 @@
     <string name="compass">Компас</string>
     <string name="zero" translatable="false">0</string>
     <string name="total_time">Время</string>
-    <string name="finish_date">Завершена</string>
+    <string name="date">Дата</string>
+    <string name="finish_time">Завершена</string>
     <string name="up_altitude">Набор высоты</string>
     <string name="down_altitude">Потеря высоты</string>
     <string name="stats">Статистика</string>
@@ -52,4 +53,17 @@
     <string name="km">км</string>
     <string name="kmch">км/ч</string>
     <string name="save">Сохранить</string>
+    <string name="title_activity_stats_view">StatsViewActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="start">Старт</string>
+    <string name="finish">Финиш</string>
+    <string name="export">Экспорт</string>
+    <string name="export_to_gpx">Трек в формате GPX</string>
+    <string name="export_to_kml">Трек в формате KML</string>
+    <string name="to_up">На подъем</string>
+    <string name="to_down">На спуск</string>
+    <string name="to_plain">Равнина</string>
 </resources>

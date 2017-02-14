@@ -55,7 +55,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mMaxSpeedTv;
     private TextView mAverageSpeedTv;
     private TextView mMaxAltitudeTv;
-    private TextView mFinishDateTv;
+    private TextView mFinishTimeTv;
     private EditText mDescriptionEd;
 
     private long mFinishDateInMillis;
@@ -123,7 +123,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mAverageSpeedTv = (TextView) findViewById(R.id.average_speed_value);
         mMaxSpeedTv = (TextView) findViewById(R.id.max_speed_value);
         mMaxAltitudeTv = (TextView) findViewById(R.id.max_altitude_value);
-        mFinishDateTv = (TextView) findViewById(R.id.finish_date_value);
+        mFinishTimeTv = (TextView) findViewById(R.id.finish_time_value);
         mDescriptionEd = (EditText) findViewById(R.id.description);
         mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
@@ -243,7 +243,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             mMaxAltitudeTv.setText(maxAltitudeStr);
             mUpAltitudeTv.setText(upAltitude);
             mDownAltitudeTv.setText(downAltitude);
-            mFinishDateTv.setText(finishDateStr);
+            mFinishTimeTv.setText(finishDateStr);
 
             mSummaryRecord.description = mDescriptionEd.getText().toString();
 

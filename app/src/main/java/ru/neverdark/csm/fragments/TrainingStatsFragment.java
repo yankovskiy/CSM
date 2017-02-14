@@ -1,6 +1,7 @@
 package ru.neverdark.csm.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
@@ -19,10 +20,12 @@ import java.util.List;
 import java.util.Locale;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.activity.StatsViewActivity;
 import ru.neverdark.csm.adapter.TrainingStatsAdapter;
 import ru.neverdark.csm.adapter.TrainingStatsItemTouchHelperCallback;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.SummaryTable;
+import ru.neverdark.csm.utils.Constants;
 import ru.neverdark.csm.utils.Utils;
 
 public class TrainingStatsFragment extends Fragment implements TrainingStatsAdapter.OnListInteractionListener {
@@ -43,9 +46,16 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
         return fragment;
     }
 
+
+    private static final String TAG = "TrainingStatsFragment";
+    private static final String FRAGMENT_PATH = Constants.PACKAGE_NAME + "." + TAG;
+    public static final String STATS_DATA = FRAGMENT_PATH + ".STATS_DATA";
+
     @Override
     public void onClickItem(SummaryTable.Record item) {
-
+        Intent intent = new Intent(getContext(), StatsViewActivity.class);
+        intent.putExtra(STATS_DATA, item);
+        startActivity(intent);
     }
 
     @Override

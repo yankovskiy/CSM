@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class SummaryTable {
             int up_altitude = c.getColumnIndex(Entry.COLUMN_UP_ALTITUDE);
             int down_altitude = c.getColumnIndex(Entry.COLUMN_DOWN_ALTITUDE);
             int timezone = c.getColumnIndex(Entry.COLUMN_TIMEZONE);
+
             do {
                 Record record = new Record(
                         c.getLong(id),
@@ -103,7 +105,7 @@ public class SummaryTable {
         mDb.update(Entry.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    public static class Record {
+    public static class Record implements Serializable {
         public Record(long _id, long finish_date, String description, boolean is_commited, int distance, String total_time, float average_speed, float max_speed, int up_distance, int down_distance, int max_altitude, int up_altitude, int down_altitude, String timezone) {
             this._id = _id;
             this.finish_date = finish_date;

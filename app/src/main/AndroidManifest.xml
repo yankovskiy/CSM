@@ -56,6 +56,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ru.neverdark.csm.MainActivity" />
         </activity>
+        <activity
+            android:name=".activity.StatsViewActivity"
+            android:label="@string/stats"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ru.neverdark.csm.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

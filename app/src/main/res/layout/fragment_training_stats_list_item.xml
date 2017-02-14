@@ -19,7 +19,7 @@
             android:text="10 км 250 м" />
 
         <TextView
-            android:id="@+id/finish_date"
+            android:id="@+id/finish_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"

@@ -34,6 +34,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import ru.neverdark.csm.activity.SettingsActivity;
+import ru.neverdark.csm.activity.StatsViewActivity;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="@string/export" app:showAsAction="never" android:orderInCategory="10">
+        <menu>
+            <item android:title="@string/export_to_gpx" android:id="@+id/action_export_gpx"/>
+            <item android:title="@string/export_to_kml" android:id="@+id/action_export_kml"/>
+        </menu>
+    </item>
+
+</menu>

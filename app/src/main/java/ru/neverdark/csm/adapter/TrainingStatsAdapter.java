@@ -116,7 +116,7 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
             mDistanceTv = (TextView) view.findViewById(R.id.distance);
             mTotalTimeTv = (TextView) view.findViewById(R.id.duration);
             mAverageSpeedTv = (TextView) view.findViewById(R.id.average_speed);
-            mFinishDate = (TextView) view.findViewById(R.id.finish_date);
+            mFinishDate = (TextView) view.findViewById(R.id.finish_time);
             mMapSnapshot = (ImageView) view.findViewById(R.id.map_snapshot);
         }
 
