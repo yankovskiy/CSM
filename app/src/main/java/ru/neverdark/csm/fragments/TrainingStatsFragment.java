@@ -10,6 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -99,8 +101,14 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.list);
         mProgressBar = (ProgressBar) mView.findViewById(R.id.progressBar);
         asyncLoadData();
-
+        setHasOptionsMenu(true);
         return mView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 
     private void asyncLoadData() {
