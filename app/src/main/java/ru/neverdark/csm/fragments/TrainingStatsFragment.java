@@ -101,6 +101,7 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.list);
         mProgressBar = (ProgressBar) mView.findViewById(R.id.progressBar);
         asyncLoadData();
+        getActivity().setTitle(R.string.stats);
         setHasOptionsMenu(true);
         return mView;
     }
