@@ -257,9 +257,11 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
             if (mPreviousLocation.getAltitude() < mData.altitude) {
                 mData.up_distance += distance;
                 mData.up_altitude += mData.altitude - mPreviousLocation.getAltitude();
+                mData.ascend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
+                mData.descend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
             }
 
             Log.v(TAG, "prepareData: " + mData.up_altitude);

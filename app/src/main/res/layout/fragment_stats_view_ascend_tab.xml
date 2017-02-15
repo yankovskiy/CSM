@@ -5,6 +5,7 @@
     android:padding="8dp">
 
     <android.support.v7.widget.CardView
+        android:id="@+id/distance_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -37,7 +38,7 @@
                 android:layout_height="wrap_content">
 
                 <lecho.lib.hellocharts.view.PieChartView
-                    android:id="@+id/chart"
+                    android:id="@+id/distance_chart"
                     android:layout_centerVertical="true"
                     android:layout_width="100dp"
                     android:layout_height="100dp" />
@@ -46,11 +47,11 @@
                     android:id="@+id/up_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/chart"
+                    android:layout_alignTop="@+id/distance_chart"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
-                    android:layout_toEndOf="@+id/chart"
-                    android:layout_toRightOf="@+id/chart"
+                    android:layout_toEndOf="@+id/distance_chart"
+                    android:layout_toRightOf="@+id/distance_chart"
                     app:color="@color/orange_400"
                     app:title="@string/to_up" />
 
@@ -72,6 +73,84 @@
                     android:layout_alignLeft="@+id/up_distance"
                     android:layout_alignStart="@+id/up_distance"
                     android:layout_below="@+id/down_distance"
+                    android:layout_marginTop="8dp"
+                    app:color="@color/blue_400"
+                    app:title="@string/to_plain" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/time_card"
+        android:layout_below="@+id/distance_card"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="@string/total_time"
+                android:textAllCaps="true"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/delemiter2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/time"
+                android:background="@color/textColorHints" />
+
+            <RelativeLayout
+                android:padding="8dp"
+                android:layout_below="@+id/delemiter2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <lecho.lib.hellocharts.view.PieChartView
+                    android:id="@+id/time_chart"
+                    android:layout_centerVertical="true"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
+
+                <ru.neverdark.widgets.Legend
+                    android:id="@+id/ascend_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/time_chart"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_toEndOf="@+id/time_chart"
+                    android:layout_toRightOf="@+id/time_chart"
+                    app:color="@color/orange_400"
+                    app:title="@string/to_up" />
+
+                <ru.neverdark.widgets.Legend
+                    android:id="@+id/descend_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/ascend_time"
+                    android:layout_alignStart="@+id/ascend_time"
+                    android:layout_below="@+id/ascend_time"
+                    android:layout_marginTop="8dp"
+                    app:color="@color/light_green_400"
+                    app:title="@string/to_down" />
+
+                <ru.neverdark.widgets.Legend
+                    android:id="@+id/plain_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/descend_time"
+                    android:layout_alignStart="@+id/descend_time"
+                    android:layout_below="@+id/descend_time"
                     android:layout_marginTop="8dp"
                     app:color="@color/blue_400"
                     app:title="@string/to_plain" />

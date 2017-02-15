@@ -19,6 +19,7 @@ import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.db.SummaryTable;
+import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Legend;
 
 /**
@@ -47,6 +48,53 @@ public class StatsViewAscendTabFragment extends Fragment {
         int blue = ContextCompat.getColor(context, R.color.blue_400);
         int orange = ContextCompat.getColor(context, R.color.orange_400);
 
+        initDistanceChart(view, green, blue, orange);
+        initTimeChart(view, green, blue, orange);
+
+        return view;
+    }
+
+    private void initTimeChart(View view, int green, int blue, int orange) {
+        float ascendTime = mSummaryRecord.ascend_time;
+        float descendTime = mSummaryRecord.descend_time;
+        float plainTime = mSummaryRecord.plain_time;
+        float totalTime = mSummaryRecord.ascend_time + mSummaryRecord.descend_time + mSummaryRecord.plain_time;
+
+        List<SliceValue> values = new ArrayList<>();
+        values.add(new SliceValue(ascendTime, orange));
+        values.add(new SliceValue(descendTime, green));
+        values.add(new SliceValue(plainTime, blue));
+
+        PieChartData data = new PieChartData(values);
+
+        PieChartView distanceChart = (PieChartView) view.findViewById(R.id.time_chart);
+        distanceChart.setChartRotationEnabled(false);
+        distanceChart.setValueTouchEnabled(false);
+        distanceChart.setPieChartData(data);
+
+        Legend ascendTimeLegend = (Legend) view.findViewById(R.id.ascend_time);
+        Legend descendTimeLegend = (Legend) view.findViewById(R.id.descend_time);
+        Legend plainTimeLegend = (Legend) view.findViewById(R.id.plain_time);
+
+        String ascendTimePercent = String.format(Locale.US, "%.2f%%", ascendTime / totalTime * 100);
+        String descendTimePercent = String.format(Locale.US, "%.2f%%", descendTime / totalTime * 100);
+        String plainTimePercent = String.format(Locale.US, "%.2f%%", plainTime / totalTime * 100);
+
+        String fmtAscendTime = Utils.convertMillisToTime(mSummaryRecord.ascend_time);
+        String fmtDescendTime = Utils.convertMillisToTime(mSummaryRecord.descend_time);
+        String fmtPlainDistance = Utils.convertMillisToTime(mSummaryRecord.plain_time);
+
+        ascendTimeLegend.setValue(fmtAscendTime);
+        ascendTimeLegend.setPercents(ascendTimePercent);
+
+        descendTimeLegend.setValue(fmtDescendTime);
+        descendTimeLegend.setPercents(descendTimePercent);
+
+        plainTimeLegend.setValue(fmtPlainDistance);
+        plainTimeLegend.setPercents(plainTimePercent);
+    }
+
+    private void initDistanceChart(View view, int green, int blue, int orange) {
         float upDistance = mSummaryRecord.up_distance;
         float downDistance = mSummaryRecord.down_distance;
         float plainDistance = mSummaryRecord.distance - mSummaryRecord.up_distance - mSummaryRecord.down_distance;
@@ -59,10 +107,10 @@ public class StatsViewAscendTabFragment extends Fragment {
 
         PieChartData data = new PieChartData(values);
 
-        PieChartView chart = (PieChartView) view.findViewById(R.id.chart);
-        chart.setChartRotationEnabled(false);
-        chart.setValueTouchEnabled(false);
-        chart.setPieChartData(data);
+        PieChartView distanceChart = (PieChartView) view.findViewById(R.id.distance_chart);
+        distanceChart.setChartRotationEnabled(false);
+        distanceChart.setValueTouchEnabled(false);
+        distanceChart.setPieChartData(data);
 
         Legend upLegend = (Legend) view.findViewById(R.id.up_distance);
         Legend downLegend = (Legend) view.findViewById(R.id.down_distance);
@@ -76,10 +124,6 @@ public class StatsViewAscendTabFragment extends Fragment {
         String fmtDownDistance = getFormattedDistance((int) downDistance);
         String fmtPlainDistance = getFormattedDistance((int) plainDistance);
 
-        Log.v(TAG, "onCreateView: up% = " + upPercent);
-        Log.v(TAG, "onCreateView: down% = " + downPercent);
-        Log.v(TAG, "onCreateView: plain% = " + plainPercent);
-
         upLegend.setValue(fmtUpDistance);
         upLegend.setPercents(upPercent);
 
@@ -88,7 +132,6 @@ public class StatsViewAscendTabFragment extends Fragment {
 
         plainLegend.setValue(fmtPlainDistance);
         plainLegend.setPercents(plainPercent);
-        return view;
     }
 
     private String getFormattedDistance(int distance) {

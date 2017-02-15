@@ -40,4 +40,17 @@ public final class Utils {
     public static String getSnapshotNameById(long recordId) {
         return String.format(Locale.US, "trip-map-%d.png", recordId);
     }
+
+    /**
+     * Выполняет конвертацию миллисекунд в часы:минуты:секунды
+     * @param millis количество миллисекунд
+     * @return строка содержащая время в формате часы:минуты:секунды
+     */
+    public static String convertMillisToTime(long millis) {
+        int time = (int) (millis / 1000);
+        int seconds = time % 60;
+        int minutes = (time / 60) % 60;
+        int hours = time / (60 * 60);
+        return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
+    }
 }

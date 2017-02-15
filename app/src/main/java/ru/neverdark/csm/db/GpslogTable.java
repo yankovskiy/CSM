@@ -17,10 +17,9 @@ public class GpslogTable {
     }
 
     public void saveData(Location location, double distance, long trainingId) {
-        long timestamp = System.currentTimeMillis();
         ContentValues values = new ContentValues();
         values.put(Entry.COLUMN_TRAINING_ID, trainingId);
-        values.put(Entry.COLUMN_TIMESTAMP, timestamp);
+        values.put(Entry.COLUMN_TIMESTAMP, location.getTime());
         values.put(Entry.COLUMN_ALTITUDE, location.getAltitude());
         values.put(Entry.COLUMN_LATITUDE, location.getLatitude());
         values.put(Entry.COLUMN_LONGITUDE, location.getLongitude());
@@ -31,7 +30,7 @@ public class GpslogTable {
     }
 
     public Cursor getRecordsForTraining(long trainId) {
-        String[] projection = {Entry.COLUMN_LATITUDE, Entry.COLUMN_LONGITUDE};
+        String[] projection = {Entry.COLUMN_LATITUDE, Entry.COLUMN_LONGITUDE, Entry.COLUMN_TIMESTAMP};
         String selection = Entry.COLUMN_TRAINING_ID + " = ?";
         String[] selectionArgs = {String.valueOf(trainId)};
 

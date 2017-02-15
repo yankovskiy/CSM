@@ -65,6 +65,9 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mDownAltitudeTv;
     private SummaryTable.Record mSummaryRecord;
     private String mTrainingDuration;
+    private int mTotalTime;
+    private int mDescendTime;
+    private int mAscendTime;
 
 
     @Override
@@ -81,15 +84,20 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
 
         Log.v(TAG, "onCreate: " + String.valueOf(data == null));
 
+        mDescendTime = data.descend_time;
+        mAscendTime = data.ascend_time;
+
         mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
         mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
         mTrainingDuration = intent.getStringExtra(MainFragment.TRAINING_DURATION);
         Log.v(TAG, "onCreate: " + mTrainingDuration);
 
+        // готовим данные для добавления в базу. Поля обозначенные как null и 0 будут заполненны
+        // позже по завершению AsyncTask
         mSummaryRecord = new SummaryTable.Record(
                 mTrainingId,
                 mFinishDateInMillis,
-                null, // Заметка, установим позже
+                null, // заметка о тренировке
                 true,
                 Math.round(data.distance),
                 mTrainingDuration,
@@ -100,7 +108,10 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 Math.round(data.max_altitude),
                 Math.round(data.up_altitude),
                 Math.round(data.down_altitude),
-                TimeZone.getDefault().getID()
+                TimeZone.getDefault().getID(),
+                mAscendTime,
+                mDescendTime,
+                0    // время движения по равнине
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
@@ -201,20 +212,31 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             Cursor cursor = Db.getInstance(getApplicationContext()).getGpslogTable().getRecordsForTraining(trainingId[0]);
 
             cursor.moveToFirst();
+            int timestampIndex = cursor.getColumnIndex(GpslogTable.Entry.COLUMN_TIMESTAMP);
+            int latitudeIndex = cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LATITUDE);
+            int longitudeIndex = cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LONGITUDE);
+
+            long firstTime = cursor.getLong(timestampIndex);
+            long lastTime = 0;
+
             double latitude;
             double longitude;
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             rectOptions.color(Color.RED).width(4).geodesic(true);
             do {
-                latitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LATITUDE));
-                longitude = cursor.getDouble(cursor.getColumnIndex(GpslogTable.Entry.COLUMN_LONGITUDE));
+                latitude = cursor.getDouble(latitudeIndex);
+                longitude = cursor.getDouble(longitudeIndex);
                 LatLng latLng = new LatLng(latitude, longitude);
                 rectOptions.add(latLng);
                 builder.include(latLng);
+                if (cursor.isLast()) {
+                    lastTime = cursor.getLong(timestampIndex);
+                }
             } while (cursor.moveToNext());
             cursor.close();
             mBounds = builder.build();
 
+            mTotalTime = (int) (lastTime - firstTime);
             return null;
         }
 
@@ -246,6 +268,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             mFinishTimeTv.setText(finishDateStr);
 
             mSummaryRecord.description = mDescriptionEd.getText().toString();
+            mSummaryRecord.plain_time = (mTotalTime - mAscendTime - mDescendTime);
 
             if (mGoogleMap != null) {
                 mGoogleMap.addPolyline(rectOptions);
