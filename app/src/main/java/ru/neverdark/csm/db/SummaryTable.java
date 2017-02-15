@@ -65,7 +65,7 @@ public class SummaryTable {
                         c.getInt(distance),
                         c.getString(total_time),
                         c.getFloat(average_speed),
-                        c.getInt(max_speed),
+                        c.getFloat(max_speed),
                         c.getInt(up_distance),
                         c.getInt(down_distance),
                         c.getInt(max_altitude),
