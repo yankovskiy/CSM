@@ -4,6 +4,7 @@ package ru.neverdark.csm.fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -119,15 +121,26 @@ public class StatsViewMapTabFragment extends Fragment implements OnMapReadyCallb
         MarkerOptions startMarker = new MarkerOptions()
                 .position(mStartPoint)
                 .title(getString(R.string.start))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                .icon(getMarkerIcon(R.color.light_green_400));
         MarkerOptions finishMarker = new MarkerOptions()
                 .position(mFinishPoint)
                 .title(getString(R.string.finish))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                .icon(getMarkerIcon(R.color.orange_400));
         googleMap.addMarker(startMarker);
         googleMap.addMarker(finishMarker);
 
 
         mGoogleMap = googleMap;
+    }
+
+    /**
+     * Возвращает иконку маркера в нужном цветовом оттенке основывываясь на переданном цвете
+     * @param colorResId id цвета из ресурсов
+     * @return иконка для маркера
+     */
+    private BitmapDescriptor getMarkerIcon(int colorResId) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(ContextCompat.getColor(getContext(), colorResId), hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
     }
 }
