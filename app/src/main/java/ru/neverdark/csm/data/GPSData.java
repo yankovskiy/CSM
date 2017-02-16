@@ -49,6 +49,9 @@ public class GPSData implements Serializable{
         editor.putInt("ascend-time", ascend_time);
         editor.putInt("descend-time", descend_time);
         editor.putFloat("max-ascend-gradient", (float) max_ascend_gradient);
+        editor.putFloat("average-ascend-gradient", (float) average_ascend_gradient);
+        editor.putFloat("max-descend-gradient", (float) max_descend_gradient);
+        editor.putFloat("average-descend-gradient", (float) average_descend_gradient);
         editor.apply();
     }
 
@@ -72,6 +75,9 @@ public class GPSData implements Serializable{
         ascend_time = sharedPref.getInt("ascend-time", 0);
         descend_time = sharedPref.getInt("descend-time", 0);
         max_ascend_gradient = sharedPref.getFloat("max-ascend-gradient", 0);
+        average_ascend_gradient = sharedPref.getFloat("average-ascend-gradient", 0);
+        max_descend_gradient = sharedPref.getFloat("max-descend-gradient", 0);
+        average_descend_gradient = sharedPref.getFloat("average-descend-gradient", 0);
     }
 
     public void copyFrom(GPSData data) {
@@ -91,5 +97,8 @@ public class GPSData implements Serializable{
         ascend_time = data.ascend_time;
         descend_time = data.descend_time;
         max_ascend_gradient = data.max_ascend_gradient;
+        average_ascend_gradient = data.average_ascend_gradient;
+        max_descend_gradient = data.max_descend_gradient;
+        average_descend_gradient = data.average_descend_gradient;
     }
 }

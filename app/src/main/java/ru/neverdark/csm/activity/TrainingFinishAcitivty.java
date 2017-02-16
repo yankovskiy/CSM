@@ -112,10 +112,10 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 mAscendTime,
                 mDescendTime,
                 0,    // время движения по равнине
-                (int)data.max_ascend_gradient,
-                (int)data.average_ascend_gradient,
-                (int)data.max_descend_gradient,
-                (int)data.max_descend_gradient
+                (int)Math.round(data.max_ascend_gradient),
+                (int)Math.round(data.average_ascend_gradient),
+                (int)Math.round(data.max_descend_gradient),
+                (int)Math.round(data.average_descend_gradient)
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);

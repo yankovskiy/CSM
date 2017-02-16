@@ -256,8 +256,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         Log.v(TAG, "prepareData: latitude = " + mData.latitude);
         if (mPreviousLocation != null) {
             float distance = mPreviousLocation.distanceTo(mCurrentLocation);
-            double dAltitude = mCurrentLocation.getAltitude() - mPreviousLocation.getAltitude();
-            double gradient = Math.abs(dAltitude) / distance * 100;
+            double dAltitude = Math.abs(mCurrentLocation.getAltitude() - mPreviousLocation.getAltitude());
+            double gradient = dAltitude / distance * 100;
 
             mData.distance += distance;
 
@@ -270,9 +270,11 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                     mData.max_ascend_gradient = gradient;
                 }
 
+                Log.v(TAG, "prepareData: ascend gradient = " + gradient);
                 mSumAscendGradient += gradient;
                 mAscendSegmentCount++;
                 mData.average_ascend_gradient = mSumAscendGradient / mAscendSegmentCount;
+                Log.v(TAG, "prepareData: ascend avg gradient = " + mData.average_ascend_gradient);
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
@@ -282,9 +284,11 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                     mData.max_descend_gradient = gradient;
                 }
 
+                Log.v(TAG, "prepareData: descend gradient = " + gradient);
                 mSumDescendGradient += gradient;
                 mDescendSegmentCount++;
                 mData.average_descend_gradient = mSumDescendGradient / mDescendSegmentCount;
+                Log.v(TAG, "prepareData: descend avg gradient = " + mData.average_descend_gradient);
             }
 
             Log.v(TAG, "prepareData: " + mData.up_altitude);

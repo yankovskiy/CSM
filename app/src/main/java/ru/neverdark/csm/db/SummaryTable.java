@@ -60,7 +60,7 @@ public class SummaryTable {
             int plain_time = c.getColumnIndex(Entry.COLUMN_PLAIN_TIME);
             int max_ascend_gradient = c.getColumnIndex(Entry.COLUMN_MAX_ASCEND_GRADIENT);
             int average_ascend_gradient = c.getColumnIndex(Entry.COLUMN_AVERAGE_ASCEND_GRADIENT);
-            int max_descend_gradient = c.getColumnIndex(Entry.COLUMN_MAX_ASCEND_GRADIENT);
+            int max_descend_gradient = c.getColumnIndex(Entry.COLUMN_MAX_DESCEND_GRADIENT);
             int average_descend_gradient = c.getColumnIndex(Entry.COLUMN_AVERAGE_DESCEND_GRADIENT);
 
             do {
