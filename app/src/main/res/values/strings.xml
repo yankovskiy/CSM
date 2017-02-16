@@ -66,4 +66,6 @@
     <string name="to_up">На подъем</string>
     <string name="to_down">На спуск</string>
     <string name="to_plain">Равнина</string>
+    <string name="max_gradient">Максимальный уклон</string>
+    <string name="avg_gradient">Средний уклон</string>
 </resources>
