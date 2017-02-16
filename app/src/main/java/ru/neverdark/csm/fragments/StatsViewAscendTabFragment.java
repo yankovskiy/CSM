@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +51,21 @@ public class StatsViewAscendTabFragment extends Fragment {
 
         initDistanceChart(view, green, blue, orange);
         initTimeChart(view, green, blue, orange);
+        initGradientData(view);
 
         return view;
+    }
+
+    private void initGradientData(View view) {
+        TextView maxAscendGradient = (TextView) view.findViewById(R.id.max_ascend_gradient_value);
+        TextView avgAscendGradient = (TextView) view.findViewById(R.id.avg_ascend_gradient_value);
+        TextView maxDescendGradient = (TextView) view.findViewById(R.id.max_descend_gradient_value);
+        TextView avgDescendGradient = (TextView) view.findViewById(R.id.avg_descend_gradient_value);
+
+        maxAscendGradient.setText(String.format(Locale.US, "%d %%", mSummaryRecord.max_ascend_gradient));;
+        avgAscendGradient.setText(String.format(Locale.US, "%d %%", mSummaryRecord.average_ascend_gradient));
+        maxDescendGradient.setText(String.format(Locale.US, "%d %%", mSummaryRecord.max_descend_gradient));
+        avgDescendGradient.setText(String.format(Locale.US, "%d %%", mSummaryRecord.average_descend_gradient));
     }
 
     private void initTimeChart(View view, int green, int blue, int orange) {
