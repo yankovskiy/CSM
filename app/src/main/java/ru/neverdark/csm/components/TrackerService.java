@@ -72,7 +72,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private final IBinder mBinder = new LocalBinder();
     private double mSumAscendGradient;
     private double mSumDescendGradient;
-    private int mAverageSegmentCount;
+    private int mAscendSegmentCount;
     private int mDescendSegmentCount;
 
     public TrackerService() {
@@ -271,8 +271,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 }
 
                 mSumAscendGradient += gradient;
-                mAverageSegmentCount++;
-                mData.average_ascend_gradient = mSumAscendGradient / mAverageSegmentCount;
+                mAscendSegmentCount++;
+                mData.average_ascend_gradient = mSumAscendGradient / mAscendSegmentCount;
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
