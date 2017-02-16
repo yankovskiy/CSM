@@ -70,7 +70,6 @@
 
     <!-- Блок стилей для вкладок -->
     <style name="AbsTabButtonBase">
-        <item name="android:background">@color/colorAccent</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">4dp</item>
@@ -80,11 +79,13 @@
     <style name="AbsTabButton" parent="AbsTabButtonBase" />
 
     <style name="AbsTabButton.Next">
+        <item name="android:background">@drawable/next_tab_button</item>
         <item name="android:src">@drawable/ic_next_tab</item>
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
     <style name="AbsTabButton.Prev">
+        <item name="android:background">@drawable/prev_tab_button</item>
         <item name="android:src">@drawable/ic_prev_tab</item>
         <item name="android:layout_alignParentLeft">true</item>
     </style>
