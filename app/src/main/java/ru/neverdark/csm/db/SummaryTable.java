@@ -58,6 +58,10 @@ public class SummaryTable {
             int ascend_time = c.getColumnIndex(Entry.COLUMN_ASCEND_TIME);
             int descend_time = c.getColumnIndex(Entry.COLUMN_DESCEND_TIME);
             int plain_time = c.getColumnIndex(Entry.COLUMN_PLAIN_TIME);
+            int max_ascend_gradient = c.getColumnIndex(Entry.COLUMN_MAX_ASCEND_GRADIENT);
+            int average_ascend_gradient = c.getColumnIndex(Entry.COLUMN_AVERAGE_ASCEND_GRADIENT);
+            int max_descend_gradient = c.getColumnIndex(Entry.COLUMN_MAX_ASCEND_GRADIENT);
+            int average_descend_gradient = c.getColumnIndex(Entry.COLUMN_AVERAGE_DESCEND_GRADIENT);
 
             do {
                 Record record = new Record(
@@ -77,7 +81,11 @@ public class SummaryTable {
                         c.getString(timezone),
                         c.getInt(ascend_time),
                         c.getInt(descend_time),
-                        c.getInt(plain_time)
+                        c.getInt(plain_time),
+                        c.getInt(max_ascend_gradient),
+                        c.getInt(average_ascend_gradient),
+                        c.getInt(max_descend_gradient),
+                        c.getInt(average_descend_gradient)
                 );
                 records.add(record);
             } while (c.moveToNext());
@@ -111,6 +119,10 @@ public class SummaryTable {
         values.put(Entry.COLUMN_ASCEND_TIME, data.ascend_time);
         values.put(Entry.COLUMN_DESCEND_TIME, data.descend_time);
         values.put(Entry.COLUMN_PLAIN_TIME, data.plain_time);
+        values.put(Entry.COLUMN_MAX_ASCEND_GRADIENT, data.max_ascend_gradient);
+        values.put(Entry.COLUMN_AVERAGE_ASCEND_GRADIENT, data.average_ascend_gradient);
+        values.put(Entry.COLUMN_MAX_DESCEND_GRADIENT, data.max_descend_gradient);
+        values.put(Entry.COLUMN_AVERAGE_DESCEND_GRADIENT, data.average_descend_gradient);
         mDb.update(Entry.TABLE_NAME, values, selection, selectionArgs);
     }
 
@@ -119,7 +131,8 @@ public class SummaryTable {
                       int distance, String total_time, float average_speed, float max_speed,
                       int up_distance, int down_distance, int max_altitude, int up_altitude,
                       int down_altitude, String timezone, int ascend_time, int descend_time,
-                      int plain_time) {
+                      int plain_time, int max_ascend_gradient, int average_ascend_gradient,
+                      int max_descend_gradient, int average_descend_gradient) {
             this._id = _id;
             this.finish_date = finish_date;
             this.description = description;
@@ -137,6 +150,10 @@ public class SummaryTable {
             this.ascend_time = ascend_time;
             this.descend_time = descend_time;
             this.plain_time = plain_time;
+            this.max_ascend_gradient = max_ascend_gradient;
+            this.average_ascend_gradient = average_ascend_gradient;
+            this.max_descend_gradient = max_descend_gradient;
+            this.average_descend_gradient = average_descend_gradient;
         }
 
         public Record() {
@@ -160,6 +177,10 @@ public class SummaryTable {
         public int ascend_time;
         public int descend_time;
         public int plain_time;
+        public int max_ascend_gradient;
+        public int average_ascend_gradient;
+        public int max_descend_gradient;
+        public int average_descend_gradient;
     }
 
     public static class Entry implements BaseColumns {
@@ -180,6 +201,10 @@ public class SummaryTable {
         public static final String COLUMN_ASCEND_TIME = "ascend_time";
         public static final String COLUMN_DESCEND_TIME = "descend_time";
         public static final String COLUMN_PLAIN_TIME = "plain_time";
+        public static final String COLUMN_MAX_ASCEND_GRADIENT = "max_ascend_gradient";
+        public static final String COLUMN_AVERAGE_ASCEND_GRADIENT = "average_ascend_gradient";
+        public static final String COLUMN_MAX_DESCEND_GRADIENT = "max_descend_gradient";
+        public static final String COLUMN_AVERAGE_DESCEND_GRADIENT = "average_descend_gradient";
 
         public static final String[] COLUMN_ALL = {
                 _ID,
@@ -198,7 +223,11 @@ public class SummaryTable {
                 COLUMN_TIMEZONE,
                 COLUMN_ASCEND_TIME,
                 COLUMN_DESCEND_TIME,
-                COLUMN_PLAIN_TIME
+                COLUMN_PLAIN_TIME,
+                COLUMN_MAX_ASCEND_GRADIENT,
+                COLUMN_AVERAGE_ASCEND_GRADIENT,
+                COLUMN_MAX_DESCEND_GRADIENT,
+                COLUMN_AVERAGE_DESCEND_GRADIENT
         };
     }
 }

@@ -24,6 +24,10 @@ public class GPSData implements Serializable{
     public float accuracy;          // погрешность местоположения в метрах
     public int ascend_time;        // время подъема в мс
     public int descend_time;       // время спуска в мс
+    public double max_ascend_gradient;      // максимальный уклон на подъеме
+    public double average_ascend_gradient;  // средний уклон на подъеме
+    public double max_descend_gradient;     // максимальный уклон на спуске
+    public double average_descend_gradient; // средний уклон на спуске
 
     public void save(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(
@@ -44,6 +48,7 @@ public class GPSData implements Serializable{
         editor.putFloat("accuracy", accuracy);
         editor.putInt("ascend-time", ascend_time);
         editor.putInt("descend-time", descend_time);
+        editor.putFloat("max-ascend-gradient", (float) max_ascend_gradient);
         editor.apply();
     }
 
@@ -66,6 +71,7 @@ public class GPSData implements Serializable{
         accuracy = sharedPref.getFloat("accuracy", 0);
         ascend_time = sharedPref.getInt("ascend-time", 0);
         descend_time = sharedPref.getInt("descend-time", 0);
+        max_ascend_gradient = sharedPref.getFloat("max-ascend-gradient", 0);
     }
 
     public void copyFrom(GPSData data) {
@@ -84,5 +90,6 @@ public class GPSData implements Serializable{
         accuracy = data.accuracy;
         ascend_time = data.ascend_time;
         descend_time = data.descend_time;
+        max_ascend_gradient = data.max_ascend_gradient;
     }
 }

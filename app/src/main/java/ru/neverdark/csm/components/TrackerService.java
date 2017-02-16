@@ -70,6 +70,10 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private Runnable mChronometer;
     private int mTotalTime;
     private final IBinder mBinder = new LocalBinder();
+    private double mSumAscendGradient;
+    private double mSumDescendGradient;
+    private int mAverageSegmentCount;
+    private int mDescendSegmentCount;
 
     public TrackerService() {
     }
@@ -252,16 +256,35 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         Log.v(TAG, "prepareData: latitude = " + mData.latitude);
         if (mPreviousLocation != null) {
             float distance = mPreviousLocation.distanceTo(mCurrentLocation);
+            double dAltitude = mCurrentLocation.getAltitude() - mPreviousLocation.getAltitude();
+            double gradient = Math.abs(dAltitude) / distance * 100;
+
             mData.distance += distance;
 
             if (mPreviousLocation.getAltitude() < mData.altitude) {
                 mData.up_distance += distance;
                 mData.up_altitude += mData.altitude - mPreviousLocation.getAltitude();
                 mData.ascend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
+
+                if (gradient > mData.max_ascend_gradient) {
+                    mData.max_ascend_gradient = gradient;
+                }
+
+                mSumAscendGradient += gradient;
+                mAverageSegmentCount++;
+                mData.average_ascend_gradient = mSumAscendGradient / mAverageSegmentCount;
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
                 mData.descend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
+
+                if (gradient > mData.max_descend_gradient) {
+                    mData.max_descend_gradient = gradient;
+                }
+
+                mSumDescendGradient += gradient;
+                mDescendSegmentCount++;
+                mData.average_descend_gradient = mSumDescendGradient / mDescendSegmentCount;
             }
 
             Log.v(TAG, "prepareData: " + mData.up_altitude);

@@ -32,7 +32,11 @@ class Schema {
                 "`timezone` TEXT," +
                 "`ascend_time` INTEGER," +
                 "`descend_time` INTEGER," +
-                "`plain_time` INTEGER" +
+                "`plain_time` INTEGER," +
+                "`max_ascend_gradient` INTEGER," +
+                "`average_ascend_gradient` INTEGER," +
+                "`max_descend_gradient` INTEGER," +
+                "`average_descend_gradient` INTEGER" +
                 ")";
 
         static final String DROP_GPSLOG = "DROP TABLE IF EXISTS `gpslog`";
