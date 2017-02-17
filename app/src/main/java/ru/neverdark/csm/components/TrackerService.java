@@ -257,7 +257,11 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         if (mPreviousLocation != null) {
             float distance = mPreviousLocation.distanceTo(mCurrentLocation);
             double dAltitude = Math.abs(mCurrentLocation.getAltitude() - mPreviousLocation.getAltitude());
-            double gradient = dAltitude / distance * 100;
+            double gradient = 0;
+            double temp = (distance * distance - dAltitude * dAltitude);
+            if (temp > 0) {
+                gradient = (dAltitude / Math.sqrt(temp)) * 100;
+            }
 
             mData.distance += distance;
 
@@ -266,29 +270,33 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mData.up_altitude += mData.altitude - mPreviousLocation.getAltitude();
                 mData.ascend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
 
-                if (gradient > mData.max_ascend_gradient) {
-                    mData.max_ascend_gradient = gradient;
-                }
+                if (gradient > 0) {
+                    if (gradient > mData.max_ascend_gradient) {
+                        mData.max_ascend_gradient = gradient;
+                    }
 
-                Log.v(TAG, "prepareData: ascend gradient = " + gradient);
-                mSumAscendGradient += gradient;
-                mAscendSegmentCount++;
-                mData.average_ascend_gradient = mSumAscendGradient / mAscendSegmentCount;
-                Log.v(TAG, "prepareData: ascend avg gradient = " + mData.average_ascend_gradient);
+                    Log.v(TAG, "prepareData: ascend gradient = " + gradient);
+                    mSumAscendGradient += gradient;
+                    mAscendSegmentCount++;
+                    mData.average_ascend_gradient = mSumAscendGradient / mAscendSegmentCount;
+                    Log.v(TAG, "prepareData: ascend avg gradient = " + mData.average_ascend_gradient);
+                }
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
                 mData.descend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
 
-                if (gradient > mData.max_descend_gradient) {
-                    mData.max_descend_gradient = gradient;
-                }
+                if (gradient > 0) {
+                    if (gradient > mData.max_descend_gradient) {
+                        mData.max_descend_gradient = gradient;
+                    }
 
-                Log.v(TAG, "prepareData: descend gradient = " + gradient);
-                mSumDescendGradient += gradient;
-                mDescendSegmentCount++;
-                mData.average_descend_gradient = mSumDescendGradient / mDescendSegmentCount;
-                Log.v(TAG, "prepareData: descend avg gradient = " + mData.average_descend_gradient);
+                    Log.v(TAG, "prepareData: descend gradient = " + gradient);
+                    mSumDescendGradient += gradient;
+                    mDescendSegmentCount++;
+                    mData.average_descend_gradient = mSumDescendGradient / mDescendSegmentCount;
+                    Log.v(TAG, "prepareData: descend avg gradient = " + mData.average_descend_gradient);
+                }
             }
 
             Log.v(TAG, "prepareData: " + mData.up_altitude);
