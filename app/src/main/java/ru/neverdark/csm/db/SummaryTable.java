@@ -58,6 +58,12 @@ public class SummaryTable {
             int ascend_time = c.getColumnIndex(Entry.COLUMN_ASCEND_TIME);
             int descend_time = c.getColumnIndex(Entry.COLUMN_DESCEND_TIME);
             int plain_time = c.getColumnIndex(Entry.COLUMN_PLAIN_TIME);
+            int ascend_average_speed = c.getColumnIndex(Entry.COLUMN_ASCEND_AVERAGE_SPEED);
+            int ascend_max_speed = c.getColumnIndex(Entry.COLUMN_ASCEND_MAX_SPEED);
+            int descend_average_speed = c.getColumnIndex(Entry.COLUMN_DESCEND_AVERAGE_SPEED);
+            int descend_max_speed = c.getColumnIndex(Entry.COLUMN_DESCEND_MAX_SPEED);
+            int plain_average_speed = c.getColumnIndex(Entry.COLUMN_PLAIN_AVERAGE_SPEED);
+            int plain_max_speed = c.getColumnIndex(Entry.COLUMN_PLAIN_MAX_SPEED);
 
             do {
                 Record record = new Record(
@@ -77,7 +83,13 @@ public class SummaryTable {
                         c.getString(timezone),
                         c.getInt(ascend_time),
                         c.getInt(descend_time),
-                        c.getInt(plain_time)
+                        c.getInt(plain_time),
+                        c.getFloat(ascend_average_speed),
+                        c.getFloat(ascend_max_speed),
+                        c.getFloat(descend_average_speed),
+                        c.getFloat(descend_max_speed),
+                        c.getFloat(plain_average_speed),
+                        c.getFloat(plain_max_speed)
                 );
                 records.add(record);
             } while (c.moveToNext());
@@ -111,6 +123,12 @@ public class SummaryTable {
         values.put(Entry.COLUMN_ASCEND_TIME, data.ascend_time);
         values.put(Entry.COLUMN_DESCEND_TIME, data.descend_time);
         values.put(Entry.COLUMN_PLAIN_TIME, data.plain_time);
+        values.put(Entry.COLUMN_ASCEND_AVERAGE_SPEED, data.ascend_average_speed);
+        values.put(Entry.COLUMN_ASCEND_MAX_SPEED, data.ascend_max_speed);
+        values.put(Entry.COLUMN_DESCEND_AVERAGE_SPEED, data.descend_average_speed);
+        values.put(Entry.COLUMN_DESCEND_MAX_SPEED, data.descend_max_speed);
+        values.put(Entry.COLUMN_PLAIN_AVERAGE_SPEED, data.plain_average_speed);
+        values.put(Entry.COLUMN_PLAIN_MAX_SPEED, data.plain_max_speed);
         mDb.update(Entry.TABLE_NAME, values, selection, selectionArgs);
     }
 
@@ -119,7 +137,9 @@ public class SummaryTable {
                       int distance, String total_time, float average_speed, float max_speed,
                       int up_distance, int down_distance, int max_altitude, int up_altitude,
                       int down_altitude, String timezone, int ascend_time, int descend_time,
-                      int plain_time) {
+                      int plain_time, float ascend_average_speed, float ascend_max_speed,
+                      float descend_average_speed, float descend_max_speed,
+                      float plain_average_speed, float plain_max_speed) {
             this._id = _id;
             this.finish_date = finish_date;
             this.description = description;
@@ -137,6 +157,12 @@ public class SummaryTable {
             this.ascend_time = ascend_time;
             this.descend_time = descend_time;
             this.plain_time = plain_time;
+            this.ascend_average_speed = ascend_average_speed;
+            this.ascend_max_speed = ascend_max_speed;
+            this.descend_average_speed = descend_average_speed;
+            this.descend_max_speed = descend_max_speed;
+            this.plain_average_speed = plain_average_speed;
+            this.plain_max_speed = plain_max_speed;
         }
 
         public Record() {
@@ -160,6 +186,12 @@ public class SummaryTable {
         public int ascend_time;
         public int descend_time;
         public int plain_time;
+        public float ascend_average_speed;
+        public float ascend_max_speed;
+        public float descend_average_speed;
+        public float descend_max_speed;
+        public float plain_average_speed;
+        public float plain_max_speed;
     }
 
     public static class Entry implements BaseColumns {
@@ -180,6 +212,12 @@ public class SummaryTable {
         public static final String COLUMN_ASCEND_TIME = "ascend_time";
         public static final String COLUMN_DESCEND_TIME = "descend_time";
         public static final String COLUMN_PLAIN_TIME = "plain_time";
+        public static final String COLUMN_ASCEND_AVERAGE_SPEED = "ascend_average_speed";
+        public static final String COLUMN_ASCEND_MAX_SPEED = "ascend_max_speed";
+        public static final String COLUMN_DESCEND_AVERAGE_SPEED = "descend_average_speed";
+        public static final String COLUMN_DESCEND_MAX_SPEED = "descend_max_speed";
+        public static final String COLUMN_PLAIN_AVERAGE_SPEED = "plain_average_speed";
+        public static final String COLUMN_PLAIN_MAX_SPEED = "plain_max_speed";
 
         public static final String[] COLUMN_ALL = {
                 _ID,
@@ -198,7 +236,13 @@ public class SummaryTable {
                 COLUMN_TIMEZONE,
                 COLUMN_ASCEND_TIME,
                 COLUMN_DESCEND_TIME,
-                COLUMN_PLAIN_TIME
+                COLUMN_PLAIN_TIME,
+                COLUMN_ASCEND_AVERAGE_SPEED,
+                COLUMN_ASCEND_MAX_SPEED,
+                COLUMN_DESCEND_AVERAGE_SPEED,
+                COLUMN_DESCEND_MAX_SPEED,
+                COLUMN_PLAIN_AVERAGE_SPEED,
+                COLUMN_PLAIN_MAX_SPEED
         };
     }
 }

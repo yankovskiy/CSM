@@ -17,22 +17,28 @@ class Schema {
 
         static final String CREATE_SUMMARY = "CREATE TABLE `summary` (" +
                 "`_id`INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "`finish_date`INTEGER," +
-                "`description`TEXT," +
-                "`is_commited`INTEGER NOT NULL DEFAULT '0'," +
-                "`distance`INTEGER," +
-                "`total_time`TEXT," +
-                "`average_speed`REAL," +
-                "`max_speed`REAL," +
-                "`up_distance`INTEGER," +
-                "`down_distance`INTEGER," +
-                "`max_altitude`INTEGER," +
+                "`finish_date` INTEGER," +
+                "`description` TEXT," +
+                "`is_commited` INTEGER NOT NULL DEFAULT '0'," +
+                "`distance` INTEGER," +
+                "`total_time` TEXT," +
+                "`average_speed` REAL," +
+                "`max_speed` REAL," +
+                "`up_distance` INTEGER," +
+                "`down_distance` INTEGER," +
+                "`max_altitude` INTEGER," +
                 "`up_altitude` INTEGER," +
                 "`down_altitude` INTEGER," +
                 "`timezone` TEXT," +
                 "`ascend_time` INTEGER," +
                 "`descend_time` INTEGER," +
-                "`plain_time` INTEGER" +
+                "`plain_time` INTEGER," +
+                "`ascend_average_speed` REAL," +
+                "`ascend_max_speed` REAL," +
+                "`descend_average_speed` REAL," +
+                "`descend_max_speed` REAL," +
+                "`plain_average_speed` REAL," +
+                "`plain_max_speed` REAL" +
                 ")";
 
         static final String DROP_GPSLOG = "DROP TABLE IF EXISTS `gpslog`";

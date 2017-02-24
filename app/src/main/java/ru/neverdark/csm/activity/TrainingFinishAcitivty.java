@@ -111,7 +111,13 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 TimeZone.getDefault().getID(),
                 mAscendTime,
                 mDescendTime,
-                0    // время движения по равнине
+                0,    // время движения по равнине
+                data.ascend_average_speed,
+                data.ascend_max_speed,
+                data.descend_average_speed,
+                data.descend_max_speed,
+                data.plain_average_speed,
+                data.plain_max_speed
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);

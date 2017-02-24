@@ -14,8 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
+import lecho.lib.hellocharts.formatter.SimpleColumnChartValueFormatter;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
+import lecho.lib.hellocharts.model.Column;
+import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.model.SubcolumnValue;
+import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.view.ColumnChartView;
 import lecho.lib.hellocharts.view.PieChartView;
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.db.SummaryTable;
@@ -50,20 +59,88 @@ public class StatsViewAscendTabFragment extends Fragment {
 
         initDistanceChart(view, green, blue, orange);
         initTimeChart(view, green, blue, orange);
+        initAvgSpeedChart(view, green, blue, orange);
+        initMaxSpeedChart(view, green, blue, orange);
 
         return view;
     }
 
-    private void initTimeChart(View view, int green, int blue, int orange) {
+    private void initMaxSpeedChart(View view, int descendColor, int plainColor, int ascendColor) {
+        float ascendSpeed = mSummaryRecord.ascend_max_speed;
+        float descendSpeed = mSummaryRecord.descend_max_speed;
+        float plainSpeed = mSummaryRecord.plain_max_speed;
+        int chartResId = R.id.max_speed_chart;
+
+        initSpeedChart(view, descendColor, plainColor, ascendColor, ascendSpeed, descendSpeed, plainSpeed, chartResId);
+    }
+
+    private void initAvgSpeedChart(View view, int descendColor, int plainColor, int ascendColor) {
+        float ascendSpeed = mSummaryRecord.ascend_average_speed;
+        float descendSpeed = mSummaryRecord.descend_average_speed;
+        float plainSpeed = mSummaryRecord.plain_average_speed;
+        int chartResId = R.id.average_speed_chart;
+
+        initSpeedChart(view, descendColor, plainColor, ascendColor, ascendSpeed, descendSpeed, plainSpeed, chartResId);
+    }
+
+    private void initSpeedChart(View view, int descendColor, int plainColor, int ascendColor, float ascendSpeed, float descendSpeed, float plainSpeed, int chartResId) {
+        List<Column> columns = new ArrayList<>();
+        List<SubcolumnValue> values;
+
+        values = new ArrayList<>();
+        values.add(new SubcolumnValue(ascendSpeed * 3.6f, ascendColor));
+        columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
+
+        values = new ArrayList<>();
+        values.add(new SubcolumnValue(descendSpeed * 3.6f, descendColor));
+        columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
+
+        values = new ArrayList<>();
+        values.add(new SubcolumnValue(plainSpeed * 3.6f, plainColor));
+        columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
+
+        List<AxisValue> axisXValues = new ArrayList<>();
+        axisXValues.add(new AxisValue(0).setLabel(getString(R.string.to_up)));
+        axisXValues.add(new AxisValue(1).setLabel(getString(R.string.to_down)));
+        axisXValues.add(new AxisValue(2).setLabel(getString(R.string.to_plain)));
+
+        Axis axisX = new Axis();
+        axisX.setValues(axisXValues);
+        axisX.setInside(false);
+
+        Axis axisY = new Axis().setHasLines(true);
+        axisY.setName(String.format("%s [%s]", getString(R.string.speed), getString(R.string.kmch)));
+//        axisY.setFormatter(new SimpleAxisValueFormatter().setAppendedText(getString(R.string.kmch).toCharArray()));
+        axisY.setHasLines(true);
+        axisY.setInside(true);
+        axisY.setMaxLabelChars(8);
+
+        ColumnChartData data = new ColumnChartData(columns);
+        data.setAxisXBottom(axisX);
+        data.setAxisYLeft(axisY);
+
+        ColumnChartView chart = (ColumnChartView) view.findViewById(chartResId);
+        chart.setColumnChartData(data);
+
+        Viewport v = new Viewport(chart.getMaximumViewport());
+        v.top += 1;
+        v.left -= 0.3;
+        chart.setMaximumViewport(v);
+        chart.setCurrentViewport(v);
+        chart.setZoomEnabled(false);
+        chart.setValueSelectionEnabled(true);
+    }
+
+    private void initTimeChart(View view, int descendColor, int plainColor, int ascendColor) {
         float ascendTime = mSummaryRecord.ascend_time;
         float descendTime = mSummaryRecord.descend_time;
         float plainTime = mSummaryRecord.plain_time;
         float totalTime = mSummaryRecord.ascend_time + mSummaryRecord.descend_time + mSummaryRecord.plain_time;
 
         List<SliceValue> values = new ArrayList<>();
-        values.add(new SliceValue(ascendTime, orange));
-        values.add(new SliceValue(descendTime, green));
-        values.add(new SliceValue(plainTime, blue));
+        values.add(new SliceValue(ascendTime, ascendColor));
+        values.add(new SliceValue(descendTime, descendColor));
+        values.add(new SliceValue(plainTime, plainColor));
 
         PieChartData data = new PieChartData(values);
 
@@ -94,16 +171,16 @@ public class StatsViewAscendTabFragment extends Fragment {
         plainTimeLegend.setPercents(plainTimePercent);
     }
 
-    private void initDistanceChart(View view, int green, int blue, int orange) {
+    private void initDistanceChart(View view, int descendColor, int plainColor, int ascendColor) {
         float upDistance = mSummaryRecord.up_distance;
         float downDistance = mSummaryRecord.down_distance;
         float plainDistance = mSummaryRecord.distance - mSummaryRecord.up_distance - mSummaryRecord.down_distance;
         float distance = mSummaryRecord.distance;
 
         List<SliceValue> values = new ArrayList<>();
-        values.add(new SliceValue(upDistance, orange));
-        values.add(new SliceValue(downDistance, green));
-        values.add(new SliceValue(plainDistance, blue));
+        values.add(new SliceValue(upDistance, ascendColor));
+        values.add(new SliceValue(downDistance, descendColor));
+        values.add(new SliceValue(plainDistance, plainColor));
 
         PieChartData data = new PieChartData(values);
 

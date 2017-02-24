@@ -70,6 +70,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private Runnable mChronometer;
     private int mTotalTime;
     private final IBinder mBinder = new LocalBinder();
+    private int mAscendSegmentCount;
+    private float mAscendSumSpeed;
+    private int mDescendSegmentCount;
+    private float mDescendSumSpeed;
+    private int mPlainSegmentCount;
+    private float mPlainSumSpeed;
 
     public TrackerService() {
     }
@@ -258,10 +264,32 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mData.up_distance += distance;
                 mData.up_altitude += mData.altitude - mPreviousLocation.getAltitude();
                 mData.ascend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
+                mAscendSegmentCount++;
+                mAscendSumSpeed += mData.speed;
+                mData.ascend_average_speed = mAscendSumSpeed / mAscendSegmentCount;
+
+                if (mData.speed > mData.ascend_max_speed) {
+                    mData.ascend_max_speed = mData.speed;
+                }
             } else if (mPreviousLocation.getAltitude() > mData.altitude) {
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
                 mData.descend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
+                mDescendSegmentCount++;
+                mDescendSumSpeed += mData.speed;
+                mData.descend_average_speed = mDescendSumSpeed / mDescendSegmentCount;
+
+                if (mData.speed > mData.descend_max_speed) {
+                    mData.descend_max_speed = mData.speed;
+                }
+            } else {
+                mPlainSegmentCount++;
+                mPlainSumSpeed += mData.speed;
+                mData.plain_average_speed = mPlainSumSpeed / mPlainSegmentCount;
+
+                if (mData.speed > mData.plain_max_speed) {
+                    mData.plain_max_speed = mData.speed;
+                }
             }
 
             Log.v(TAG, "prepareData: " + mData.up_altitude);
