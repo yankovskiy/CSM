@@ -49,10 +49,14 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public static final String TRACKER_SERVICE_GPSDATA = TRACKER_PATH + ".GPSDATA";
     public static final String TRACKER_SERVICE_STARTED = TRACKER_PATH + ".STARTED";
     public static final String TRACKER_SERVICE_REQUEST = TRACKER_PATH + ".SERVICE_REQUEST";
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     public static final String TRACKER_SERVICE_TIMER_REQUEST = TRACKER_PATH + ".TIMER_REQUEST";
     public static final String TRACKER_SERVICE_TIMER_DATA = TRACKER_PATH + ".TIMER_DATA";
+    //private long mStartTime;
+    public static final String TRACKER_CURRENT_TRAINING_ID = TRACKER_PATH + ".TEMP_TRAINING_ID";
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    private final IBinder mBinder = new LocalBinder();
+    private final List<LatLng> mLatLngLst = new ArrayList<>();
     private boolean mIsGUIRunning;
     private BroadcastReceiver mReceiver;
     private GPSData mData;
@@ -65,11 +69,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private float mSumSpeed;
     private int mSegmentCount;
     private Handler mHandler;
-    //private long mStartTime;
-    public static final String TRACKER_CURRENT_TRAINING_ID = TRACKER_PATH + ".TEMP_TRAINING_ID";
     private Runnable mChronometer;
     private int mTotalTime;
-    private final IBinder mBinder = new LocalBinder();
     private int mAscendSegmentCount;
     private float mAscendSumSpeed;
     private int mDescendSegmentCount;
@@ -249,9 +250,9 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
     private void prepareData() {
         mData.accuracy = mCurrentLocation.getAccuracy();
-        mData.altitude =  (float) mCurrentLocation.getAltitude();
-        mData.longitude = (float) mCurrentLocation.getLongitude();
-        mData.latitude = (float) mCurrentLocation.getLatitude();
+        mData.altitude = mCurrentLocation.getAltitude();
+        mData.longitude =  mCurrentLocation.getLongitude();
+        mData.latitude =  mCurrentLocation.getLatitude();
         mData.speed = mCurrentLocation.getSpeed();
 
         Log.v(TAG, "prepareData: longitude = " + mData.longitude);
@@ -331,6 +332,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     /**
      * Сохраняет данные о местоположении и уведомляет UI только если местоположение изменилось и
      * при этом зафиксирована ненулевая скорость
+     *
      * @param location объект содержащий информацию об определенном местоположении
      */
     private void saveAndNotify(Location location) {
@@ -358,8 +360,6 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
             notifyUI();
         }
     }
-
-    private final List<LatLng> mLatLngLst = new ArrayList<>();
 
     public List<LatLng> getLatLngList() {
         return mLatLngLst;

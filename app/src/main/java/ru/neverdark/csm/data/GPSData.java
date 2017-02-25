@@ -9,18 +9,18 @@ import ru.neverdark.csm.R;
 
 public class GPSData implements Serializable{
 
-    public float latitude;          // текущая широта
-    public float longitude;         // текущая долгтоа
-    public float altitude;          // текущая высота
+    public double latitude;          // текущая широта
+    public double longitude;         // текущая долгтоа
+    public double altitude;          // текущая высота
     public float speed;             // текущая скорость
     public float distance;          // пройденное расстояние
     public float max_speed;         // максимальная скорость
     public float average_speed;     // средняя скорость
-    public float max_altitude;      // максимальная высота
+    public double max_altitude;      // максимальная высота
     public float up_distance;       // дистанция движения в гору
     public float down_distance;     // дистанция движения с горы
-    public float up_altitude;       // набор высоты
-    public float down_altitude;     // потеря высоты
+    public double up_altitude;       // набор высоты
+    public double down_altitude;     // потеря высоты
     public float accuracy;          // погрешность местоположения в метрах
     public int ascend_time;             // время подъема в мс
     public int descend_time;            // время спуска в мс
@@ -35,18 +35,18 @@ public class GPSData implements Serializable{
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putFloat("altitude", altitude);
-        editor.putFloat("latitude", latitude);
-        editor.putFloat("longitude", longitude);
+        editor.putFloat("altitude", (float) altitude);
+        editor.putFloat("latitude", (float) latitude);
+        editor.putFloat("longitude", (float) longitude);
         editor.putFloat("speed", speed);
         editor.putFloat("average-speed", average_speed);
         editor.putFloat("distance", distance);
         editor.putFloat("max-speed", max_speed);
-        editor.putFloat("max-altitude", max_altitude);
+        editor.putFloat("max-altitude", (float) max_altitude);
         editor.putFloat("up-distance", up_distance);
         editor.putFloat("down-distance", down_distance);
-        editor.putFloat("up-altitude", up_altitude);
-        editor.putFloat("down-altitude", down_altitude);
+        editor.putFloat("up-altitude", (float) up_altitude);
+        editor.putFloat("down-altitude", (float) down_altitude);
         editor.putFloat("accuracy", accuracy);
         editor.putInt("ascend-time", ascend_time);
         editor.putInt("descend-time", descend_time);

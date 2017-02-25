@@ -559,9 +559,9 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         Log.v(TAG, String.format(Locale.US, "onMyLocationChanged: %f,%f", location.getLatitude(), location.getLongitude()));
 
         GPSData data = new GPSData();
-        data.latitude = (float) location.getLatitude();
-        data.longitude = (float) location.getLongitude();
-        data.altitude = (float) location.getAltitude();
+        data.latitude = location.getLatitude();
+        data.longitude = location.getLongitude();
+        data.altitude = location.getAltitude();
         mCompassTabFragment.updateUI(data);
 
         updateCamera(new LatLng(location.getLatitude(), location.getLongitude()));
