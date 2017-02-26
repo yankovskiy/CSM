@@ -34,7 +34,6 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import ru.neverdark.csm.activity.SettingsActivity;
-import ru.neverdark.csm.activity.StatsViewActivity;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
@@ -46,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = "MainActivity";
     private static final int PERMISSION_REQUEST_BACKUP_DATABASE = 1;
+    private static final int PERMISSION_REQUEST_RESTORE_DATABASE = 2;
 
     private MainFragment mMainFragment;
     private ActionBarDrawerToggle mToggle;
@@ -157,10 +157,22 @@ public class MainActivity extends AppCompatActivity
                 backupDatabase();
             } else if (id == R.id.nav_settings) {
                 openSettings();
+            } else if (id == R.id.nav_restore_db) {
+                restoreDatabase();
             }
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void restoreDatabase() {
+        if (Utils.isExternalStorageWritable()) {
+            if (checkAndRequirePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_RESTORE_DATABASE)) {
+                new RestoreDBTask().execute("gpsdata");
+            }
+        } else {
+            Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void openSettings() {
@@ -184,6 +196,10 @@ public class MainActivity extends AppCompatActivity
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 backupDatabase();
+            }
+        } else if (requestCode == PERMISSION_REQUEST_RESTORE_DATABASE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                restoreDatabase();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -285,6 +301,50 @@ public class MainActivity extends AppCompatActivity
         if (mBound) {
             unbindService(mConnection);
             mBound = false;
+        }
+    }
+
+    private class RestoreDBTask extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            return importDatabase(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean status) {
+            if (!status) {
+                Toast.makeText(MainActivity.this, R.string.restore_database_fail, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, R.string.restoure_database_success, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        private boolean importDatabase(String databaseName) {
+            boolean status = false;
+            try {
+                String backupDBPath = "logs.db";
+                File currentDB = getDatabasePath(databaseName);
+                File mBackupDbFile = new File(getExternalFilesDir(null), backupDBPath);
+
+                if (mBackupDbFile.exists()) {
+                    if (currentDB.exists()) {
+                        currentDB.delete();
+                    }
+
+                    Log.v(TAG, "importDatabase: " + currentDB.getAbsolutePath());
+                    FileChannel src = new FileInputStream(mBackupDbFile).getChannel();
+                    FileChannel dst = new FileOutputStream(currentDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    status = true;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return status;
         }
     }
 
