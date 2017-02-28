@@ -98,7 +98,7 @@ public class StatsViewActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             mTrackPoints = Db.getInstance(StatsViewActivity.this).getGpslogTable().getTrackPoints(mSummaryRecord._id);
             mAscendTabFrag = StatsViewAscendTabFragment.getInstance(mSummaryRecord);
-            mGraphTabFrag = StatsViewGraphTabFragment.getInstance(mTrackPoints);
+            mGraphTabFrag = StatsViewGraphTabFragment.getInstance(getApplicationContext(), mTrackPoints);
             mMapTabFrag = StatsViewMapTabFragment.getInstance(mTrackPoints);
             mInfoTabFrag = StatsViewInfoTabFragment.getInstance(mSummaryRecord);
             return null;
