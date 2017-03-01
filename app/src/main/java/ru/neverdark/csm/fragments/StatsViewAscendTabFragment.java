@@ -88,15 +88,15 @@ public class StatsViewAscendTabFragment extends Fragment {
         List<SubcolumnValue> values;
 
         values = new ArrayList<>();
-        values.add(new SubcolumnValue(ascendSpeed * 3.6f, ascendColor));
+        values.add(new SubcolumnValue(Utils.convertMeterToKm(ascendSpeed), ascendColor));
         columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
 
         values = new ArrayList<>();
-        values.add(new SubcolumnValue(descendSpeed * 3.6f, descendColor));
+        values.add(new SubcolumnValue(Utils.convertMeterToKm(descendSpeed), descendColor));
         columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
 
         values = new ArrayList<>();
-        values.add(new SubcolumnValue(plainSpeed * 3.6f, plainColor));
+        values.add(new SubcolumnValue(Utils.convertMeterToKm(plainSpeed), plainColor));
         columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
 
         List<AxisValue> axisXValues = new ArrayList<>();

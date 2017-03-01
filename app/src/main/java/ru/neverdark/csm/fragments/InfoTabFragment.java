@@ -13,6 +13,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
+import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.DataCard;
 
 /**
@@ -42,9 +43,9 @@ public class InfoTabFragment extends AbsTabFragment {
     public void updateUI(GPSData data) {
         if (isResumed()) {
             mDistance.setValue(String.format(Locale.US, "%.3f", data.distance / 1000));
-            mSpeed.setValue(String.format(Locale.US, "%.1f", data.speed * 3.6));
-            mAverageSpeed.setValue(String.format(Locale.US, "%.1f", data.average_speed * 3.6));
-            mMaxSpeed.setValue(String.format(Locale.US, "%.1f", data.max_speed * 3.6));
+            mSpeed.setValue(String.format(Locale.US, "%.1f", Utils.convertMeterToKm(data.speed)));
+            mAverageSpeed.setValue(String.format(Locale.US, "%.1f", Utils.convertMeterToKm(data.average_speed)));
+            mMaxSpeed.setValue(String.format(Locale.US, "%.1f", Utils.convertMeterToKm(data.max_speed)));
             mAltitude.setValue(String.valueOf(Math.round(data.altitude)));
             mMaxAltitude.setValue(String.valueOf(Math.round(data.max_altitude)));
             mUpAltitude.setValue(String.valueOf(Math.round(data.up_altitude)));

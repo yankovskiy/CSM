@@ -53,4 +53,13 @@ public final class Utils {
         int hours = time / (60 * 60);
         return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
     }
+
+    /**
+     * Конвертирует метры в секунду в километры в час
+     * @param meters метры в секунду
+     * @return километры в час
+     */
+    public static float convertMeterToKm(float meters) {
+        return meters * 3.6f;
+    }
 }

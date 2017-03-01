@@ -22,6 +22,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
+import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.DataCard;
 
 /**
@@ -56,7 +57,7 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
          * если так, то запоминаем переданные данные и повторно вызываем эту функцию из onResume */
         if(isResumed()) {
             String distance = String.format(Locale.US, "%.3f", data.distance / 1000);
-            String average_speed = String.format(Locale.US, "%.2f", data.average_speed * 3.6);
+            String average_speed = String.format(Locale.US, "%.2f", Utils.convertMeterToKm(data.average_speed));
 
             mDistance.setValue(distance);
             mAverageSpeed.setValue(average_speed);

@@ -27,6 +27,7 @@ import lecho.lib.hellocharts.view.PreviewLineChartView;
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.utils.Constants;
+import ru.neverdark.csm.utils.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -123,7 +124,7 @@ public class StatsViewGraphTabFragment extends Fragment {
 
         MaxMin maxMin = new MaxMin(points);
 
-        mSpeedRange = maxMin.max_speed * 3.6f;
+        mSpeedRange = Utils.convertMeterToKm(maxMin.max_speed);
         double minHeight = maxMin.min_altitude;
         double maxHeight = maxMin.max_altitude;
 
@@ -142,7 +143,7 @@ public class StatsViewGraphTabFragment extends Fragment {
             if (Constants.AVERAGE_ALTITUDE_SEGMENT_COUNT == count) {
                 double normalizedHeight = (altitude / count) * scale - sub;
                 PointValue elevationValue = new PointValue((float) totalDistance, (float) normalizedHeight);
-                PointValue speedValue = new PointValue((float) totalDistance, speed * 3.6f);
+                PointValue speedValue = new PointValue((float) totalDistance, Utils.convertMeterToKm(speed));
                 elevationList.add(elevationValue);
                 speedList.add(speedValue);
                 altitude = 0;
@@ -153,7 +154,7 @@ public class StatsViewGraphTabFragment extends Fragment {
         if (count > 0) {
             double normalizedHeight = (altitude / count) * scale - sub;
             PointValue elevationValue = new PointValue((float) totalDistance, (float) normalizedHeight);
-            PointValue speedValue = new PointValue((float) totalDistance, speed * 3.6f);
+            PointValue speedValue = new PointValue((float) totalDistance, Utils.convertMeterToKm(speed));
             speedList.add(speedValue);
             elevationList.add(elevationValue);
         }

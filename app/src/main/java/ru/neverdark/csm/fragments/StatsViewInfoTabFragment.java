@@ -17,6 +17,7 @@ import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.db.SummaryTable;
+import ru.neverdark.csm.utils.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,8 +61,8 @@ public class StatsViewInfoTabFragment extends Fragment {
         Date date = new Date(mSummaryRecord.finish_date);
 
         String distanceStr = String.format(Locale.US, "%d %s %d %s", mSummaryRecord.distance / 1000, km, mSummaryRecord.distance % 1000, m);
-        String maxSpeedStr = String.format(Locale.US, "%.2f %s", mSummaryRecord.max_speed * 3.6, kmch);
-        String averageSpeedStr = String.format(Locale.US, "%.2f %s", mSummaryRecord.average_speed * 3.6, kmch);
+        String maxSpeedStr = String.format(Locale.US, "%.2f %s", Utils.convertMeterToKm(mSummaryRecord.max_speed), kmch);
+        String averageSpeedStr = String.format(Locale.US, "%.2f %s", Utils.convertMeterToKm(mSummaryRecord.average_speed), kmch);
         String maxAltitudeStr = String.format(Locale.US, "%d %s", mSummaryRecord.max_altitude, m);
         String upAltitudeStr = String.format(Locale.US, "%d %s", mSummaryRecord.up_altitude, m);
         String downAltitudeStr = String.format(Locale.US, "%d %s", mSummaryRecord.down_altitude, m);

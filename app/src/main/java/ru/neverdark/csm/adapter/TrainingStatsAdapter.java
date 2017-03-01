@@ -61,7 +61,7 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         holder.mItem = record;
 
         Date date = new Date(record.finish_date);
-        holder.mAverageSpeedTv.setText(String.format(Locale.US, "%.2f %s", record.average_speed * 3.6, mKmch));
+        holder.mAverageSpeedTv.setText(String.format(Locale.US, "%.2f %s",  Utils.convertMeterToKm(record.average_speed), mKmch));
         holder.mDistanceTv.setText(String.format(Locale.US, "%.3f %s", (float) record.distance / 1000, mKm));
         holder.mTotalTimeTv.setText(record.total_time);
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd.MM.yyyy", Locale.getDefault());
