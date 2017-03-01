@@ -5,7 +5,7 @@
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <string name="action_settings">Настройки</string>
-
+    <string name="action_training">Тренировка</string>
     <string name="preference_file_key" translatable="false">gpsdata</string>
     <string name="notification_message">Отслеживание тренировки</string>
     <string name="ticker_text">CSM отслеживает вашу тренировку</string>
@@ -69,4 +69,14 @@
     <string name="restore_database_fail">Ошибка при восстановлении базы данных</string>
     <string name="restoure_database_success">База данных успешно восстановлена</string>
     <string name="restore_database">Восстановление базы данных</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="send_mail">Письмо автору</string>
+    <string name="other">Прочее</string>
+    <string name="social_network">Мы в социальных сетях</string>
+    <string name="rate_app">Оценить приложение</string>
+    <string name="pref_email">artemyankovskiy@gmail.com</string>
+    <string name="pref_selectEmailApplication">Приложение для отправки Email</string>
+    <string name="facebook">Facebook</string>
+    <string name="vk">ВКонтакте</string>
+    <string name="gplus">Google+</string>
 </resources>

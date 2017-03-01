@@ -36,7 +36,9 @@ import java.util.List;
 import ru.neverdark.csm.activity.SettingsActivity;
 import ru.neverdark.csm.components.TrackerService;
 import ru.neverdark.csm.fragments.MainFragment;
+import ru.neverdark.csm.fragments.SocialNetworkDialog;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
+import ru.neverdark.csm.utils.Constants;
 import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 
@@ -143,26 +145,41 @@ public class MainActivity extends AppCompatActivity
                 }
                 TrainingStatsFragment fragment = TrainingStatsFragment.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, fragment).commit();
-            } else if (id == R.id.nav_gallery) {
-
-            } else if (id == R.id.nav_slideshow) {
-
-            } else if (id == R.id.nav_manage) {
-
-            } else if (id == R.id.nav_share) {
-
-            } else if (id == R.id.nav_send) {
-
             } else if (id == R.id.nav_backup_db) {
                 backupDatabase();
             } else if (id == R.id.nav_settings) {
                 openSettings();
+            } else if (id == R.id.nav_rate_app) {
+                rateApp();
+            } else if (id == R.id.nav_social_network) {
+                showSocialNetworkDialog();
+            } else if (id == R.id.nav_send_mail) {
+                sendMail();
             } else if (id == R.id.nav_restore_db) {
                 restoreDatabase();
             }
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void sendMail() {
+        Intent mailto = new Intent(Intent.ACTION_SEND);
+        mailto.setType("plain/text");
+        mailto.putExtra(Intent.EXTRA_EMAIL, new String[] { getString(R.string.pref_email) });
+        mailto.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
+        startActivity(Intent.createChooser(mailto, getString(R.string.pref_selectEmailApplication)));
+    }
+
+    private void showSocialNetworkDialog() {
+        SocialNetworkDialog dialog = new SocialNetworkDialog();
+        dialog.show(getSupportFragmentManager(), null);
+    }
+
+    private void rateApp() {
+        Intent marketIntent = new Intent(Intent.ACTION_VIEW);
+        marketIntent.setData(Uri.parse("market://details?id=" + Constants.PACKAGE_NAME));
+        startActivity(marketIntent);
     }
 
     private void restoreDatabase() {
