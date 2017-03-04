@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:title="@string/change" android:orderInCategory="9" android:id="@+id/action_edit_training"/>
     <item android:title="@string/export" app:showAsAction="never" android:orderInCategory="10">
         <menu>
             <item android:title="@string/export_to_gpx" android:id="@+id/action_export_gpx"/>

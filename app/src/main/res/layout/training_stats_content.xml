@@ -114,7 +114,7 @@
         android:layout_alignBaseline="@+id/down_altitude"
         android:text="@string/zero" />
     <!---->
-    <EditText
+    <TextView
         style="@style/TrainDescription"
         android:id="@+id/description"
         android:layout_below="@+id/down_altitude" />

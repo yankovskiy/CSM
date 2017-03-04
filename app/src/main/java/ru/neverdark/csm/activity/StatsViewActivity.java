@@ -2,6 +2,7 @@ package ru.neverdark.csm.activity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +31,7 @@ import ru.neverdark.csm.components.GPXExporter;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
+import ru.neverdark.csm.fragments.EditTrainingDialog;
 import ru.neverdark.csm.fragments.StatsViewAscendTabFragment;
 import ru.neverdark.csm.fragments.StatsViewGraphTabFragment;
 import ru.neverdark.csm.fragments.StatsViewInfoTabFragment;
@@ -37,9 +39,11 @@ import ru.neverdark.csm.fragments.StatsViewMapTabFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
 import ru.neverdark.csm.utils.Utils;
 
-public class StatsViewActivity extends AppCompatActivity implements AbsExporter.ExportLisener {
+public class StatsViewActivity extends AppCompatActivity implements AbsExporter.ExportLisener, EditTrainingDialog.OnEditTrainingDialogListener,StatsViewInfoTabFragment.OnDescriptionListener {
+    public static final int TRAINING_DESCRIPTION_CHANGED = RESULT_FIRST_USER + 1;
     private static final String TAG = "StatsViewActivity";
     private static final int PERMISSION_REQUEST_EXPORT_GPX = 1;
+    public static final String DESCRIPTION = "description";
     private SummaryTable.Record mSummaryRecord;
     private List<GpslogTable.TrackRecord> mTrackPoints;
     private ViewPager mViewPager;
@@ -79,6 +83,9 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
             case R.id.action_export_gpx:
                 exportToGpx();
                 break;
+            case R.id.action_edit_training:
+                openEditTrainingDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,6 +135,38 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
     @Override
     public void onExportFinishedFail() {
         Toast.makeText(this, R.string.gpx_export_fail, Toast.LENGTH_LONG).show();
+    }
+
+    private void openEditTrainingDialog() {
+        EditTrainingDialog dialog = EditTrainingDialog.getInstance(mSummaryRecord.description);
+        dialog.show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void onAcceptNewDescription(String newDescription) {
+        updateUI(newDescription);
+        updateDescriptionInDb(newDescription);
+        notifyParent(newDescription);
+    }
+
+    private void updateUI(String newDescription) {
+        mInfoTabFrag.updateDesription(newDescription);
+    }
+
+    private void updateDescriptionInDb(String newDescription) {
+        mSummaryRecord.description = newDescription;
+        Db.getInstance(this).getSummaryTable().updateRecordData(mSummaryRecord);
+    }
+
+    private void notifyParent(String newDescription) {
+        Intent data = new Intent();
+        data.putExtra(DESCRIPTION, newDescription);
+        setResult(TRAINING_DESCRIPTION_CHANGED, data);
+    }
+
+    @Override
+    public void onDescriptionClick() {
+        openEditTrainingDialog();
     }
 
     private enum TABS {

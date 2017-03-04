@@ -1,6 +1,7 @@
 package ru.neverdark.csm.fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,7 +23,7 @@ import ru.neverdark.csm.utils.Utils;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class StatsViewInfoTabFragment extends Fragment {
+public class StatsViewInfoTabFragment extends Fragment implements View.OnClickListener {
     private SummaryTable.Record mSummaryRecord;
     private TextView mDistanceTv;
     private TextView mTotalTimeTv;
@@ -30,7 +31,7 @@ public class StatsViewInfoTabFragment extends Fragment {
     private TextView mMaxSpeedTv;
     private TextView mMaxAltitudeTv;
     private TextView mFinishTimeTv;
-    private EditText mDescriptionEd;
+    private TextView mDescriptionTv;
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
     private TextView mFinishDateTv;
@@ -76,7 +77,7 @@ public class StatsViewInfoTabFragment extends Fragment {
         mMaxAltitudeTv.setText(maxAltitudeStr);
         mFinishTimeTv.setText(finishTimeStr);
         mFinishDateTv.setText(finishDateStr);
-        mDescriptionEd.setText(mSummaryRecord.description);
+        mDescriptionTv.setText(mSummaryRecord.description);
         mUpAltitudeTv.setText(upAltitudeStr);
         mDownAltitudeTv.setText(downAltitudeStr);
     }
@@ -101,14 +102,51 @@ public class StatsViewInfoTabFragment extends Fragment {
         mMaxAltitudeTv = (TextView) view.findViewById(R.id.max_altitude_value);
         mFinishTimeTv = (TextView) view.findViewById(R.id.finish_time_value);
         mFinishDateTv = (TextView) view.findViewById(R.id.finish_date_value);
-        mDescriptionEd = (EditText) view.findViewById(R.id.description);
+        mDescriptionTv = (TextView) view.findViewById(R.id.description);
         mUpAltitudeTv = (TextView) view.findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) view.findViewById(R.id.down_altitude_value);
+
+        mDescriptionTv.setOnClickListener(this);
     }
 
     public static StatsViewInfoTabFragment getInstance(SummaryTable.Record record) {
         StatsViewInfoTabFragment fragment = new StatsViewInfoTabFragment();
         fragment.mSummaryRecord = record;
         return fragment;
+    }
+
+    public void updateDesription(String newDescription) {
+        mDescriptionTv.setText(newDescription);
+    }
+
+    public interface OnDescriptionListener {
+        void onDescriptionClick();
+    }
+
+    private OnDescriptionListener mCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            // null или нет в зависимости от конструктора
+            if (mCallback == null) {
+                mCallback = (OnDescriptionListener) context;
+            }
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnDescriptionListener");
+
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.description:
+                mCallback.onDescriptionClick();
+                break;
+        }
     }
 }

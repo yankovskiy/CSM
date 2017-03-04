@@ -17,7 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,10 +42,11 @@ import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.fragments.ConfirmDialog;
+import ru.neverdark.csm.fragments.EditTrainingDialog;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.utils.Utils;
 
-public class TrainingFinishAcitivty extends AppCompatActivity implements ConfirmDialog.NoticeDialogListener, OnMapReadyCallback {
+public class TrainingFinishAcitivty extends AppCompatActivity implements ConfirmDialog.NoticeDialogListener, OnMapReadyCallback, EditTrainingDialog.OnEditTrainingDialogListener {
 
     private static final String TAG = "TrainingFinishAcitivty";
     private long mTrainingId;
@@ -56,7 +57,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mAverageSpeedTv;
     private TextView mMaxAltitudeTv;
     private TextView mFinishTimeTv;
-    private EditText mDescriptionEd;
+    private TextView mDescriptionTv;
 
     private long mFinishDateInMillis;
     private GoogleMap mGoogleMap;
@@ -141,9 +142,16 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mMaxSpeedTv = (TextView) findViewById(R.id.max_speed_value);
         mMaxAltitudeTv = (TextView) findViewById(R.id.max_altitude_value);
         mFinishTimeTv = (TextView) findViewById(R.id.finish_time_value);
-        mDescriptionEd = (EditText) findViewById(R.id.description);
+        mDescriptionTv = (TextView) findViewById(R.id.description);
         mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
+
+        mDescriptionTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openEditTrainingDialog();
+            }
+        });
     }
 
     private void saveTrainingResult() {
@@ -206,6 +214,12 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 // для запрета клика
             }
         });
+    }
+
+    @Override
+    public void onAcceptNewDescription(String newDescription) {
+        mSummaryRecord.description = newDescription;
+        mDescriptionTv.setText(newDescription);
     }
 
     private class CollectSummaryTask extends AsyncTask<Long, Void, Void> {
@@ -273,7 +287,6 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             mDownAltitudeTv.setText(downAltitude);
             mFinishTimeTv.setText(finishDateStr);
 
-            mSummaryRecord.description = mDescriptionEd.getText().toString();
             mSummaryRecord.plain_time = (mTotalTime - mAscendTime - mDescendTime);
 
             if (mGoogleMap != null) {
@@ -290,6 +303,11 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 Toast.makeText(TrainingFinishAcitivty.this, "Map is not ready", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void openEditTrainingDialog() {
+        EditTrainingDialog dialog = EditTrainingDialog.getInstance(null);
+        dialog.show(getSupportFragmentManager(), null);
     }
 
     private class SnapshotMap implements GoogleMap.SnapshotReadyCallback {

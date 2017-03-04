@@ -17,9 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Locale;
 
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.activity.StatsViewActivity;
@@ -35,6 +33,8 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
     private ProgressBar mProgressBar;
     private View mView;
     private TrainingStatsAdapter mAdapter;
+    private SummaryTable.Record mCurrentlyViewTraining;
+    private static final int VIEW_TRAINING_REQUEST = 1;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,9 +55,21 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
 
     @Override
     public void onClickItem(SummaryTable.Record item) {
+        mCurrentlyViewTraining = item;
         Intent intent = new Intent(getContext(), StatsViewActivity.class);
         intent.putExtra(STATS_DATA, item);
-        startActivity(intent);
+        startActivityForResult(intent, VIEW_TRAINING_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == VIEW_TRAINING_REQUEST) {
+            if (resultCode == StatsViewActivity.TRAINING_DESCRIPTION_CHANGED) {
+                mCurrentlyViewTraining.description = data.getStringExtra(StatsViewActivity.DESCRIPTION);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
