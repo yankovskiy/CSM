@@ -1,11 +1,16 @@
 package ru.neverdark.csm.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.List;
 
+import ru.neverdark.csm.MainActivity;
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.abs.AbsExporter;
+import ru.neverdark.csm.components.GPXExporter;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
@@ -26,9 +35,11 @@ import ru.neverdark.csm.fragments.StatsViewGraphTabFragment;
 import ru.neverdark.csm.fragments.StatsViewInfoTabFragment;
 import ru.neverdark.csm.fragments.StatsViewMapTabFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
+import ru.neverdark.csm.utils.Utils;
 
-public class StatsViewActivity extends AppCompatActivity {
+public class StatsViewActivity extends AppCompatActivity implements AbsExporter.ExportLisener {
     private static final String TAG = "StatsViewActivity";
+    private static final int PERMISSION_REQUEST_EXPORT_GPX = 1;
     private SummaryTable.Record mSummaryRecord;
     private List<GpslogTable.TrackRecord> mTrackPoints;
     private ViewPager mViewPager;
@@ -64,9 +75,59 @@ public class StatsViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
+        switch(item.getItemId()) {
+            case R.id.action_export_gpx:
+                exportToGpx();
+                break;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void exportToGpx() {
+        if (Utils.isExternalStorageWritable()) {
+            if (checkAndRequirePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_EXPORT_GPX)) {
+                new GPXExporter(mSummaryRecord, mTrackPoints, this).execute();
+            }
+        } else {
+            Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_EXPORT_GPX) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportToGpx();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * Проверяет наличие прав и в случае необходимости запрашивает их
+     *
+     * @param permission  права доступа для проверки и запроса разрешения
+     * @param requestCode код запроса прав доступа для обработки onRequestPermissionsResult
+     * @return true если права доступа есть
+     */
+    private boolean checkAndRequirePermission(String permission, int requestCode) {
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
+            return false;
+        }
+    }
+
+    @Override
+    public void onExportFinishedSuccess() {
+        Toast.makeText(this, R.string.gpx_export_success, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onExportFinishedFail() {
+        Toast.makeText(this, R.string.gpx_export_fail, Toast.LENGTH_LONG).show();
     }
 
     private enum TABS {
