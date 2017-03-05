@@ -1,5 +1,6 @@
 package ru.neverdark.csm.components;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTrackExporter;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
@@ -21,8 +23,8 @@ import ru.neverdark.csm.db.SummaryTable;
 public class GPXExporter extends AbsTrackExporter {
     private static final String TAG = "GPXExporter";
 
-    public GPXExporter(SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
-        super(summaryRecord, trackPoints, callback);
+    public GPXExporter(Context context, SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
+        super(context, summaryRecord, trackPoints, callback);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class GPXExporter extends AbsTrackExporter {
                 "<gpx\n" +
                 "xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "version=\"1.1\"\n" +
-                "creator=\"Orendis\"\n" +
+                "creator=\"" + getContext().getString(R.string.app_name) + "\"\n" +
                 "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">";
 

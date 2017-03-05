@@ -1,5 +1,6 @@
 package ru.neverdark.csm.abs;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.List;
@@ -13,11 +14,13 @@ public abstract class AbsExporter extends AsyncTask<Void, Integer, Integer> {
     private final SummaryTable.Record mSummaryRecord;
     private final List<GpslogTable.TrackRecord> mTrackPoints;
     private final ExportLisener mCallback;
+    private final Context mContext;
 
-    public AbsExporter(SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
+    public AbsExporter(Context context, SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
         mSummaryRecord = summaryRecord;
         mTrackPoints = trackPoints;
         mCallback = callback;
+        mContext = context;
     }
 
     protected List<GpslogTable.TrackRecord> getTrackPoints() {
@@ -39,6 +42,10 @@ public abstract class AbsExporter extends AsyncTask<Void, Integer, Integer> {
         } else if (status == FAIL_IMPORT) {
             mCallback.onExportFinishedFail();
         }
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
     public interface ExportLisener {

@@ -93,7 +93,7 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
     private void exportToGpx() {
         if (Utils.isExternalStorageWritable()) {
             if (checkAndRequirePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_EXPORT_GPX)) {
-                new GPXExporter(mSummaryRecord, mTrackPoints, this).execute();
+                new GPXExporter(this, mSummaryRecord, mTrackPoints, this).execute();
             }
         } else {
             Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();

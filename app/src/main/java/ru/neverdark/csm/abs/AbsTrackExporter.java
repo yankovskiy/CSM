@@ -1,5 +1,6 @@
 package ru.neverdark.csm.abs;
 
+import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
@@ -14,8 +15,8 @@ import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
 
 public abstract class AbsTrackExporter extends AbsExporter {
-    public AbsTrackExporter(SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
-        super(summaryRecord, trackPoints, callback);
+    public AbsTrackExporter(Context context, SummaryTable.Record summaryRecord, List<GpslogTable.TrackRecord> trackPoints, ExportLisener callback) {
+        super(context, summaryRecord, trackPoints, callback);
     }
 
     protected String getTrackFileName(String extension) throws IOException {
