@@ -24,10 +24,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import ru.neverdark.csm.MainActivity;
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsExporter;
 import ru.neverdark.csm.components.GPXExporter;
+import ru.neverdark.csm.components.KMLExporter;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
@@ -39,11 +39,12 @@ import ru.neverdark.csm.fragments.StatsViewMapTabFragment;
 import ru.neverdark.csm.fragments.TrainingStatsFragment;
 import ru.neverdark.csm.utils.Utils;
 
-public class StatsViewActivity extends AppCompatActivity implements AbsExporter.ExportLisener, EditTrainingDialog.OnEditTrainingDialogListener,StatsViewInfoTabFragment.OnDescriptionListener {
+public class StatsViewActivity extends AppCompatActivity implements AbsExporter.ExportLisener, EditTrainingDialog.OnEditTrainingDialogListener, StatsViewInfoTabFragment.OnDescriptionListener {
     public static final int TRAINING_DESCRIPTION_CHANGED = RESULT_FIRST_USER + 1;
     private static final String TAG = "StatsViewActivity";
     private static final int PERMISSION_REQUEST_EXPORT_GPX = 1;
     public static final String DESCRIPTION = "description";
+    private static final int PERMISSION_REQUEST_EXPORT_KML = 2;
     private SummaryTable.Record mSummaryRecord;
     private List<GpslogTable.TrackRecord> mTrackPoints;
     private ViewPager mViewPager;
@@ -79,15 +80,28 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_export_gpx:
                 exportToGpx();
+                break;
+            case R.id.action_export_kml:
+                exportToKml();
                 break;
             case R.id.action_edit_training:
                 openEditTrainingDialog();
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void exportToKml() {
+        if (Utils.isExternalStorageWritable()) {
+            if (checkAndRequirePermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, PERMISSION_REQUEST_EXPORT_KML)) {
+                new KMLExporter(this, mSummaryRecord, mTrackPoints, this).execute();
+            }
+        } else {
+            Toast.makeText(this, R.string.external_storage_not_available, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void exportToGpx() {
@@ -102,13 +116,17 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_EXPORT_GPX) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                exportToGpx();
-            }
+        if (requestCode == PERMISSION_REQUEST_EXPORT_GPX && isGrantPerms(grantResults)) {
+            exportToGpx();
+        } else if (requestCode == PERMISSION_REQUEST_EXPORT_KML && isGrantPerms(grantResults)) {
+            exportToKml();
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private boolean isGrantPerms(@NonNull int[] grantResults) {
+        return grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -129,12 +147,12 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
 
     @Override
     public void onExportFinishedSuccess() {
-        Toast.makeText(this, R.string.gpx_export_success, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.track_export_success, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onExportFinishedFail() {
-        Toast.makeText(this, R.string.gpx_export_fail, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.track_export_fail, Toast.LENGTH_LONG).show();
     }
 
     private void openEditTrainingDialog() {

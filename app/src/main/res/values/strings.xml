@@ -79,7 +79,8 @@
     <string name="facebook">Facebook</string>
     <string name="vk">ВКонтакте</string>
     <string name="gplus">Google+</string>
-    <string name="gpx_export_success">Трек успешно экспортирован в GPX-файл</string>
-    <string name="gpx_export_fail">Ошибка при экспорте трека в GPX-файл</string>
+    <string name="track_export_success">Трек успешно экспортирован в файл</string>
+    <string name="track_export_fail">Ошибка при экспорте трека в файл</string>
     <string name="change">Редактировать</string>
+    <string name="kml_description">Трек создан спортивным трекером Orendis</string>
 </resources>
