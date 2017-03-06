@@ -30,7 +30,7 @@ public class GpslogTable {
     }
 
     public Cursor getRecordsForTraining(long trainId) {
-        String[] projection = {Entry.COLUMN_LATITUDE, Entry.COLUMN_LONGITUDE, Entry.COLUMN_TIMESTAMP};
+        String[] projection = {Entry.COLUMN_LATITUDE, Entry.COLUMN_LONGITUDE};
         String selection = Entry.COLUMN_TRAINING_ID + " = ?";
         String[] selectionArgs = {String.valueOf(trainId)};
 

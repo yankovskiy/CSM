@@ -66,17 +66,9 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private Location mCurrentLocation;
     private Location mPreviousLocation;
     private long mTempRecordId;
-    private float mSumSpeed;
-    private int mSegmentCount;
     private Handler mHandler;
     private Runnable mChronometer;
     private int mTotalTime;
-    private int mAscendSegmentCount;
-    private float mAscendSumSpeed;
-    private int mDescendSegmentCount;
-    private float mDescendSumSpeed;
-    private int mPlainSegmentCount;
-    private float mPlainSumSpeed;
 
     public TrackerService() {
     }
@@ -251,12 +243,14 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private void prepareData() {
         mData.accuracy = mCurrentLocation.getAccuracy();
         mData.altitude = mCurrentLocation.getAltitude();
-        mData.longitude =  mCurrentLocation.getLongitude();
-        mData.latitude =  mCurrentLocation.getLatitude();
+        mData.longitude = mCurrentLocation.getLongitude();
+        mData.latitude = mCurrentLocation.getLatitude();
         mData.speed = mCurrentLocation.getSpeed();
 
         Log.v(TAG, "prepareData: longitude = " + mData.longitude);
         Log.v(TAG, "prepareData: latitude = " + mData.latitude);
+        float seconds = 0;
+
         if (mPreviousLocation != null) {
             float distance = mPreviousLocation.distanceTo(mCurrentLocation);
             mData.distance += distance;
@@ -265,9 +259,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mData.up_distance += distance;
                 mData.up_altitude += mData.altitude - mPreviousLocation.getAltitude();
                 mData.ascend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
-                mAscendSegmentCount++;
-                mAscendSumSpeed += mData.speed;
-                mData.ascend_average_speed = mAscendSumSpeed / mAscendSegmentCount;
+                seconds = mData.ascend_time / 1000;
+                mData.ascend_average_speed = mData.up_distance / seconds;
 
                 if (mData.speed > mData.ascend_max_speed) {
                     mData.ascend_max_speed = mData.speed;
@@ -276,17 +269,17 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 mData.down_distance += distance;
                 mData.down_altitude += mPreviousLocation.getAltitude() - mData.altitude;
                 mData.descend_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
-                mDescendSegmentCount++;
-                mDescendSumSpeed += mData.speed;
-                mData.descend_average_speed = mDescendSumSpeed / mDescendSegmentCount;
+                seconds = mData.descend_time / 1000;
+                mData.descend_average_speed = mData.down_distance / seconds;
 
                 if (mData.speed > mData.descend_max_speed) {
                     mData.descend_max_speed = mData.speed;
                 }
             } else {
-                mPlainSegmentCount++;
-                mPlainSumSpeed += mData.speed;
-                mData.plain_average_speed = mPlainSumSpeed / mPlainSegmentCount;
+                float plainDistance = mData.distance - mData.down_distance - mData.up_distance;
+                mData.plain_time += (mCurrentLocation.getTime() - mPreviousLocation.getTime());
+                seconds = mData.plain_time / 1000;
+                mData.plain_average_speed = plainDistance / seconds;
 
                 if (mData.speed > mData.plain_max_speed) {
                     mData.plain_max_speed = mData.speed;
@@ -301,10 +294,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
             mData.max_speed = mData.speed;
         }
 
-        mSumSpeed += mData.speed;
-        mSegmentCount++;
+        seconds = (mData.ascend_time + mData.descend_time + mData.plain_time) / 1000;
+        if (seconds == 0) {
+            seconds = 1;
+        }
 
-        mData.average_speed = mSumSpeed / mSegmentCount;
+        mData.average_speed = mData.distance / seconds;
 
         if (mData.altitude > mData.max_altitude) {
             mData.max_altitude = mData.altitude;

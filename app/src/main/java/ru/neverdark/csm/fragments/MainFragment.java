@@ -64,7 +64,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     public static final String TRAINING_DATA = FRAGMENT_PATH + ".DATA";
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
-    public static final String TRAINING_DURATION = FRAGMENT_PATH + ".TRAINING_DURATION";
     private OnFragmentInteractionListener mCallback;
     private GoogleMap mGoogleMap;
     private FloatingActionButton mStartStopTrainingButton;
@@ -83,7 +82,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     private static final int COMPLETE_MAP_LOAD = 1;
     private static final int COMPLETE_SERVICE_BIND = 2;
     private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
-    private String mTrainingDurationFormated;
     private ViewPager mPager;
     private MapTabFragment mMapTabFragment;
     private CompassTabFragment mCompassTabFragment;
@@ -177,8 +175,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                 int seconds = mTrainingDurationRaw % 60;
                 int minutes = (mTrainingDurationRaw / 60) % 60;
                 int hours = mTrainingDurationRaw / (60 * 60);
-                mTrainingDurationFormated = String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
-                getActivity().setTitle(mTrainingDurationFormated);
+                getActivity().setTitle(String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds));
             }
         };
 
@@ -222,7 +219,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         Intent intent = new Intent(getContext(), TrainingFinishAcitivty.class);
         intent.putExtra(MainFragment.TRAINING_DATA, mData);
         intent.putExtra(MainFragment.TRAININD_ID, id);
-        intent.putExtra(MainFragment.TRAINING_DURATION, mTrainingDurationFormated);
         intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }

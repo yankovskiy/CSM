@@ -22,8 +22,9 @@ public class GPSData implements Serializable{
     public double up_altitude;       // набор высоты
     public double down_altitude;     // потеря высоты
     public float accuracy;          // погрешность местоположения в метрах
-    public int ascend_time;             // время подъема в мс
-    public int descend_time;            // время спуска в мс
+    public long ascend_time;             // время подъема в мс
+    public long descend_time;            // время спуска в мс
+    public long plain_time;              // время по равнине в мс
     public float ascend_average_speed;  // средняя скорость на подъем
     public float ascend_max_speed;      // максимальная скорость на подъеме
     public float descend_average_speed; // средняя скорость на спуске
@@ -48,8 +49,9 @@ public class GPSData implements Serializable{
         editor.putFloat("up-altitude", (float) up_altitude);
         editor.putFloat("down-altitude", (float) down_altitude);
         editor.putFloat("accuracy", accuracy);
-        editor.putInt("ascend-time", ascend_time);
-        editor.putInt("descend-time", descend_time);
+        editor.putLong("ascend-time", ascend_time);
+        editor.putLong("descend-time", descend_time);
+        editor.putLong("plain-time", plain_time);
         editor.putFloat("ascend-average-speed", ascend_average_speed);
         editor.putFloat("ascend-max-speed", ascend_max_speed);
         editor.putFloat("descend-average-speed", descend_average_speed);
@@ -77,8 +79,9 @@ public class GPSData implements Serializable{
         up_altitude = sharedPref.getFloat("up-altitude", 0);
         down_altitude = sharedPref.getFloat("down-altitude", 0);
         accuracy = sharedPref.getFloat("accuracy", 0);
-        ascend_time = sharedPref.getInt("ascend-time", 0);
-        descend_time = sharedPref.getInt("descend-time", 0);
+        ascend_time = sharedPref.getLong("ascend-time", 0);
+        descend_time = sharedPref.getLong("descend-time", 0);
+        plain_time = sharedPref.getLong("plain-time", 0);
         ascend_average_speed = sharedPref.getFloat("ascend-average-speed", 0);
         ascend_max_speed = sharedPref.getFloat("ascend-max-speed", 0);
         descend_average_speed = sharedPref.getFloat("descend-average-speed", 0);
@@ -103,6 +106,7 @@ public class GPSData implements Serializable{
         accuracy = data.accuracy;
         ascend_time = data.ascend_time;
         descend_time = data.descend_time;
+        plain_time = data.plain_time;
         ascend_average_speed = data.ascend_average_speed;
         ascend_max_speed = data.ascend_max_speed;
         descend_average_speed = data.descend_average_speed;
