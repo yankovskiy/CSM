@@ -5,10 +5,6 @@
     android:layout_height="match_parent"
     tools:context="ru.neverdark.csm.fragments.MapTabFragment">
 
-    <ImageView
-        android:id="@+id/next_tab"
-        style="@style/NextTabButton" />
-
     <LinearLayout
         android:id="@+id/first_row"
         android:layout_width="match_parent"
@@ -40,5 +36,9 @@
         android:layout_height="match_parent"
         android:id="@+id/map_fragment"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
+
+    <ImageView
+        android:id="@+id/next_tab"
+        style="@style/NextTabButton" />
 
 </RelativeLayout>

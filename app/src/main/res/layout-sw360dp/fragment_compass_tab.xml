@@ -55,10 +55,8 @@
 
     <ru.neverdark.widgets.Compass
         android:id="@+id/compass"
-        android:layout_below="@+id/second_row"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
