@@ -163,6 +163,9 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         // если сервис запущен и перезапущен UI нам нужно обновить масштаб на карте
         mDelayedUpdateMap = mIsServiceRunning;
 
+        if (!mIsServiceRunning) {
+            getActivity().setTitle(R.string.app_name);
+        }
         createReseivers();
     }
 
