@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if (BuildConfig.DEBUG) {
+            navigationView.getMenu().findItem(R.id.nav_other).setVisible(true);
+        }
 
         /* Intent будет содержать значение TRACKER_SERVICE_STARTED (true) если мы пришли из уведомления */
         Intent intent = getIntent();
