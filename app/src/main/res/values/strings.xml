@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Orendis</string>
+    <string name="app_name" translatable="false">Orendis</string>
+    <string name="app_full_name" translatable="false">Orendis Sport Tracker</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
