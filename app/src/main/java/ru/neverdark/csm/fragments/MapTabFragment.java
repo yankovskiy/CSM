@@ -23,6 +23,7 @@ import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.utils.Utils;
+import ru.neverdark.widgets.Antenna;
 import ru.neverdark.widgets.DataCard;
 
 /**
@@ -32,6 +33,8 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
 
     private DataCard mDistance;
     private DataCard mAverageSpeed;
+    private Antenna mAntenna;
+    private int mSignal = -1;
 
     public interface OnMapFragmentListener {
         void onChangeMapType(int mapType);
@@ -42,6 +45,28 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
 
     public MapTabFragment() {
         // Required empty public constructor
+    }
+
+    public void updateSignal(int signal) {
+        if (isResumed()) {
+            mAntenna.setSignal(signal);
+        } else {
+            repeatUpdateSignalAfterResumed(signal);
+        }
+    }
+
+    private void repeatUpdateSignalAfterResumed(int signal) {
+        mSignal = signal;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mSignal != -1) {
+            mAntenna.setSignal(mSignal);
+            mSignal = -1;
+        }
     }
 
     public static MapTabFragment getInstance(OnTabNaviListener listener, OnMapFragmentListener callback) {
@@ -82,6 +107,8 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
 
         mDistance = (DataCard) view.findViewById(R.id.distance);
         mAverageSpeed = (DataCard) view.findViewById(R.id.average_speed);
+        mAntenna = (Antenna) view.findViewById(R.id.antenna);
+
         mDistance.setTitleNote(R.string.km);
         mAverageSpeed.setTitleNote(R.string.kmch);
 

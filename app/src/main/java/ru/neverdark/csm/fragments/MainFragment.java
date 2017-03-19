@@ -584,7 +584,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
             mSignal = Antenna.SIGNAL_LOW;
         }
 
-        mCallback.updateSignal(mSignal);
+        mMapTabFragment.updateSignal(mSignal);
     }
 
 
@@ -652,8 +652,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         void stopTrackerService();
 
         void startTrackerService();
-
-        void updateSignal(int signal);
 
         List<LatLng> getLatLngList();
 

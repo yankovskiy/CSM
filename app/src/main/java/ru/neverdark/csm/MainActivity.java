@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private MainFragment mMainFragment;
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawer;
-    private Antenna mAntenna;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +86,7 @@ public class MainActivity extends AppCompatActivity
         mMainFragment = MainFragment.newInstance(mIsServiceRunning);
         getSupportFragmentManager().beginTransaction().add(R.id.main_content_fragment, mMainFragment).commit();
 
-        mAntenna = (Antenna) findViewById(R.id.quality);
         setDrawerDisabledState(mIsServiceRunning);
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        TextView tv = (TextView) findViewById(R.id.title);
-        tv.setText(title);
     }
 
     @Override
@@ -139,13 +131,9 @@ public class MainActivity extends AppCompatActivity
         if (!item.isChecked()) {
             Log.v(TAG, "onNavigationItemSelected: ");
             if (id == R.id.nav_training) {
-                mAntenna.setVisibility(View.VISIBLE);
                 mMainFragment = MainFragment.newInstance(false);
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, mMainFragment).commit();
             } else if (id == R.id.nav_stats) {
-                if (mAntenna.getVisibility() != View.GONE) {
-                    mAntenna.setVisibility(View.GONE);
-                }
                 TrainingStatsFragment fragment = TrainingStatsFragment.newInstance();
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_content_fragment, fragment).commit();
             } else if (id == R.id.nav_backup_db) {
@@ -265,11 +253,6 @@ public class MainActivity extends AppCompatActivity
     public void startTrackerService() {
         startService(new Intent(this, TrackerService.class));
         setDrawerDisabledState(true);
-    }
-
-    @Override
-    public void updateSignal(int signal) {
-        mAntenna.setSignal(signal);
     }
 
     @Override

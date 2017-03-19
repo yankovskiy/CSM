@@ -37,6 +37,13 @@
         android:id="@+id/map_fragment"
         android:name="com.google.android.gms.maps.SupportMapFragment" />
 
+    <ru.neverdark.widgets.Antenna
+        android:layout_margin="12dp"
+        android:layout_alignTop="@+id/map_fragment"
+        android:id="@+id/antenna"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
     <ImageView
         android:id="@+id/next_tab"
         style="@style/NextTabButton" />
