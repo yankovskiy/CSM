@@ -5,4 +5,6 @@
     <color name="textColorTertiary">#60FFFFFF</color>
     <color name="colorAccent">#277879</color>
     <color name="colorPrimary">#FF212121</color>
+    <color name="signalColor">#89000000</color>
+    <color name="nosignalColor">#2d000000</color>
 </resources>

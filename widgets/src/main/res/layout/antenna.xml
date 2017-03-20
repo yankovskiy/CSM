@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="8dp"
+    android:padding="4dp"
+    android:background="@drawable/map_button"
     android:gravity="bottom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="6dp"
         android:layout_weight="1"
-        android:background="@color/textColorTertiary" />
+        android:background="@color/nosignalColor" />
 
     <View
         android:id="@+id/low_plus"
@@ -20,7 +21,7 @@
         android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:layout_weight="1"
-        android:background="@color/textColorTertiary" />
+        android:background="@color/nosignalColor" />
 
     <View
         android:id="@+id/medium"
@@ -29,7 +30,7 @@
         android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:layout_weight="1"
-        android:background="@color/textColorTertiary" />
+        android:background="@color/nosignalColor" />
 
     <View
         android:id="@+id/medium_plus"
@@ -38,7 +39,7 @@
         android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:layout_weight="1"
-        android:background="@color/textColorTertiary" />
+        android:background="@color/nosignalColor" />
 
     <View
         android:id="@+id/high"
@@ -47,6 +48,6 @@
         android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:layout_weight="1"
-        android:background="@color/textColorTertiary" />
+        android:background="@color/nosignalColor" />
 
 </LinearLayout>

@@ -61,8 +61,8 @@ public class Antenna extends LinearLayout {
         mMediumPlus = findViewById(R.id.medium_plus);
         mHigh = findViewById(R.id.high);
 
-        mNoSignalColor = ContextCompat.getColor(mContext, R.color.textColorTertiary);
-        mSignalColor = ContextCompat.getColor(mContext, R.color.textColorPrimary);
+        mNoSignalColor = ContextCompat.getColor(mContext, R.color.nosignalColor);
+        mSignalColor = ContextCompat.getColor(mContext, R.color.signalColor);
 
         mLow.setBackgroundColor(mNoSignalColor);
         mLogPlus.setBackgroundColor(mNoSignalColor);
