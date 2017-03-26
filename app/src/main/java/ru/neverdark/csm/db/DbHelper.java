@@ -3,10 +3,11 @@ package ru.neverdark.csm.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "gpsdata";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -19,11 +20,22 @@ class DbHelper extends SQLiteOpenHelper {
         db.execSQL(Schema.Indices.CREATE_TRAIN_ID_IDX);
     }
 
+    private static final String TAG = "DbHelper";
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(Schema.Indices.DROP_TRAIN_ID_IDX);
-        db.execSQL(Schema.Tables.DROP_GPSLOG);
-        db.execSQL(Schema.Tables.DROP_SUMMARY);
-        onCreate(db);
+        Log.v(TAG, "onUpgrade: old = " + oldVersion + " new = " + newVersion);
+        switch (oldVersion) {
+            case 1:
+                updateDb(db, Schema.Updates.V2);
+        }
+    }
+
+    private void updateDb(SQLiteDatabase db, String[] queries) {
+        Log.v(TAG, "updateDb: ");
+        for (int i = 0; i < queries.length; i++) {
+            Log.v(TAG, "updateDb: " + queries[i]);
+            db.execSQL(queries[i]);
+        }
     }
 }

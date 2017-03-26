@@ -20,17 +20,8 @@
 
         <TextView
             android:id="@+id/finish_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:gravity="center_vertical"
-            android:text="Чт, 28.12.2017"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp" />
+            style="@style/RightStatCardField"
+            android:layout_marginTop="16dp" />
 
         <ImageView
             android:id="@+id/map_snapshot"
@@ -40,16 +31,16 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            style="@style/RightStatCardField"
             android:id="@+id/duration"
+            style="@style/RightStatCardField"
             android:layout_below="@+id/map_snapshot"
             android:drawableLeft="@drawable/ic_duration"
             android:drawableStart="@drawable/ic_duration"
             android:text="00:15:00" />
 
         <TextView
-            style="@style/LeftStatCardField"
             android:id="@+id/average_speed"
+            style="@style/LeftStatCardField"
             android:layout_below="@id/map_snapshot"
             android:drawableLeft="@drawable/ic_avgspeed"
             android:drawableStart="@drawable/ic_avgspeed"

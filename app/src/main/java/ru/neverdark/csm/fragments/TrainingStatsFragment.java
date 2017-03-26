@@ -23,6 +23,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.activity.StatsViewActivity;
 import ru.neverdark.csm.adapter.TrainingStatsAdapter;
 import ru.neverdark.csm.adapter.TrainingStatsItemTouchHelperCallback;
+import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.utils.Constants;
@@ -66,6 +67,11 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
         if (requestCode == VIEW_TRAINING_REQUEST) {
             if (resultCode == StatsViewActivity.TRAINING_DESCRIPTION_CHANGED) {
                 mCurrentlyViewTraining.description = data.getStringExtra(StatsViewActivity.DESCRIPTION);
+                int activityType = data.getIntExtra(StatsViewActivity.ACTIVITY_TYPE, ActivityTypes.UNKNOWN);
+                if (activityType != ActivityTypes.UNKNOWN) {
+                    mCurrentlyViewTraining.activity_type = activityType;
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.utils.Utils;
 
@@ -67,6 +68,7 @@ public class TrainingStatsAdapter extends RecyclerView.Adapter<TrainingStatsAdap
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd.MM.yyyy", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone(record.timezone));
         holder.mFinishDate.setText(sdf.format(date));
+        holder.mFinishDate.setCompoundDrawablesWithIntrinsicBounds(ActivityTypes.getActivityIconByType(record.activity_type), 0, 0 ,0);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

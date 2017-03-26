@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
@@ -44,6 +45,7 @@ import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.fragments.ConfirmDialog;
 import ru.neverdark.csm.fragments.EditTrainingDialog;
 import ru.neverdark.csm.fragments.MainFragment;
+import ru.neverdark.csm.utils.Settings;
 import ru.neverdark.csm.utils.Utils;
 
 public class TrainingFinishAcitivty extends AppCompatActivity implements ConfirmDialog.NoticeDialogListener, OnMapReadyCallback, EditTrainingDialog.OnEditTrainingDialogListener {
@@ -58,6 +60,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mMaxAltitudeTv;
     private TextView mFinishTimeTv;
     private TextView mDescriptionTv;
+    private TextView mActivityTypeTv;
 
     private long mFinishDateInMillis;
     private GoogleMap mGoogleMap;
@@ -83,6 +86,9 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mTrainingId = intent.getLongExtra(MainFragment.TRAININD_ID, 0);
         mFinishDateInMillis = intent.getLongExtra(MainFragment.TRAINING_FINISH_DATE, 0);
 
+        int activity_type = ActivityTypes.getActivityTypeByIcon(
+                Settings.getInstance(this).loadActivityTypeIcon()
+        );
         // готовим данные для добавления в базу. Поля обозначенные как null и 0 будут заполненны
         // позже по завершению AsyncTask
         mSummaryRecord = new SummaryTable.Record(
@@ -108,13 +114,19 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 data.descend_average_speed,
                 data.descend_max_speed,
                 data.plain_average_speed,
-                data.plain_max_speed
+                data.plain_max_speed,
+                activity_type
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
         mapView.getMapAsync(this);
         bindObjects();
 
+        String activity = ActivityTypes.getTextName(this, activity_type);
+        int activityDrawable = ActivityTypes.getActivityIconByType(activity_type);
+
+        mActivityTypeTv.setText(activity);
+        mActivityTypeTv.setCompoundDrawablesWithIntrinsicBounds(activityDrawable, 0, 0, 0);
         new CollectSummaryTask().execute(mTrainingId);
     }
 
@@ -135,6 +147,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mDescriptionTv = (TextView) findViewById(R.id.description);
         mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
+        mActivityTypeTv = (TextView) findViewById(R.id.activity_type);
 
         mDescriptionTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +223,11 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     public void onAcceptNewDescription(String newDescription) {
         mSummaryRecord.description = newDescription;
         mDescriptionTv.setText(newDescription);
+    }
+
+    @Override
+    public void onAcceptTripEdit(int newActivityType, String newDescription) {
+        // nothing
     }
 
     private class CollectSummaryTask extends AsyncTask<Long, Void, Void> {

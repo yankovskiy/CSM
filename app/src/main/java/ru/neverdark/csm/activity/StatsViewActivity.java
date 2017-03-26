@@ -28,6 +28,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsExporter;
 import ru.neverdark.csm.components.GPXExporter;
 import ru.neverdark.csm.components.KMLExporter;
+import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.db.Db;
 import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
@@ -45,6 +46,7 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
     private static final int PERMISSION_REQUEST_EXPORT_GPX = 1;
     public static final String DESCRIPTION = "description";
     private static final int PERMISSION_REQUEST_EXPORT_KML = 2;
+    public static final String ACTIVITY_TYPE = "activity_type";
     private SummaryTable.Record mSummaryRecord;
     private List<GpslogTable.TrackRecord> mTrackPoints;
     private ViewPager mViewPager;
@@ -88,7 +90,7 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
                 exportToKml();
                 break;
             case R.id.action_edit_training:
-                openEditTrainingDialog();
+                openEditTrainingDialog(true);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -155,36 +157,54 @@ public class StatsViewActivity extends AppCompatActivity implements AbsExporter.
         Toast.makeText(this, R.string.track_export_fail, Toast.LENGTH_LONG).show();
     }
 
-    private void openEditTrainingDialog() {
-        EditTrainingDialog dialog = EditTrainingDialog.getInstance(mSummaryRecord.description);
+    private void openEditTrainingDialog(boolean fullEdit) {
+        EditTrainingDialog dialog;
+        if (fullEdit) {
+            dialog = EditTrainingDialog.getInstance(mSummaryRecord.activity_type, mSummaryRecord.description);
+        } else {
+            dialog = EditTrainingDialog.getInstance(mSummaryRecord.description);
+        }
         dialog.show(getSupportFragmentManager(), null);
     }
 
     @Override
     public void onAcceptNewDescription(String newDescription) {
-        updateUI(newDescription);
-        updateDescriptionInDb(newDescription);
-        notifyParent(newDescription);
+        onAcceptTripEdit(ActivityTypes.UNKNOWN, newDescription);
     }
 
-    private void updateUI(String newDescription) {
+    @Override
+    public void onAcceptTripEdit(int newActivityType, String newDescription) {
+        updateUI(newActivityType, newDescription);
+        updateDataInDb(newActivityType, newDescription);
+        notifyParent(newActivityType, newDescription);
+    }
+
+    private void updateUI(int activityType, String newDescription) {
+        if (activityType != ActivityTypes.UNKNOWN) {
+            mInfoTabFrag.updateActivityType(activityType);
+        }
         mInfoTabFrag.updateDesription(newDescription);
     }
 
-    private void updateDescriptionInDb(String newDescription) {
+    private void updateDataInDb(int activityType, String newDescription) {
+        if (activityType != ActivityTypes.UNKNOWN) {
+            mSummaryRecord.activity_type = activityType;
+        }
+
         mSummaryRecord.description = newDescription;
         Db.getInstance(this).getSummaryTable().updateRecordData(mSummaryRecord);
     }
 
-    private void notifyParent(String newDescription) {
+    private void notifyParent(int activityType, String newDescription) {
         Intent data = new Intent();
         data.putExtra(DESCRIPTION, newDescription);
+        data.putExtra(ACTIVITY_TYPE, activityType);
         setResult(TRAINING_DESCRIPTION_CHANGED, data);
     }
 
     @Override
     public void onDescriptionClick() {
-        openEditTrainingDialog();
+        openEditTrainingDialog(false);
     }
 
     private enum TABS {

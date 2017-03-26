@@ -22,10 +22,15 @@
             android:layout_height="140dp"
             map:liteMode="true" />
         <!---->
+        <TextView
+            android:layout_below="@+id/mapView"
+            android:id="@+id/activity_type"
+            style="@style/StatField" />
+        <!---->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mapView">
+            android:layout_below="@+id/activity_type">
 
             <include layout="@layout/training_stats_content" />
         </RelativeLayout>

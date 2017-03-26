@@ -5,10 +5,14 @@ import android.content.SharedPreferences;
 
 import com.google.android.gms.maps.GoogleMap;
 
+import ru.neverdark.csm.R;
+
 public final class Settings {
     private static final String FILE_NAME = "prefs";
     private static final String MAP_TYPE = "map-type";
     private static final String MAP_ZOOM = "map-zoom";
+    private static final String ACTIVITY_TYPE_ICON = "activity-type-icon";
+
     private static Settings mInstance;
     private final SharedPreferences mPrefs;
     private final SharedPreferences.Editor mEditor;
@@ -42,5 +46,14 @@ public final class Settings {
 
     public float loadMapZoom() {
         return mPrefs.getFloat(MAP_ZOOM, 15);
+    }
+
+    public void saveActivityTypeIcon(int drawable) {
+        mEditor.putInt(ACTIVITY_TYPE_ICON, drawable);
+        mEditor.apply();
+    }
+
+    public int loadActivityTypeIcon() {
+        return mPrefs.getInt(ACTIVITY_TYPE_ICON, R.drawable.ic_road_bike);
     }
 }

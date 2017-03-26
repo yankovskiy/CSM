@@ -126,7 +126,7 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         Log.v(TAG, "onCreateOptionsMenu: ");
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.map_tab, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

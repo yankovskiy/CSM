@@ -84,4 +84,11 @@
     <string name="track_export_fail">Ошибка при экспорте трека в файл</string>
     <string name="change">Редактировать</string>
     <string name="kml_description">Трек создан спортивным трекером Orendis</string>
+    <string name="road_bike">Дорожный велосипед</string>
+    <string name="choose_activity_type">Выбор типа тренировки</string>
+    <string name="walking">Ходьба</string>
+    <string name="nordic_walking">Скандинавская ходьба</string>
+    <string name="hiking">Пеший туризм</string>
+    <string name="run">Бег</string>
+    <string name="mtb">Горный велосипед</string>
 </resources>

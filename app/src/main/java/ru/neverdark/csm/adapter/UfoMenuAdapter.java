@@ -1,6 +1,8 @@
 package ru.neverdark.csm.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,11 @@ public class UfoMenuAdapter extends ArrayAdapter<UfoMenuItem> {
     }
 
     @Override
+    public long getItemId(int position) {
+        return getItem(position).getId();
+    }
+
+    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View row = convertView;
 
@@ -49,6 +56,21 @@ public class UfoMenuAdapter extends ArrayAdapter<UfoMenuItem> {
         holder.mMenuLabel.setText(item.getMenuLabel());
 
         return row;
+    }
+
+    @Override
+    public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        return getView(position, convertView, parent);
+    }
+
+    public int getPositionByActivityType(int activityType) {
+        for (int i = 0; i < getCount(); i++) {
+            if (getItemId(i) == activityType) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     private static class RowHolder {

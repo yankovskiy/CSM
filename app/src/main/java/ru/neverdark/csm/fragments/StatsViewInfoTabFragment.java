@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.utils.Utils;
 
@@ -35,6 +36,7 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
     private TextView mFinishDateTv;
+    private TextView mActivityTypeTv;
 
     public StatsViewInfoTabFragment() {
         // Required empty public constructor
@@ -80,6 +82,16 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
         mDescriptionTv.setText(mSummaryRecord.description);
         mUpAltitudeTv.setText(upAltitudeStr);
         mDownAltitudeTv.setText(downAltitudeStr);
+
+        updateActivityType(mSummaryRecord.activity_type);
+    }
+
+    public void updateActivityType(int activityType) {
+        String activity = ActivityTypes.getTextName(getContext(), activityType);
+        int activityDrawable = ActivityTypes.getActivityIconByType(activityType);
+
+        mActivityTypeTv.setText(activity);
+        mActivityTypeTv.setCompoundDrawablesWithIntrinsicBounds(activityDrawable, 0, 0, 0);
     }
 
     private String getTime(Date date) {
@@ -105,6 +117,7 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
         mDescriptionTv = (TextView) view.findViewById(R.id.description);
         mUpAltitudeTv = (TextView) view.findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) view.findViewById(R.id.down_altitude_value);
+        mActivityTypeTv = (TextView) view.findViewById(R.id.activity_type);
 
         mDescriptionTv.setOnClickListener(this);
     }

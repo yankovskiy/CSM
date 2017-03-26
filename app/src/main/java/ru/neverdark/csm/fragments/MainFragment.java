@@ -22,6 +22,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -64,6 +67,9 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     public static final String TRAINING_DATA = FRAGMENT_PATH + ".DATA";
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_ACCESS_FINE_LOCATION_FROM_MAP = 2;
+    private static final int COMPLETE_MAP_LOAD = 1;
+    private static final int COMPLETE_SERVICE_BIND = 2;
+    private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
     private OnFragmentInteractionListener mCallback;
     private GoogleMap mGoogleMap;
     private FloatingActionButton mStartStopTrainingButton;
@@ -77,16 +83,24 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     private boolean mDelayShowDialog;
     private Polyline mPolyline;
     private boolean mDelayedUpdateMap;
-
     private int mCompleteJob;
-    private static final int COMPLETE_MAP_LOAD = 1;
-    private static final int COMPLETE_SERVICE_BIND = 2;
-    private static final int COMPLETE_ALL = COMPLETE_MAP_LOAD | COMPLETE_SERVICE_BIND;
     private ViewPager mPager;
     private MapTabFragment mMapTabFragment;
     private CompassTabFragment mCompassTabFragment;
     private InfoTabFragment mInfoTabFragment;
     private int mTrainingDurationRaw;
+    private MenuItem mActivityMenuItem;
+    private Context mContext;
+
+    public MainFragment() {
+        // Required empty public constructor
+    }
+
+    public static MainFragment newInstance(boolean isServiceRunning) {
+        MainFragment fragment = new MainFragment();
+        fragment.mIsServiceRunning = isServiceRunning;
+        return fragment;
+    }
 
     private synchronized void completeJob(int job) {
         if (mCompleteJob != COMPLETE_ALL) {
@@ -97,16 +111,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                 mDelayedUpdateMap = false;
             }
         }
-    }
-
-    public MainFragment() {
-        // Required empty public constructor
-    }
-
-    public static MainFragment newInstance(boolean isServiceRunning) {
-        MainFragment fragment = new MainFragment();
-        fragment.mIsServiceRunning = isServiceRunning;
-        return fragment;
     }
 
     @Override
@@ -145,11 +149,27 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         String fileName = Utils.getSnapshotNameById(recordId);
         File file = new File(getContext().getFilesDir(), fileName);
         if (file.exists()) {
-            if(!file.delete()) {
+            if (!file.delete()) {
                 Log.v(TAG, "removeTraining: unable to delete " + file.getAbsolutePath());
             }
         }
         Db.getInstance(getContext()).getSummaryTable().deleteRecord(recordId);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_choose_activity_type:
+                showChooseActivityTypeDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showChooseActivityTypeDialog() {
+        ChooseActivityTypeDialog dialog = ChooseActivityTypeDialog.getInstance(new ActivityTypeChooseListener());
+        dialog.show(getFragmentManager(), null);
     }
 
     @Override
@@ -167,6 +187,8 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
             getActivity().setTitle(R.string.app_name);
         }
         createReseivers();
+
+        setHasOptionsMenu(true);
     }
 
     private void createReseivers() {
@@ -198,7 +220,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                         Log.v(TAG, "onReceive: incorrect database record id");
                     } else {
                         Log.v(TAG, "onReceive: create new activity with result");
-                        List<LatLng> lst = mPolyline != null? mPolyline.getPoints() : null;
+                        List<LatLng> lst = mPolyline != null ? mPolyline.getPoints() : null;
 
                         if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
                             startTrainingFinishActivity(recordId);
@@ -231,6 +253,8 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                              Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView: ");
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        mContext = getContext();
 
         mStartStopTrainingButton = (FloatingActionButton) view.findViewById(R.id.start_stop_training_button);
         mStartStopTrainingButton.setOnClickListener(new ButtonsClickListener());
@@ -301,6 +325,16 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
             stopTrackerService();
         }
         updateImageOnButton(mIsServiceRunning);
+        showHideActivityButton(mIsServiceRunning);
+    }
+
+    /**
+     * Скрывает или отображает кнопку в ActionBar'e для выбора типа активности
+     *
+     * @param isHide true если кнопку необходимо скрыть
+     */
+    private void showHideActivityButton(boolean isHide) {
+        mActivityMenuItem.setVisible(!isHide);
     }
 
     @Override
@@ -595,6 +629,16 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v(TAG, "onCreateOptionsMenu: ");
+        inflater.inflate(R.menu.main_fragment, menu);
+        mActivityMenuItem = menu.findItem(R.id.action_choose_activity_type);
+        mActivityMenuItem.setIcon(Settings.getInstance(mContext).loadActivityTypeIcon());
+        showHideActivityButton(mIsServiceRunning);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     public void startGeoClient() {
         mGeoClient.start();
         if (mGoogleMap != null) {
@@ -646,6 +690,22 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     @Override
     public void onNextTab() {
         mPager.setCurrentItem(mPager.getCurrentItem() + 1, true);
+    }
+
+    private enum TABS {
+        MAP(R.string.map),
+        INFO(R.string.info),
+        COMPASS(R.string.compass);
+
+        private final int mTitleRes;
+
+        TABS(int titleResIs) {
+            mTitleRes = titleResIs;
+        }
+
+        public int getTitle() {
+            return mTitleRes;
+        }
     }
 
     public interface OnFragmentInteractionListener {
@@ -724,22 +784,6 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         }
     }
 
-    private enum TABS {
-        MAP(R.string.map),
-        INFO(R.string.info),
-        COMPASS(R.string.compass);
-
-        private final int mTitleRes;
-
-        TABS(int titleResIs) {
-            mTitleRes = titleResIs;
-        }
-
-        public int getTitle() {
-            return mTitleRes;
-        }
-    }
-
     private class CustomAdapter extends FragmentPagerAdapter {
         CustomAdapter(FragmentManager fm) {
             super(fm);
@@ -769,6 +813,45 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         public CharSequence getPageTitle(int position) {
             TABS tab = TABS.values()[position];
             return getString(tab.getTitle());
+        }
+    }
+
+    private class ActivityTypeChooseListener implements ChooseActivityTypeDialog.OnActivityTypeChooseListener {
+        private void setIcon(int drawable) {
+            if (mActivityMenuItem != null) {
+                mActivityMenuItem.setIcon(drawable);
+                Settings.getInstance(mContext).saveActivityTypeIcon(drawable);
+            }
+        }
+
+        @Override
+        public void onWalingActivity() {
+            setIcon(R.drawable.ic_walking);
+        }
+
+        @Override
+        public void onNordikWalkingActivity() {
+            setIcon(R.drawable.ic_nordic_walking);
+        }
+
+        @Override
+        public void onHikingActivity() {
+            setIcon(R.drawable.ic_hiking);
+        }
+
+        @Override
+        public void onRunActivity() {
+            setIcon(R.drawable.ic_run);
+        }
+
+        @Override
+        public void onRoadBikeActivity() {
+            setIcon(R.drawable.ic_road_bike);
+        }
+
+        @Override
+        public void onMtbActivity() {
+            setIcon(R.drawable.ic_mtb);
         }
     }
 }

@@ -38,7 +38,8 @@ class Schema {
                 "`descend_average_speed` REAL," +
                 "`descend_max_speed` REAL," +
                 "`plain_average_speed` REAL," +
-                "`plain_max_speed` REAL" +
+                "`plain_max_speed` REAL," +
+                "`activity_type` INTEGER NOT NULL DEFAULT '1'" +
                 ")";
 
         static final String DROP_GPSLOG = "DROP TABLE IF EXISTS `gpslog`";
@@ -48,5 +49,9 @@ class Schema {
     static class Indices {
         static final String CREATE_TRAIN_ID_IDX = "CREATE INDEX `train_id_idx` ON `gpslog` (`train_id` ASC)";
         static final String DROP_TRAIN_ID_IDX = "DROP INDEX `train_id_idx`";
+    }
+
+    static class Updates {
+        static final String[] V2 = {"alter table `summary` add column `activity_type` INTEGER NOT NULL DEFAULT '1'"};
     }
 }
