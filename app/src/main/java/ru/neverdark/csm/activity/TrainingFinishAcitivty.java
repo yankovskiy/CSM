@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import ru.neverdark.csm.R;
+import ru.neverdark.csm.components.BitmapSaveTask;
 import ru.neverdark.csm.data.ActivityTypes;
 import ru.neverdark.csm.data.GPSData;
 import ru.neverdark.csm.db.Db;
@@ -312,27 +313,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         @Override
         public void onSnapshotReady(Bitmap bitmap) {
             Log.v(TAG, "onSnapshotReady: ");
-            new BitmapSaveTask().execute(bitmap);
-        }
-    }
-
-    private class BitmapSaveTask extends AsyncTask<Bitmap, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Bitmap... bitmaps) {
-            Log.v(TAG, "doInBackground: ");
-            Bitmap bitmap = bitmaps[0];
-            String fileName = Utils.getSnapshotNameById(mTrainingId);
-            try {
-                FileOutputStream outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 60, outputStream);
-                outputStream.flush();
-                outputStream.close();
-                Log.v(TAG, "doInBackground: file " + fileName + " saved");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+            new BitmapSaveTask(getApplicationContext(), mTrainingId, null).execute(bitmap);
         }
     }
 }

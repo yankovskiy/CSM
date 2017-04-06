@@ -39,6 +39,13 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp" />
 
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:visibility="gone"
+            app:liteMode="true" />
+
         <android.support.v4.view.ViewPager
             android:id="@+id/container"
             android:layout_width="match_parent"

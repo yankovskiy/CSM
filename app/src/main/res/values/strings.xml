@@ -91,4 +91,7 @@
     <string name="hiking">Пеший туризм</string>
     <string name="run">Бег</string>
     <string name="mtb">Горный велосипед</string>
+    <string name="regenerate_thumbnail">Обновить предпросмотр</string>
+    <string name="regerate_successfully">Предпросмотр обновлен</string>
+    <string name="regerate_fail">Ошибка при обновлении предпросмотра</string>
 </resources>

@@ -65,13 +65,17 @@ public class TrainingStatsFragment extends Fragment implements TrainingStatsAdap
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == VIEW_TRAINING_REQUEST) {
-            if (resultCode == StatsViewActivity.TRAINING_DESCRIPTION_CHANGED) {
+            if (resultCode == StatsViewActivity.RESULT_TRAINING_DESCRIPTION_CHANGED) {
                 mCurrentlyViewTraining.description = data.getStringExtra(StatsViewActivity.DESCRIPTION);
                 int activityType = data.getIntExtra(StatsViewActivity.ACTIVITY_TYPE, ActivityTypes.UNKNOWN);
                 if (activityType != ActivityTypes.UNKNOWN) {
                     mCurrentlyViewTraining.activity_type = activityType;
                     mAdapter.notifyDataSetChanged();
                 }
+            }
+
+            if (resultCode == StatsViewActivity.RESULT_UPDATE_THUMBNAIL) {
+                mAdapter.notifyDataSetChanged();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

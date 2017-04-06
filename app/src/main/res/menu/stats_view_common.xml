@@ -9,5 +9,6 @@
             <item android:title="@string/export_to_kml" android:id="@+id/action_export_kml"/>
         </menu>
     </item>
+    <item android:title="@string/regenerate_thumbnail" android:orderInCategory="11" android:id="@+id/action_regenerate"/>
 
 </menu>
