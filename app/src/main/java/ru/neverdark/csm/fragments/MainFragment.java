@@ -778,6 +778,8 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                 case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                     // Location settings are not satisfied. However, we have no way
                     // to fix the settings so we won't show the dialog.
+                    InfoDialog dialog = InfoDialog.getInstance(R.string.title_gps_not_found, R.string.message_gps_not_found);
+                    dialog.show(getFragmentManager(), null);
                     break;
             }
 
