@@ -9,7 +9,7 @@
     <string name="action_training">Тренировка</string>
     <string name="preference_file_key" translatable="false">gpsdata</string>
     <string name="notification_message">Отслеживание тренировки</string>
-    <string name="ticker_text">CSM отслеживает вашу тренировку</string>
+    <string name="ticker_text">Orendis отслеживает вашу тренировку</string>
     <string name="altitude">Высота</string>
     <string name="longitude">Долгота</string>
     <string name="latitude">Широта</string>
@@ -48,17 +48,14 @@
     <string name="map_terrain">Местность</string>
     <string name="info">Информация</string>
     <string name="short_traning_title">Короткая тренировка</string>
-    <string name="short_training_message">Тренировка слишком короткая, чтобы быть сохраненной</string>
+    <string name="short_training_message">Данные о тренировке не сохранятся, т.к. она слишком короткая</string>
     <string name="zero_time" translatable="false">00:00:00</string>
     <string name="m">м</string>
     <string name="km">км</string>
     <string name="kmch">км/ч</string>
     <string name="save">Сохранить</string>
-    <string name="title_activity_stats_view">StatsViewActivity</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="start">Старт</string>
     <string name="finish">Финиш</string>
     <string name="export">Экспорт</string>
@@ -71,12 +68,12 @@
     <string name="restoure_database_success">База данных успешно восстановлена</string>
     <string name="restore_database">Восстановление базы данных</string>
     <string name="feedback">Обратная связь</string>
-    <string name="send_mail">Письмо автору</string>
+    <string name="send_mail">Написать автору</string>
     <string name="other">Прочее</string>
     <string name="social_network">Мы в социальных сетях</string>
     <string name="rate_app">Оценить приложение</string>
     <string name="pref_email">artemyankovskiy@gmail.com</string>
-    <string name="pref_selectEmailApplication">Приложение для отправки Email</string>
+    <string name="pref_selectEmailApplication">Выберите приложение для отправки письма</string>
     <string name="facebook">Facebook</string>
     <string name="vk">ВКонтакте</string>
     <string name="gplus">Google+</string>
