@@ -99,7 +99,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:title="@string/up_altitude" />
+                app:title="@string/elevation_gain" />
 
             <ru.neverdark.widgets.DataCard
                 android:id="@+id/down_altitude"
@@ -108,7 +108,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                app:title="@string/down_altitude" />
+                app:title="@string/elevation_loss" />
         </LinearLayout>
 
         <LinearLayout
@@ -124,7 +124,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:title="@string/up_distance" />
+                app:title="@string/uphill" />
 
             <ru.neverdark.widgets.DataCard
                 android:id="@+id/down_distance"
@@ -133,7 +133,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                app:title="@string/down_distance" />
+                app:title="@string/downhill" />
         </LinearLayout>
 
         <LinearLayout

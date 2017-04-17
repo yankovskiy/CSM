@@ -92,7 +92,7 @@
         android:layout_below="@id/max_altitude"
         android:drawableLeft="@drawable/ic_ascend"
         android:drawableStart="@drawable/ic_ascend"
-        android:text="@string/up_altitude" />
+        android:text="@string/elevation_gain" />
 
     <TextView
         android:id="@+id/up_altitude_value"
@@ -106,7 +106,7 @@
         android:layout_below="@id/up_altitude"
         android:drawableLeft="@drawable/ic_descend"
         android:drawableStart="@drawable/ic_descend"
-        android:text="@string/down_altitude" />
+        android:text="@string/elevation_loss" />
 
     <TextView
         android:id="@+id/down_altitude_value"

@@ -57,7 +57,7 @@
                         android:layout_toEndOf="@+id/distance_chart"
                         android:layout_toRightOf="@+id/distance_chart"
                         app:color="@color/orange_400"
-                        app:title="@string/to_up" />
+                        app:title="@string/uphill" />
 
                     <ru.neverdark.widgets.Legend
                         android:id="@+id/down_distance"
@@ -68,7 +68,7 @@
                         android:layout_below="@+id/up_distance"
                         android:layout_marginTop="8dp"
                         app:color="@color/light_green_400"
-                        app:title="@string/to_down" />
+                        app:title="@string/downhill" />
 
                     <ru.neverdark.widgets.Legend
                         android:id="@+id/plain_distance"
@@ -79,7 +79,7 @@
                         android:layout_below="@+id/down_distance"
                         android:layout_marginTop="8dp"
                         app:color="@color/blue_400"
-                        app:title="@string/to_plain" />
+                        app:title="@string/plain" />
                 </RelativeLayout>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -135,7 +135,7 @@
                         android:layout_toEndOf="@+id/time_chart"
                         android:layout_toRightOf="@+id/time_chart"
                         app:color="@color/orange_400"
-                        app:title="@string/to_up" />
+                        app:title="@string/uphill" />
 
                     <ru.neverdark.widgets.Legend
                         android:id="@+id/descend_time"
@@ -146,7 +146,7 @@
                         android:layout_below="@+id/ascend_time"
                         android:layout_marginTop="8dp"
                         app:color="@color/light_green_400"
-                        app:title="@string/to_down" />
+                        app:title="@string/downhill" />
 
                     <ru.neverdark.widgets.Legend
                         android:id="@+id/plain_time"
@@ -157,7 +157,7 @@
                         android:layout_below="@+id/descend_time"
                         android:layout_marginTop="8dp"
                         app:color="@color/blue_400"
-                        app:title="@string/to_plain" />
+                        app:title="@string/plain" />
                 </RelativeLayout>
             </RelativeLayout>
         </android.support.v7.widget.CardView>

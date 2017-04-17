@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import lecho.lib.hellocharts.formatter.SimpleAxisValueFormatter;
 import lecho.lib.hellocharts.formatter.SimpleColumnChartValueFormatter;
 import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
@@ -100,9 +99,9 @@ public class StatsViewAscendTabFragment extends Fragment {
         columns.add(new Column(values).setHasLabelsOnlyForSelected(true).setFormatter(new SimpleColumnChartValueFormatter(2)));
 
         List<AxisValue> axisXValues = new ArrayList<>();
-        axisXValues.add(new AxisValue(0).setLabel(getString(R.string.to_up)));
-        axisXValues.add(new AxisValue(1).setLabel(getString(R.string.to_down)));
-        axisXValues.add(new AxisValue(2).setLabel(getString(R.string.to_plain)));
+        axisXValues.add(new AxisValue(0).setLabel(getString(R.string.uphill)));
+        axisXValues.add(new AxisValue(1).setLabel(getString(R.string.downhill)));
+        axisXValues.add(new AxisValue(2).setLabel(getString(R.string.plain)));
 
         Axis axisX = new Axis();
         axisX.setValues(axisXValues);
