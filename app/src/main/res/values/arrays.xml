@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- файл не используется на текущий момент -->
 <resources>
-    <string-array name="colors">
+    <string-array name="colors" translatable="false">
         <item>Красный</item>
         <item>Зеленый</item>
         <item>Синий</item>
