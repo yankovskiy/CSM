@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
+import java.util.Locale;
+
 import ru.neverdark.csm.R;
 import ru.neverdark.csm.adapter.UfoMenuAdapter;
 import ru.neverdark.csm.adapter.UfoMenuItem;
@@ -19,7 +21,10 @@ public class SocialNetworkDialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         Context context = getContext();
         final UfoMenuAdapter adapter = new UfoMenuAdapter(context, R.layout.ufo_menu_item);
-        adapter.add(new UfoMenuItem(context, R.drawable.vk_24dp, R.string.vk));
+
+        if (Locale.getDefault().getLanguage().equals("ru")) {
+            adapter.add(new UfoMenuItem(context, R.drawable.vk_24dp, R.string.vk));
+        }
         adapter.add(new UfoMenuItem(context, R.drawable.fb_24dp, R.string.facebook));
         adapter.add(new UfoMenuItem(context, R.drawable.gplus_24dp, R.string.gplus));
 
