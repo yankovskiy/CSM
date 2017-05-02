@@ -78,4 +78,5 @@
     <string name="regerate_fail">Ошибка при обновлении предпросмотра</string>
     <string name="title_gps_not_found">GPS-модуль не найден</string>
     <string name="message_gps_not_found">Удостоверьтесь, что режим \"В самолете\" выключен и в вашем устройстве есть GPS-модуль</string>
+    <string name="skateboard">Скейтборд</string>
 </resources>

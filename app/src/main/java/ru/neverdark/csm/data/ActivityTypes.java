@@ -16,6 +16,7 @@ public class ActivityTypes {
     public static final int RUN = 1 << 3;
     public static final int ROAD_BIKE = 1 << 4;
     public static final int MTB = 1 << 5;
+    public static final int SKATEBOARD = 1 << 6;
 
     public static int getActivityTypeByIcon(int drawable) {
         switch (drawable) {
@@ -31,6 +32,8 @@ public class ActivityTypes {
                 return ROAD_BIKE;
             case R.drawable.ic_mtb:
                 return MTB;
+            case R.drawable.ic_skateboard:
+                return SKATEBOARD;
             default:
                 return UNKNOWN;
         }
@@ -50,6 +53,8 @@ public class ActivityTypes {
                 return R.drawable.ic_road_bike_gray;
             case MTB:
                 return R.drawable.ic_mtb_gray;
+            case SKATEBOARD:
+                return R.drawable.ic_skateboard_gray;
             default:
                 return UNKNOWN;
         }
@@ -69,6 +74,8 @@ public class ActivityTypes {
                 return context.getString(R.string.road_bike);
             case MTB:
                 return context.getString(R.string.mtb);
+            case SKATEBOARD:
+                return context.getString(R.string.skateboard);
             default:
                 return null;
         }

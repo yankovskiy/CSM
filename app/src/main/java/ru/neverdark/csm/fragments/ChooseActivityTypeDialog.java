@@ -24,7 +24,7 @@ public class ChooseActivityTypeDialog extends AppCompatDialogFragment {
         adapter.add(new UfoMenuItem(context, R.drawable.ic_run_gray, R.string.run, ActivityTypes.RUN));
         adapter.add(new UfoMenuItem(context, R.drawable.ic_road_bike_gray, R.string.road_bike, ActivityTypes.ROAD_BIKE));
         adapter.add(new UfoMenuItem(context, R.drawable.ic_mtb_gray, R.string.mtb, ActivityTypes.MTB));
-
+        adapter.add(new UfoMenuItem(context, R.drawable.ic_skateboard_gray, R.string.skateboard, ActivityTypes.SKATEBOARD));
 
         builder.setTitle(R.string.choose_activity_type);
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -49,6 +49,9 @@ public class ChooseActivityTypeDialog extends AppCompatDialogFragment {
                     case ActivityTypes.MTB:
                         mCallback.onMtbActivity();
                         break;
+                    case ActivityTypes.SKATEBOARD:
+                        mCallback.onSkateboardActivity();
+                        break;
                 }
             }
         });
@@ -62,6 +65,7 @@ public class ChooseActivityTypeDialog extends AppCompatDialogFragment {
         void onRunActivity();
         void onRoadBikeActivity();
         void onMtbActivity();
+        void onSkateboardActivity();
     }
 
     private OnActivityTypeChooseListener mCallback;

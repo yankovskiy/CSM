@@ -855,5 +855,10 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         public void onMtbActivity() {
             setIcon(R.drawable.ic_mtb);
         }
+
+        @Override
+        public void onSkateboardActivity() {
+            setIcon(R.drawable.ic_skateboard);
+        }
     }
 }

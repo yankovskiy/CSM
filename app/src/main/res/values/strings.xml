@@ -90,4 +90,5 @@
     <string name="regerate_fail">Thumbnail update error</string>
     <string name="title_gps_not_found">GPS-sensor not found</string>
     <string name="message_gps_not_found">\"Airplan mode\" must be off and your device must have GPS sensor</string>
+    <string name="skateboard">Skateboard</string>
 </resources>

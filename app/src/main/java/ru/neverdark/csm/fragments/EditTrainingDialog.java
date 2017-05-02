@@ -102,6 +102,7 @@ public class EditTrainingDialog extends AppCompatDialogFragment {
         adapter.add(new UfoMenuItem(context, R.drawable.ic_run_gray, R.string.run, ActivityTypes.RUN));
         adapter.add(new UfoMenuItem(context, R.drawable.ic_road_bike_gray, R.string.road_bike, ActivityTypes.ROAD_BIKE));
         adapter.add(new UfoMenuItem(context, R.drawable.ic_mtb_gray, R.string.mtb, ActivityTypes.MTB));
+        adapter.add(new UfoMenuItem(context, R.drawable.ic_skateboard_gray, R.string.skateboard, ActivityTypes.SKATEBOARD));
         adapter.setDropDownViewResource(R.layout.ufo_menu_item);
 
         int position = adapter.getPositionByActivityType(mActivityType);
