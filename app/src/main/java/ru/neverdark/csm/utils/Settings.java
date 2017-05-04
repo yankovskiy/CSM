@@ -2,6 +2,7 @@ package ru.neverdark.csm.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.maps.GoogleMap;
 
@@ -11,11 +12,13 @@ public final class Settings {
     private static final String FILE_NAME = "prefs";
     private static final String MAP_TYPE = "map-type";
     private static final String MAP_ZOOM = "map-zoom";
+    private static final String APP_IS_MODERN_COORDINATE_SYSTEM = "cb_format_coordinates";
     private static final String ACTIVITY_TYPE_ICON = "activity-type-icon";
 
     private static Settings mInstance;
     private final SharedPreferences mPrefs;
     private final SharedPreferences.Editor mEditor;
+    private final SharedPreferences mAppSettings;
 
     public static Settings getInstance(Context context) {
         if (mInstance == null) {
@@ -28,6 +31,7 @@ public final class Settings {
     private Settings(Context context) {
         mPrefs = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         mEditor = mPrefs.edit();
+        mAppSettings = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void saveMapType(int mapType) {
@@ -55,5 +59,9 @@ public final class Settings {
 
     public int loadActivityTypeIcon() {
         return mPrefs.getInt(ACTIVITY_TYPE_ICON, R.drawable.ic_road_bike);
+    }
+
+    public boolean isModernCoordinateSystem() {
+        return mAppSettings.getBoolean(APP_IS_MODERN_COORDINATE_SYSTEM, false);
     }
 }

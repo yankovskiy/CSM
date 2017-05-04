@@ -32,13 +32,15 @@
         </menu>
     </item>
 
-    <item android:title="@string/other" android:id="@+id/nav_other" android:visible="false">
+    <item android:title="@string/other" android:id="@+id/nav_other">
         <menu>
             <item
+                android:visible="false"
                 android:id="@+id/nav_restore_db"
                 android:icon="@drawable/ic_menu_restore_database"
                 android:title="@string/restore_database"/>
             <item
+                android:visible="false"
                 android:id="@+id/nav_backup_db"
                 android:icon="@drawable/ic_menu_backup_database"
                 android:title="@string/backup_database" />

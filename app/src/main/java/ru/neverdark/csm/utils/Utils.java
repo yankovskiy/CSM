@@ -62,4 +62,36 @@ public final class Utils {
     public static float convertMeterToKm(float meters) {
         return meters * 3.6f;
     }
+
+    private static String decimalToDMS(double coord) {
+        String output, degrees, minutes, seconds;
+
+        double mod = coord % 1;
+        int intPart = (int)coord;
+
+        degrees = String.valueOf(intPart);
+
+        coord = mod * 60;
+        mod = coord % 1;
+        intPart = (int)coord;
+
+        minutes = String.valueOf(intPart);
+
+        coord = mod * 60;
+        intPart = (int)coord;
+
+        seconds = String.valueOf(intPart);
+
+        output = degrees + "°" + minutes + "'" + seconds + '"';
+
+        return output;
+    }
+
+    public static String formatCoord(Context context, double coord) {
+        if (Settings.getInstance(context).isModernCoordinateSystem()) {
+            return String.valueOf(coord);
+        } else {
+            return decimalToDMS(coord);
+        }
+    }
 }

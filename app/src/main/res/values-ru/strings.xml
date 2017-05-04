@@ -79,4 +79,7 @@
     <string name="title_gps_not_found">GPS-модуль не найден</string>
     <string name="message_gps_not_found">Удостоверьтесь, что режим \"В самолете\" выключен и в вашем устройстве есть GPS-модуль</string>
     <string name="skateboard">Скейтборд</string>
+    <string name="settings_latitude_longitude_format_title">Формат широты и долготы</string>
+    <string name="settings_display_coordinate_modern">Градусы с десятичной дробью</string>
+    <string name="settings_display_coordinate_hystorical">Градусы, минуты и секунды</string>
 </resources>

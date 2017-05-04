@@ -52,8 +52,8 @@ public class InfoTabFragment extends AbsTabFragment {
             mDownAltitude.setValue(String.valueOf(Math.round(data.down_altitude)));
             mUpDistance.setValue(String.format(Locale.US, "%.3f", data.up_distance / 1000));
             mDownDistance.setValue(String.format(Locale.US, "%.3f", data.down_distance / 1000));
-            mLatitude.setValue(String.valueOf(data.latitude));
-            mLongitude.setValue(String.valueOf(data.longitude));
+            mLatitude.setValue(Utils.formatCoord(getContext(), data.latitude));
+            mLongitude.setValue(Utils.formatCoord(getContext(), data.longitude));
         } else {
             repeatUpdateAfterResumed(data);
         }

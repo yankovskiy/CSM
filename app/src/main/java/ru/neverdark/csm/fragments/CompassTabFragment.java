@@ -11,6 +11,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
+import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Compass;
 import ru.neverdark.widgets.DataCard;
 
@@ -39,8 +40,8 @@ public class CompassTabFragment extends AbsTabFragment {
     @Override
     public void updateUI(GPSData data) {
         if (isResumed()) {
-            mLatitude.setValue(String.valueOf(data.latitude));
-            mLongitude.setValue(String.valueOf(data.longitude));
+            mLatitude.setValue(Utils.formatCoord(getContext(), data.latitude));
+            mLongitude.setValue(Utils.formatCoord(getContext(), data.longitude));
             mAltitude.setValue(String.valueOf(Math.round(data.altitude)));
         } else {
             repeatUpdateAfterResumed(data);

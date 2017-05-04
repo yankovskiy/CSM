@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -70,7 +73,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (BuildConfig.DEBUG) {
-            navigationView.getMenu().findItem(R.id.nav_other).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_restore_db).setVisible(true);
+            navigationView.getMenu().findItem(R.id.nav_backup_db).setVisible(true);
         }
 
         /* Intent будет содержать значение TRACKER_SERVICE_STARTED (true) если мы пришли из уведомления */
