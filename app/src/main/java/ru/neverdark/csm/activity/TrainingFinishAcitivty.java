@@ -1,7 +1,6 @@
 package ru.neverdark.csm.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -29,8 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -62,6 +59,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mFinishTimeTv;
     private TextView mDescriptionTv;
     private TextView mActivityTypeTv;
+    private TextView mPauseDurationTv;
 
     private long mFinishDateInMillis;
     private GoogleMap mGoogleMap;
@@ -69,6 +67,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     private TextView mUpAltitudeTv;
     private TextView mDownAltitudeTv;
     private SummaryTable.Record mSummaryRecord;
+    private TextView mTotalTimeTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +89,17 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         int activity_type = ActivityTypes.getActivityTypeByIcon(
                 Settings.getInstance(this).loadActivityTypeIcon()
         );
+
+        long duration = data.ascend_time + data.descend_time + data.plain_time;
+        String pause_duration = null;
+        boolean autopauseEnabled = Settings.getInstance(this).isAutopauseEnabled();
+        if (autopauseEnabled) {
+            long start = intent.getLongExtra(MainFragment.TRAINING_START_DATE, 0);
+            long delta = mFinishDateInMillis - start;
+            if (delta > duration) {
+                pause_duration = Utils.convertMillisToTime(delta - duration);
+            }
+        }
         // готовим данные для добавления в базу. Поля обозначенные как null и 0 будут заполненны
         // позже по завершению AsyncTask
         mSummaryRecord = new SummaryTable.Record(
@@ -98,7 +108,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 null, // заметка о тренировке
                 true,
                 Math.round(data.distance),
-                Utils.convertMillisToTime(data.ascend_time + data.descend_time + data.plain_time),
+                Utils.convertMillisToTime(duration),
                 data.average_speed,
                 data.max_speed,
                 Math.round(data.up_distance),
@@ -116,7 +126,8 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                 data.descend_max_speed,
                 data.plain_average_speed,
                 data.plain_max_speed,
-                activity_type
+                activity_type,
+                pause_duration
         );
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(null);
@@ -128,6 +139,13 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
 
         mActivityTypeTv.setText(activity);
         mActivityTypeTv.setCompoundDrawablesWithIntrinsicBounds(activityDrawable, 0, 0, 0);
+
+        if (autopauseEnabled) {
+            mTotalTimeTitle.setText(R.string.clean_time);
+        } else {
+            mTotalTimeTitle.setText(R.string.total_time);
+        }
+
         new CollectSummaryTask().execute(mTrainingId);
     }
 
@@ -139,6 +157,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
     }
 
     private void bindObjects() {
+        mTotalTimeTitle = (TextView) findViewById(R.id.total_time);
         mDistanceTv = (TextView) findViewById(R.id.distance_value);
         mTotalTimeTv = (TextView) findViewById(R.id.total_time_value);
         mAverageSpeedTv = (TextView) findViewById(R.id.average_speed_value);
@@ -149,6 +168,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
         mUpAltitudeTv = (TextView) findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) findViewById(R.id.down_altitude_value);
         mActivityTypeTv = (TextView) findViewById(R.id.activity_type);
+        mPauseDurationTv = (TextView) findViewById(R.id.pause_duration_value);
 
         mDescriptionTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,6 +307,12 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
             mUpAltitudeTv.setText(upAltitude);
             mDownAltitudeTv.setText(downAltitude);
             mFinishTimeTv.setText(finishDateStr);
+
+            if (mSummaryRecord.pause_duration != null) {
+                findViewById(R.id.pause_duration).setVisibility(View.VISIBLE);
+                mPauseDurationTv.setVisibility(View.VISIBLE);
+                mPauseDurationTv.setText(mSummaryRecord.pause_duration);
+            }
 
             if (mGoogleMap != null) {
                 mGoogleMap.addPolyline(rectOptions);

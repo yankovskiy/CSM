@@ -22,6 +22,7 @@ import ru.neverdark.csm.R;
 import ru.neverdark.csm.abs.AbsTabFragment;
 import ru.neverdark.csm.abs.OnTabNaviListener;
 import ru.neverdark.csm.data.GPSData;
+import ru.neverdark.csm.utils.Settings;
 import ru.neverdark.csm.utils.Utils;
 import ru.neverdark.widgets.Antenna;
 import ru.neverdark.widgets.DataCard;
@@ -33,8 +34,15 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
 
     private DataCard mDistance;
     private DataCard mAverageSpeed;
+    private DataCard mTotalTime;
+    private DataCard mActivityTime;
     private Antenna mAntenna;
     private int mSignal = -1;
+
+    public void updateTime(int trainingDurationRaw, int activityTime) {
+        mTotalTime.setValue(Utils.convertMillisToTime(trainingDurationRaw));
+        mActivityTime.setValue(Utils.convertMillisToTime(activityTime));
+    }
 
     public interface OnMapFragmentListener {
         void onChangeMapType(int mapType);
@@ -67,6 +75,12 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
             mAntenna.setSignal(mSignal);
             mSignal = -1;
         }
+
+        if (Settings.getInstance(getContext()).isAutopauseEnabled()) {
+            mActivityTime.setVisibility(View.VISIBLE);
+        } else {
+            mActivityTime.setVisibility(View.GONE);
+        }
     }
 
     public static MapTabFragment getInstance(OnTabNaviListener listener, OnMapFragmentListener callback) {
@@ -95,6 +109,8 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
     public void resetUI() {
         mDistance.setValue(R.string.zero);
         mAverageSpeed.setValue(R.string.zero);
+        mActivityTime.setValue(R.string.zero_time);
+        mTotalTime.setValue(R.string.zero_time);
     }
 
     private static final String TAG = "MapTabFragment";
@@ -107,6 +123,8 @@ public class MapTabFragment extends AbsTabFragment implements OnMapReadyCallback
 
         mDistance = (DataCard) view.findViewById(R.id.distance);
         mAverageSpeed = (DataCard) view.findViewById(R.id.average_speed);
+        mActivityTime = (DataCard) view.findViewById(R.id.activity_time);
+        mTotalTime = (DataCard) view.findViewById(R.id.total_time);
         mAntenna = (Antenna) view.findViewById(R.id.antenna);
 
         mDistance.setTitleNote(R.string.km);

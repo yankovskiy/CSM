@@ -18,7 +18,7 @@
     <string name="traning_description">Примечание</string>
     <string name="map">Карта</string>
     <string name="compass">Компас</string>
-    <string name="total_time">Время</string>
+    <string name="total_time">Продолжительность</string>
     <string name="date">Дата</string>
     <string name="finish_time">Завершена</string>
     <string name="elevation_gain">Набор высоты</string>
@@ -82,4 +82,9 @@
     <string name="settings_latitude_longitude_format_title">Формат широты и долготы</string>
     <string name="settings_display_coordinate_modern">Градусы с десятичной дробью</string>
     <string name="settings_display_coordinate_hystorical">Градусы, минуты и секунды</string>
+    <string name="settings_autopause">Автопауза</string>
+    <string name="settings_autopause_off">Таймер не останавливается, если вы прекратили движение</string>
+    <string name="settings_autopause_on">Если вы прекратите движение, таймер также будет остановлен</string>
+    <string name="pause_duration">Пауза</string>
+    <string name="clean_time">Чистое время</string>
 </resources>

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -37,6 +36,9 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
     private TextView mDownAltitudeTv;
     private TextView mFinishDateTv;
     private TextView mActivityTypeTv;
+    private TextView mPauseDurationTv;
+    private TextView mPauseDurationTitle;
+    private TextView mTotalTimeTitle;
 
     public StatsViewInfoTabFragment() {
         // Required empty public constructor
@@ -83,6 +85,15 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
         mUpAltitudeTv.setText(upAltitudeStr);
         mDownAltitudeTv.setText(downAltitudeStr);
 
+        if (mSummaryRecord.pause_duration != null) {
+            mPauseDurationTv.setVisibility(View.VISIBLE);
+            mPauseDurationTitle.setVisibility(View.VISIBLE);
+            mPauseDurationTv.setText(mSummaryRecord.pause_duration);
+            mTotalTimeTitle.setText(R.string.clean_time);
+        } else {
+            mTotalTimeTitle.setText(R.string.total_time);
+        }
+
         updateActivityType(mSummaryRecord.activity_type);
     }
 
@@ -118,6 +129,9 @@ public class StatsViewInfoTabFragment extends Fragment implements View.OnClickLi
         mUpAltitudeTv = (TextView) view.findViewById(R.id.up_altitude_value);
         mDownAltitudeTv = (TextView) view.findViewById(R.id.down_altitude_value);
         mActivityTypeTv = (TextView) view.findViewById(R.id.activity_type);
+        mPauseDurationTv = (TextView) view.findViewById(R.id.pause_duration_value);
+        mPauseDurationTitle = (TextView) view.findViewById(R.id.pause_duration);
+        mTotalTimeTitle = (TextView) view.findViewById(R.id.total_time);
 
         mDescriptionTv.setOnClickListener(this);
     }

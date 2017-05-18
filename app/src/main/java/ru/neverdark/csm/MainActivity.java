@@ -236,11 +236,9 @@ public class MainActivity extends AppCompatActivity
 
     private void setDrawerDisabledState(boolean isDisabled) {
         if (isDisabled) {
-            setTitle("00:00:00");
             mToggle.setDrawerIndicatorEnabled(false);
             mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else {
-            setTitle(R.string.app_name);
             mToggle.setDrawerIndicatorEnabled(true);
             mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }

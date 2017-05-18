@@ -39,7 +39,8 @@ class Schema {
                 "`descend_max_speed` REAL," +
                 "`plain_average_speed` REAL," +
                 "`plain_max_speed` REAL," +
-                "`activity_type` INTEGER NOT NULL DEFAULT '1'" +
+                "`activity_type` INTEGER NOT NULL DEFAULT '1'," +
+                "`pause_duration` TEXT" +
                 ")";
 
         static final String DROP_GPSLOG = "DROP TABLE IF EXISTS `gpslog`";
@@ -53,5 +54,6 @@ class Schema {
 
     static class Updates {
         static final String[] V2 = {"alter table `summary` add column `activity_type` INTEGER NOT NULL DEFAULT '1'"};
+        static final String[] V3 = {"alter table `summary` add column `pause_duration` TEXT"};
     }
 }

@@ -41,7 +41,7 @@ public class ChooseActivityTypeDialog extends AppCompatDialogFragment {
                         mCallback.onHikingActivity();
                         break;
                     case ActivityTypes.RUN:
-                        mCallback.onRunActivity();;
+                        mCallback.onRunActivity();
                         break;
                     case ActivityTypes.ROAD_BIKE:
                         mCallback.onRoadBikeActivity();

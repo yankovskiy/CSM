@@ -41,6 +41,7 @@ import ru.neverdark.csm.db.GpslogTable;
 import ru.neverdark.csm.db.SummaryTable;
 import ru.neverdark.csm.fragments.MainFragment;
 import ru.neverdark.csm.utils.Constants;
+import ru.neverdark.csm.utils.Settings;
 
 public class TrackerService extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final int SERVICE_NOTIFICATION_ID = 1;
@@ -50,11 +51,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     public static final String TRACKER_SERVICE_STARTED = TRACKER_PATH + ".STARTED";
     public static final String TRACKER_SERVICE_REQUEST = TRACKER_PATH + ".SERVICE_REQUEST";
     public static final String TRACKER_SERVICE_TIMER_REQUEST = TRACKER_PATH + ".TIMER_REQUEST";
+    public static final String TRACKER_SERVICE_ACTIVITY_TIME = TRACKER_PATH + ".ACTIVITY_TIME";
     public static final String TRACKER_SERVICE_TIMER_DATA = TRACKER_PATH + ".TIMER_DATA";
-    //private long mStartTime;
     public static final String TRACKER_CURRENT_TRAINING_ID = TRACKER_PATH + ".TEMP_TRAINING_ID";
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    public static final String TRACKER_START_DATE = TRACKER_PATH + ".START_DATE";
     private final IBinder mBinder = new LocalBinder();
     private final List<LatLng> mLatLngLst = new ArrayList<>();
     private boolean mIsGUIRunning;
@@ -68,23 +70,38 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
     private long mTempRecordId;
     private Handler mHandler;
     private Runnable mChronometer;
-    private int mTotalTime;
+    private long mStartTime;
+    private boolean mIsAutopauseEnabled;
+    private boolean mIsTrainingPaused;
 
     public TrackerService() {
     }
 
     private void initChronometer() {
         mHandler = new Handler();
-        final long mStartTime = System.currentTimeMillis();
+        mStartTime = System.currentTimeMillis();
         mChronometer = new Runnable() {
             @Override
             public void run() {
-                mTotalTime = (int) (System.currentTimeMillis() - mStartTime) / 1000;
+                int totalTime;
+                int activityTime;
+
+                long currentTime = System.currentTimeMillis();
+
+                totalTime = (int) (currentTime - mStartTime);
+                activityTime = (int) (mData.plain_time + mData.descend_time + mData.ascend_time);
+
                 Intent data = new Intent(TRACKER_SERVICE_TIMER_REQUEST);
-                data.putExtra(TRACKER_SERVICE_TIMER_DATA, mTotalTime);
+                data.putExtra(TRACKER_SERVICE_TIMER_DATA, totalTime);
+                data.putExtra(TRACKER_SERVICE_ACTIVITY_TIME, activityTime);
                 LocalBroadcastManager.getInstance(TrackerService.this).sendBroadcast(data);
 
-                Log.v(TAG, "run: " + mTotalTime);
+                if (mIsAutopauseEnabled && mIsTrainingPaused) {
+                    // для корректного расчета средних скоростей меняем дату последней точки
+                    mCurrentLocation.setTime(currentTime);
+                }
+
+                Log.v(TAG, "run: " + totalTime);
                 mHandler.postDelayed(this, 1000);
             }
         };
@@ -118,6 +135,8 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                 }
             }
         };
+
+        mIsAutopauseEnabled = Settings.getInstance(this).isAutopauseEnabled();
     }
 
     private synchronized void buildGoogleApiClient() {
@@ -188,6 +207,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         Intent intent = new Intent(TRACKER_SERVICE_REQUEST);
         intent.putExtra(TRACKER_SERVICE_STARTED, false);
         intent.putExtra(TRACKER_CURRENT_TRAINING_ID, mTempRecordId);
+        intent.putExtra(TRACKER_START_DATE, mStartTime);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         super.onDestroy();
@@ -344,13 +364,22 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                     mPreviousLocation.getLatitude() != mCurrentLocation.getLatitude() &&
                     mPreviousLocation.getLongitude() != mCurrentLocation.getLongitude()) {
 
+                if (mIsAutopauseEnabled) {
+                    mIsTrainingPaused = false;
+                }
+
                 double distance = mPreviousLocation.distanceTo(mCurrentLocation);
                 mGpsLog.saveData(mCurrentLocation, distance, mTempRecordId);
                 mLatLngLst.add(new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude()));
                 prepareDataAndNotifyUI();
+            } else if (mIsAutopauseEnabled) {
+                mIsTrainingPaused = true;
             }
         } else {
             // отсылка нулевой скорости без сохранения данных в базу
+            if (mIsAutopauseEnabled) {
+                mIsTrainingPaused = true;
+            }
             mData.speed = 0;
             notifyUI();
         }

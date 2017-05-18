@@ -63,6 +63,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     public static final String APP_RUNNING = FRAGMENT_PATH + ".APP_RUNNING";
     public static final String SERVICE_REQUEST = FRAGMENT_PATH + ".SERVICE_REQUEST";
     public static final String TRAINING_FINISH_DATE = FRAGMENT_PATH + ".FINISH_DATE";
+    public static final String TRAINING_START_DATE = FRAGMENT_PATH + ".START_DATE";
     public static final String TRAININD_ID = FRAGMENT_PATH + ".TRAINING_ID";
     public static final String TRAINING_DATA = FRAGMENT_PATH + ".DATA";
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -91,6 +92,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     private int mTrainingDurationRaw;
     private MenuItem mActivityMenuItem;
     private Context mContext;
+    private long mStartTrainingDate;
 
     public MainFragment() {
         // Required empty public constructor
@@ -197,10 +199,11 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
             @Override
             public void onReceive(Context context, Intent intent) {
                 mTrainingDurationRaw = intent.getIntExtra(TrackerService.TRACKER_SERVICE_TIMER_DATA, 0);
-                int seconds = mTrainingDurationRaw % 60;
-                int minutes = (mTrainingDurationRaw / 60) % 60;
-                int hours = mTrainingDurationRaw / (60 * 60);
-                getActivity().setTitle(String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds));
+                int activityTime = intent.getIntExtra(TrackerService.TRACKER_SERVICE_ACTIVITY_TIME, 0);
+
+                if (mMapTabFragment.isResumed()) {
+                    mMapTabFragment.updateTime(mTrainingDurationRaw, activityTime);
+                }
             }
         };
 
@@ -216,13 +219,15 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
                 /* если сервис был остановлен */
                 if (!intent.getBooleanExtra(TrackerService.TRACKER_SERVICE_STARTED, true)) {
                     long recordId = intent.getLongExtra(TrackerService.TRACKER_CURRENT_TRAINING_ID, 0);
+                    mStartTrainingDate = intent.getLongExtra(TrackerService.TRACKER_START_DATE, 0);
                     if (recordId == 0) {
                         Log.v(TAG, "onReceive: incorrect database record id");
                     } else {
                         Log.v(TAG, "onReceive: create new activity with result");
                         List<LatLng> lst = mPolyline != null ? mPolyline.getPoints() : null;
 
-                        if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5) {
+                        // трек более двух точек, длительность более 5 секунд
+                        if (lst != null && lst.size() > 2 && mTrainingDurationRaw > 5000) {
                             startTrainingFinishActivity(recordId);
                         } else {
                             removeTraining(recordId);
@@ -244,6 +249,7 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
         Intent intent = new Intent(getContext(), TrainingFinishAcitivty.class);
         intent.putExtra(MainFragment.TRAINING_DATA, mData);
         intent.putExtra(MainFragment.TRAININD_ID, id);
+        intent.putExtra(MainFragment.TRAINING_START_DATE, mStartTrainingDate);
         intent.putExtra(MainFragment.TRAINING_FINISH_DATE, System.currentTimeMillis());
         startActivityForResult(intent, MainFragment.TRAINING_RESULT_REQUEST);
     }

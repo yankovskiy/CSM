@@ -45,9 +45,25 @@
         android:text="@string/zero_time" />
     <!---->
     <TextView
-        android:id="@+id/average_speed"
+        android:visibility="gone"
+        android:id="@+id/pause_duration"
         style="@style/StatField"
         android:layout_below="@+id/total_time"
+        android:drawableLeft="@drawable/ic_pause"
+        android:drawableStart="@drawable/ic_pause"
+        android:text="@string/pause_duration" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/pause_duration_value"
+        style="@style/StatFieldValue"
+        android:layout_alignBaseline="@+id/pause_duration"
+        android:text="@string/zero_time" />
+    <!---->
+    <TextView
+        android:id="@+id/average_speed"
+        style="@style/StatField"
+        android:layout_below="@+id/pause_duration"
         android:drawableLeft="@drawable/ic_avgspeed"
         android:drawableStart="@drawable/ic_avgspeed"
         android:text="@string/average_speed" />

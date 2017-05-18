@@ -7,7 +7,7 @@ import android.util.Log;
 
 class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "gpsdata";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,14 +28,16 @@ class DbHelper extends SQLiteOpenHelper {
         switch (oldVersion) {
             case 1:
                 updateDb(db, Schema.Updates.V2);
+            case 2:
+                updateDb(db, Schema.Updates.V3);
         }
     }
 
     private void updateDb(SQLiteDatabase db, String[] queries) {
         Log.v(TAG, "updateDb: ");
-        for (int i = 0; i < queries.length; i++) {
-            Log.v(TAG, "updateDb: " + queries[i]);
-            db.execSQL(queries[i]);
+        for (String query : queries) {
+            Log.v(TAG, "updateDb: " + query);
+            db.execSQL(query);
         }
     }
 }

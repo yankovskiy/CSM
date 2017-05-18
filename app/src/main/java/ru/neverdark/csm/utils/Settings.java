@@ -14,6 +14,7 @@ public final class Settings {
     private static final String MAP_ZOOM = "map-zoom";
     private static final String APP_IS_MODERN_COORDINATE_SYSTEM = "cb_format_coordinates";
     private static final String ACTIVITY_TYPE_ICON = "activity-type-icon";
+    private static final String APP_IS_AUTOPAUSE = "cb_autopause";
 
     private static Settings mInstance;
     private final SharedPreferences mPrefs;
@@ -63,5 +64,9 @@ public final class Settings {
 
     public boolean isModernCoordinateSystem() {
         return mAppSettings.getBoolean(APP_IS_MODERN_COORDINATE_SYSTEM, false);
+    }
+
+    public boolean isAutopauseEnabled() {
+        return mAppSettings.getBoolean(APP_IS_AUTOPAUSE, false);
     }
 }

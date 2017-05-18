@@ -27,7 +27,7 @@
     <string name="map">Map</string>
     <string name="compass">Compass</string>
     <string name="zero" translatable="false">0</string>
-    <string name="total_time">Time</string>
+    <string name="total_time">Duration</string>
     <string name="date">Date</string>
     <string name="finish_time">Completed</string>
     <string name="elevation_gain">Elevation gain</string>
@@ -94,4 +94,9 @@
     <string name="settings_latitude_longitude_format_title">Latitude and longitude format</string>
     <string name="settings_display_coordinate_modern">Decimal degrees</string>
     <string name="settings_display_coordinate_hystorical">Degrees, minutes and seconds</string>
+    <string name="settings_autopause">Autopause</string>
+    <string name="settings_autopause_off">Timer does not stop if you are stop your activity</string>
+    <string name="settings_autopause_on">Stop timer if you are stop your activity</string>
+    <string name="pause_duration">Pause</string>
+    <string name="clean_time">Clean time</string>
 </resources>

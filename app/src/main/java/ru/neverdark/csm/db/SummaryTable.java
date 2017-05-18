@@ -65,6 +65,7 @@ public class SummaryTable {
             int plain_average_speed = c.getColumnIndex(Entry.COLUMN_PLAIN_AVERAGE_SPEED);
             int plain_max_speed = c.getColumnIndex(Entry.COLUMN_PLAIN_MAX_SPEED);
             int activity_type = c.getColumnIndex(Entry.COLUMN_ACTIVITY_TYPE);
+            int pause_duration = c.getColumnIndex(Entry.COLUMN_PAUSE_DURATION);
 
             do {
                 Record record = new Record(
@@ -91,7 +92,8 @@ public class SummaryTable {
                         c.getFloat(descend_max_speed),
                         c.getFloat(plain_average_speed),
                         c.getFloat(plain_max_speed),
-                        c.getInt(activity_type)
+                        c.getInt(activity_type),
+                        c.getString(pause_duration)
                 );
                 records.add(record);
             } while (c.moveToNext());
@@ -132,6 +134,7 @@ public class SummaryTable {
         values.put(Entry.COLUMN_PLAIN_AVERAGE_SPEED, data.plain_average_speed);
         values.put(Entry.COLUMN_PLAIN_MAX_SPEED, data.plain_max_speed);
         values.put(Entry.COLUMN_ACTIVITY_TYPE, data.activity_type);
+        values.put(Entry.COLUMN_PAUSE_DURATION, data.pause_duration);
         mDb.update(Entry.TABLE_NAME, values, selection, selectionArgs);
     }
 
@@ -143,7 +146,7 @@ public class SummaryTable {
                       int plain_time, float ascend_average_speed, float ascend_max_speed,
                       float descend_average_speed, float descend_max_speed,
                       float plain_average_speed, float plain_max_speed,
-                      int activity_type) {
+                      int activity_type, String pause_duration) {
             this._id = _id;
             this.finish_date = finish_date;
             this.description = description;
@@ -168,6 +171,7 @@ public class SummaryTable {
             this.plain_average_speed = plain_average_speed;
             this.plain_max_speed = plain_max_speed;
             this.activity_type = activity_type;
+            this.pause_duration = pause_duration;
         }
 
         public Record() {
@@ -198,6 +202,7 @@ public class SummaryTable {
         public float plain_average_speed;
         public float plain_max_speed;
         public int activity_type;
+        public String pause_duration;
     }
 
     public static class Entry implements BaseColumns {
@@ -225,6 +230,7 @@ public class SummaryTable {
         public static final String COLUMN_PLAIN_AVERAGE_SPEED = "plain_average_speed";
         public static final String COLUMN_PLAIN_MAX_SPEED = "plain_max_speed";
         public static final String COLUMN_ACTIVITY_TYPE = "activity_type";
+        public static final String COLUMN_PAUSE_DURATION = "pause_duration";
 
         public static final String[] COLUMN_ALL = {
                 _ID,
@@ -250,7 +256,8 @@ public class SummaryTable {
                 COLUMN_DESCEND_MAX_SPEED,
                 COLUMN_PLAIN_AVERAGE_SPEED,
                 COLUMN_PLAIN_MAX_SPEED,
-                COLUMN_ACTIVITY_TYPE
+                COLUMN_ACTIVITY_TYPE,
+                COLUMN_PAUSE_DURATION
         };
     }
 }
