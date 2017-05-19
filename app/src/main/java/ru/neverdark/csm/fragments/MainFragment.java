@@ -27,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
@@ -415,7 +416,11 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
 
     @Override
     public void onChangeMapType(int mapType) {
-        mGoogleMap.setMapType(mapType);
+        if (mGoogleMap != null) {
+            mGoogleMap.setMapType(mapType);
+        } else {
+            Toast.makeText(getContext(), R.string.map_not_ready, Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -497,9 +502,10 @@ public class MainFragment extends Fragment implements GeoClient.OnGeoClientListe
     @Override
     public void onStop() {
         Log.v(TAG, "onStop: ");
-        Log.v(TAG, "onStop: save zoom " + mGoogleMap.getCameraPosition().zoom);
-        Settings.getInstance(getContext()).saveMapType(mGoogleMap.getMapType());
-        Settings.getInstance(getContext()).saveMapZoom(mGoogleMap.getCameraPosition().zoom);
+        if (mGoogleMap != null) {
+            Settings.getInstance(getContext()).saveMapType(mGoogleMap.getMapType());
+            Settings.getInstance(getContext()).saveMapZoom(mGoogleMap.getCameraPosition().zoom);
+        }
 
         mGeoClient.stop();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mTimerReseiver);

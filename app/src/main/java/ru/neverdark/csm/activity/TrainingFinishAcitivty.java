@@ -325,7 +325,7 @@ public class TrainingFinishAcitivty extends AppCompatActivity implements Confirm
                     }
                 });
             } else {
-                Toast.makeText(TrainingFinishAcitivty.this, "Map is not ready", Toast.LENGTH_LONG).show();
+                Toast.makeText(TrainingFinishAcitivty.this, R.string.map_not_ready, Toast.LENGTH_LONG).show();
             }
         }
     }

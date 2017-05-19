@@ -99,4 +99,5 @@
     <string name="settings_autopause_on">Stop timer if you are stop your activity</string>
     <string name="pause_duration">Pause</string>
     <string name="clean_time">Clean time</string>
+    <string name="map_not_ready">Map not ready</string>
 </resources>

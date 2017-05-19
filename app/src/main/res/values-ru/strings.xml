@@ -87,4 +87,5 @@
     <string name="settings_autopause_on">Если вы прекратите движение, таймер также будет остановлен</string>
     <string name="pause_duration">Пауза</string>
     <string name="clean_time">Чистое время</string>
+    <string name="map_not_ready">Карта не готова</string>
 </resources>

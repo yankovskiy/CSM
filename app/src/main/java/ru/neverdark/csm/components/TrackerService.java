@@ -196,7 +196,12 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         Log.v(TAG, "onDestroy: ");
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            saveAndNotify(location);
+            if (location == null) {
+                mData.speed = 0;
+                notifyUI();
+            } else {
+                saveAndNotify(location);
+            }
         }
 
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
